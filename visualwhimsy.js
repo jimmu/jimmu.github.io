@@ -1,18 +1,32 @@
-var width=600;
-var height=500;
-var numCircles=20;
+var width=window.innerWidth;
+var height=window.innerHeight;
+var numCircles=25;
 
 
 function createCircleData(){
-	var maxRadius = 50;
+	var minRadius = 1;
+	var maxRadius = 70;
+	var minX = minRadius;
+	var minY = minRadius;
         var maxX = width-maxRadius;
 	var maxY = height-maxRadius;
 
+	var radiusRange = maxRadius-minRadius;
 	var circleData = [];
+	// Place the circles along a simple Bezier curve
+	// Use a point half way along the top as the control point.
+	var controlX = maxX/2;
+	var controlY = minRadius;
 	for (var i=1; i<=numCircles; i++){
-	  var thisCircle = {"cx": i*maxX/numCircles
-			, "cy": i*maxY/numCircles
-			, "r": i*maxRadius/numCircles
+	  var x1=minX+i*(controlX-minX)/numCircles;
+	  var y1=controlY;
+	  var x2=maxX;
+	  var y2=controlY+i*(maxY-controlY)/numCircles;
+	  // So we're interpolating along x1,y1 -> x2,y2 rather than the main diagonal.
+	
+	  var thisCircle = {"cx": x1 + i*(x2-x1)/numCircles
+			, "cy": y1 + i*(y2-y1)/numCircles
+			, "r": minRadius + i*radiusRange/numCircles
 			, "colour": "black"
 			};
 	  circleData.push(thisCircle);
