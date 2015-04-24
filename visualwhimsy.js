@@ -1,6 +1,6 @@
 var circleData = [];
 
-for (var i=0; i<10; i++){
+for (var i=0; i<20; i++){
   var thisCircle = {"cx": i*10, "cy": i*20, "r": i*4, "colour": "black"};
   circleData.push(thisCircle);
 }
