@@ -10,7 +10,6 @@ function (interpolate){
   // We do it all by forward differences.
   return function (x1, x2, cx, n){
     var thisStep = 0;
-    var leftEdge = interpolate(x1, cx, n);
     // The line length after one step.
     var firstLineLeftEdge = x1+((cx-x1)/n);
     var firstLineRightEdge = cx+((x2-cx)/n);
