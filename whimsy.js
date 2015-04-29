@@ -1,76 +1,89 @@
 // A reusable d3 version of the visual whimsy
 define(["libs/d3v3min"
-       ,"bezier"
        ]
-,function(d3, bezier) {
+,function(d3) {
   return function(){
-    var width=window.innerWidth;
+    var width=window.innerWidth;  // These can be overridden.
     var height=window.innerHeight;
-    var numCircles=25;
+    var xAccessor = function(d){return d.x};
+    var yAccessor = function(d){return d.y};
+    var rAccessor = function(d){return d.r};
+    var fillAccessor = function(d){return d.colour};
 
     function drawTheWhimsy(selection){
       selection.each(function(data,i){
-
-function createCircleData(){
-		var minRadius = 1;
-		var maxRadius = 70;
-		var minX = minRadius;
-		var minY = minRadius;
-		//var minX = 0;
-		//var minY = 0;
-		var maxX = width-maxRadius;
-		var maxY = height-maxRadius;
-		//var maxX = 150;
-		//var maxY = 100;
-		// Don't use values below 16. That is, stay in double digit hex numbers.
-		var startColour = {"red":16, "green":128, "blue":30};
-		var endColour = {"red":255, "green":128, "blue":30};
-
-		var radiusRange = maxRadius-minRadius;
-		var circleData = [];
-		// Place the circles along a simple Bezier curve
-		// Use a point half way along the top as the control point.
-		var controlX = maxX*0.75;
-		var controlY = minRadius;
-		//var controlX = maxX/2;
-		//var controlY = minY
-		var bezierCalcX = bezier(minX, maxX, controlX, numCircles);
-		var bezierCalcY = bezier(minY, maxY, controlY, numCircles);
-
-
-		for (var i=1; i<=numCircles; i++){
-		  var red=Math.floor((startColour.red+i*(endColour.red-startColour.red)/numCircles)).toString(16);
-		  var green=Math.floor((startColour.green+i*(endColour.green-startColour.green)/numCircles)).toString(16);
-		  var blue=Math.floor((startColour.blue+i*(endColour.blue-startColour.blue)/numCircles)).toString(16);
-		  var colour="#"+red+green+blue;
-		  var thisCircle = {"cx": bezierCalcX()
-				, "cy": bezierCalcY()
-				, "r": minRadius + i*radiusRange/numCircles
-				, "colour": colour
-				};
-		  circleData.push(thisCircle);
-		}
-		return circleData;
-	}
+        var xScale = d3.scale.linear()
+                       .range([0, width])
+                       .domain([d3.min(data, function(d){return xAccessor(d)-rAccessor(d)}),
+                                d3.max(data, function(d){return xAccessor(d)+rAccessor(d)})]);
+        var yScale = d3.scale.linear()
+                       .range([0, height])
+                       .domain([d3.min(data, function(d){return yAccessor(d)-rAccessor(d)}),
+                                d3.max(data, function(d){return yAccessor(d)+rAccessor(d)})]);
+        // Make the radius scale linearly with the smaller dimension.
+        var domainAccessor;
+        var smallerDimension = Math.min(width, height);
+        if (height === smallerDimension){
+          domainAccessor = yAccessor;
+        }
+        else {
+          domainAccessor = xAccessor;
+        }
+        var rScale = d3.scale.linear()
+                       .range([0, smallerDimension])
+                       .domain([0, d3.max(data, function(d){return domainAccessor(d)})]);
 
         var svg=d3.select(this).append("svg")
 		.attr("width", width)
 		.attr("height", height);
-
 	var circleGroup = svg.append("g");
-
 	var circles = circleGroup.selectAll("circle")
-			.data(createCircleData())
+			.data(data)
 			.enter()
 			.append("circle");
-
-	circles.attr("cx", function(d){return d.cx})
-		.attr("cy", function(d){return d.cy})
-		.attr("r", function(d){return d.r})
-		.attr("fill", function(d){return d.colour});
-
+	circles.attr("cx", function(d){return xScale(xAccessor(d))})
+		.attr("cy", function(d){return yScale(yAccessor(d))})
+		.attr("r", function(d){return rScale(rAccessor(d))})
+		.attr("fill", function(d){return fillAccessor(d)});
       });
     }
+
+    drawTheWhimsy.width =function(value){
+      if (!arguments.length) return width;
+      width = value;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.height =function(value){
+      if (!arguments.length) return height;
+      height = value;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.x = function(accessor){
+      if (!arguments.length) return xAccessor;
+      xAccessor = accessor;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.y = function(accessor){
+      if (!arguments.length) return yAccessor;
+      yAccessor = accessor;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.r = function(accessor){
+      if (!arguments.length) return rAccessor;
+      rAccessor = accessor;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.fill = function(accessor){
+      if (!arguments.length) return fillAccessor;
+      fillAccessor = accessor;
+      return drawTheWhimsy;
+    }
+
     return drawTheWhimsy;
   }
 })

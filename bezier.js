@@ -44,7 +44,7 @@ function (interpolate){
         return x2;
       } 
       sumOfSteps += stepSize.next();
-      return sumOfSteps;
+      return sumOfSteps + x1;
     }
   }
 });
