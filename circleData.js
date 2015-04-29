@@ -1,7 +1,7 @@
-define (["bezier"
+define (["spline"
        , "interpolate"]
 ,
-function createCircleData(bezier, interpolate){
+function createCircleData(spline, interpolate){
   return function(){
     var numCircles = 25; // All the below are defaults
     var startRadius = 1; // They're all settable + gettable.
@@ -22,18 +22,18 @@ function createCircleData(bezier, interpolate){
       var radiusRange = interpolate(startRadius, endRadius, numCircles);
 
       var circleData = [];
-      // Place the circles along a simple Bezier curve
+      // Place the circles along a simple spline curve
       // Use a point half way along the top as the control point.
-      var bezierCalcX = bezier(start.x, end.x, control.x, numCircles);
-      var bezierCalcY = bezier(start.y, end.y, control.y, numCircles);
+      var splineCalcX = spline(start.x, end.x, control.x, numCircles);
+      var splineCalcY = spline(start.y, end.y, control.y, numCircles);
 
       for (var i=1; i<=numCircles; i++){
 	var red=Math.floor(redRange.next()).toString(16);
 	var green=Math.floor(greenRange.next()).toString(16);
 	var blue=Math.floor(blueRange.next()).toString(16);
 	var colour="#"+red+green+blue;
-	var thisCircle = {"x": bezierCalcX()
-		      , "y": bezierCalcY()
+	var thisCircle = {"x": splineCalcX()
+		      , "y": splineCalcY()
 		      , "r": radiusRange.next()
 		      , "colour": colour
 		      };

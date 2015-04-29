@@ -1,9 +1,8 @@
 define(["interpolate"]
 ,
 function (interpolate){
-  // We'll plot a bezier curve from x1 to x2 
+  // We'll plot a spline curve from x1 to x2 
   // via a control x in n steps.
-  // (Actually, is that truly Bezier? Or just a spline?)
   // What we'll return is a function that returns
   // the next value each time it is called.
   // This looks fairly complex, but that's all so that we can
@@ -29,10 +28,10 @@ function (interpolate){
     var initialStepSize = (firstLineLeftEdge + firstLineStepSize) - x1;
     // The step from the penultimate point to the end point.
     var finalStepSize = x2 - (lastLineRightEdge - lastLineStepSize);
+
     // So we know the sizes of the first and last steps.
     // All the other step sizes are linear interpolations between those.
     var stepSize = interpolate(initialStepSize, finalStepSize, n-1);
-    
     var sumOfSteps = 0;
 
     // All the stuff up there was a one-off.
