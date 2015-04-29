@@ -12,27 +12,22 @@ function (interpolate){
     var thisStep = 0;
     var firstPartStepSize = (cx-x1)/n;
     var secondPartStepSize = (x2-cx)/n;
-    // The line length after one step.
+    // Calculate the position on the intermediate line after one step.
     var firstLineLeftEdge = x1+firstPartStepSize;
     var firstLineRightEdge = cx+secondPartStepSize;
-    var firstLineLength = firstLineRightEdge - firstLineLeftEdge;
-    // And one step along that line.
-    var firstLineStepSize = firstLineLength/n;
-    // The line length one step before the end;
+    var firstLinePosition = ((n-1)*firstLineLeftEdge + firstLineRightEdge)/n;
+    var initialStepSize = firstLinePosition - x1;
+
+    // Calculate the position on the intermediate line one step before the end.
     var lastLineRightEdge = x2-secondPartStepSize;
     var lastLineLeftEdge = cx-firstPartStepSize;
-    var lastLineLength = lastLineRightEdge - lastLineLeftEdge;
-    // And one step along that line.
-    var lastLineStepSize = lastLineLength/n;
-    // The step from the start point to the point on the first-step line.
-    var initialStepSize = (firstLineLeftEdge + firstLineStepSize) - x1;
-    // The step from the penultimate point to the end point.
-    var finalStepSize = x2 - (lastLineRightEdge - lastLineStepSize);
+    var lastLinePosition = (lastLineLeftEdge + (n-1)*lastLineRightEdge)/n;
+    var finalStepSize = x2 - lastLinePosition;
 
     // So we know the sizes of the first and last steps.
     // All the other step sizes are linear interpolations between those.
     var stepSize = interpolate(initialStepSize, finalStepSize, n-1);
-    var sumOfSteps = 0;
+    var currentPosition = x1;	// This is our starting point.
 
     // All the stuff up there was a one-off.
     // Here's the bit which is called repeatedly.
@@ -42,8 +37,8 @@ function (interpolate){
       if (thisStep > n){
         return x2;
       } 
-      sumOfSteps += stepSize.next();
-      return sumOfSteps + x1;
+      currentPosition += stepSize.next();
+      return currentPosition;
     }
   }
 });
