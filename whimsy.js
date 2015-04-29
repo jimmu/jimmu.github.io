@@ -1,7 +1,8 @@
 // A reusable d3 version of the visual whimsy
 define(["libs/d3v3min"
        ]
-,function(d3) {
+,
+function(d3) {
   return function(){
     var width=window.innerWidth;  // These can be overridden.
     var height=window.innerHeight;
@@ -10,8 +11,10 @@ define(["libs/d3v3min"
     var rAccessor = function(d){return d.r};
     var fillAccessor = function(d){return d.colour};
 
+    // Render the circleywhatnots in each element of the current selection.
     function drawTheWhimsy(selection){
       selection.each(function(data,i){
+        // Scale the coordinates of the data to fit in this node.
         var xScale = d3.scale.linear()
                        .range([0, width])
                        .domain([d3.min(data, function(d){return xAccessor(d)-rAccessor(d)}),
@@ -46,10 +49,14 @@ define(["libs/d3v3min"
 		.attr("r", function(d){return rScale(rAccessor(d))})
 		.attr("fill", function(d){return fillAccessor(d)})
                 .on("mouseover", function(d){
-                   d3.select(this).transition().attr("r", rScale(rAccessor(d))*1.4)
+                   d3.select(this).transition()
+                                  .attr("r", rScale(rAccessor(d))*1.4)
+                                  .attr("fill", "#801080")
                  })
                 .on("mouseout", function(d){
-                   d3.select(this).transition().attr("r", rScale(rAccessor(d)))
+                   d3.select(this).transition()
+                                  .attr("r", rScale(rAccessor(d)))
+                                  .attr("fill", fillAccessor(d))
                  })
       });
     }
