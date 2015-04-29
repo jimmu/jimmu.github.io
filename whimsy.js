@@ -44,7 +44,13 @@ define(["libs/d3v3min"
 	circles.attr("cx", function(d){return xScale(xAccessor(d))})
 		.attr("cy", function(d){return yScale(yAccessor(d))})
 		.attr("r", function(d){return rScale(rAccessor(d))})
-		.attr("fill", function(d){return fillAccessor(d)});
+		.attr("fill", function(d){return fillAccessor(d)})
+                .on("mouseover", function(d){
+                   d3.select(this).transition().attr("r", rScale(rAccessor(d))*1.4)
+                 })
+                .on("mouseout", function(d){
+                   d3.select(this).transition().attr("r", rScale(rAccessor(d)))
+                 })
       });
     }
 
