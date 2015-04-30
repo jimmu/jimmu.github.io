@@ -10,7 +10,7 @@ function(d3) {
     var yAccessor = function(d){return d.y};
     var rAccessor = function(d){return d.r};
     var fillAccessor = function(d){return d.colour};
-    var hoverFillAccessor = function(d){return d.hoverColour};
+    var eventHandlers = {}
 
     // Render the circleywhatnots in each element of the current selection.
     function drawTheWhimsy(selection){
@@ -49,16 +49,12 @@ function(d3) {
 		.attr("cy", function(d){return yScale(yAccessor(d))})
 		.attr("r", function(d){return rScale(rAccessor(d))})
 		.attr("fill", function(d){return fillAccessor(d)})
-                .on("mouseover", function(d){
-                   d3.select(this).transition()
-                                  .attr("r", rScale(rAccessor(d))*1.4)
-                                  .attr("fill", hoverFillAccessor(d))
-                 })
-                .on("mouseout", function(d){
-                   d3.select(this).transition()
-                                  .attr("r", rScale(rAccessor(d)))
-                                  .attr("fill", fillAccessor(d))
-                 })
+
+        // So we can do mouseover tricks and whatnot without
+        // predefining which ones we'll cater for.
+        for (var handlerName in eventHandlers){
+          circles.on(handlerName, eventHandlers[handlerName]);
+        }
       });
     }
 
@@ -98,9 +94,9 @@ function(d3) {
       return drawTheWhimsy;
     }
 
-    drawTheWhimsy.hoverFill = function(accessor){
-      if (!arguments.length) return hoverFillAccessor;
-      hoverFillAccessor = accessor;
+    drawTheWhimsy.handle = function(name, fn){
+      if (arguments.length === 1) return eventHandlers[name];
+      eventHandlers[name] = fn;
       return drawTheWhimsy;
     }
 

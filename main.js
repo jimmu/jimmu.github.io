@@ -34,6 +34,23 @@ function(d3, circles, whim){
                 .y(function(d){return d.y})
                 .r(function(d){return d.r})
                 .fill(function(d){return d.colour})
+                .handle("mouseover", function(d){
+                      var me = d3.select(this);
+                      if (!me.attr("originalR")){
+                        me.attr("originalR", me.attr("r"));
+                      }
+                      me.transition()
+                        .attr("r", me.attr("originalR")*1.4)
+                        .attr("fill", d.hoverColour)
+                    })
+                 .handle("mouseout", function(d){
+                       var me = d3.select(this);
+                       if (me.attr("originalR")){
+                         me.transition()
+                           .attr("r", me.attr("originalR"))
+                           .attr("fill", d.colour)
+                       }
+                   })
 
   d3.selectAll(".container")
     .datum(circleData)
