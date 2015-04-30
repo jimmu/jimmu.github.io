@@ -11,9 +11,13 @@ function (interpolate){
     var currentColour = decToString(a.red, a.green, a.blue);
 
     function decToString(r, g, b){
-      var red=Math.floor(r).toString(16);
-      var green=Math.floor(g).toString(16);
-      var blue=Math.floor(b).toString(16);
+      function decTo2digitHex(d){
+        var padded = "00"+d.toString(16);
+        return padded.substring(padded.length-2);
+      }
+      var red=decTo2digitHex(Math.floor(r));
+      var green=decTo2digitHex(Math.floor(g));
+      var blue=decTo2digitHex(Math.floor(b));
       return "#"+red+green+blue;
     } 
 

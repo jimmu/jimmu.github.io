@@ -13,7 +13,6 @@ function createCircleData(spline, interpolate, colourInterpolate){
     var start = {"x": startRadius, "y": startRadius}
     var end = {"x": width-endRadius, "y": height-endRadius}
     var control = {"x": end.x*0.75, "y": startRadius}
-    // Don't use values below 16. That is, stay in double digit hex numbers.
     var startColour = {"red":16, "green":128, "blue":30};
     var endColour = {"red":255, "green":128, "blue":30};
     var startHoverColour = {"red":30, "green":128, "blue":16};
@@ -26,7 +25,6 @@ function createCircleData(spline, interpolate, colourInterpolate){
 
       var circleData = [];
       // Place the circles along a simple spline curve
-      // Use a point half way along the top as the control point.
       var splineCalcX = spline(start.x, end.x, control.x, numCircles);
       var splineCalcY = spline(start.y, end.y, control.y, numCircles);
 
