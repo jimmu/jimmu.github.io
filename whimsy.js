@@ -10,6 +10,7 @@ function(d3) {
     var yAccessor = function(d){return d.y};
     var rAccessor = function(d){return d.r};
     var fillAccessor = function(d){return d.colour};
+    var hoverFillAccessor = function(d){return d.hoverColour};
 
     // Render the circleywhatnots in each element of the current selection.
     function drawTheWhimsy(selection){
@@ -51,7 +52,7 @@ function(d3) {
                 .on("mouseover", function(d){
                    d3.select(this).transition()
                                   .attr("r", rScale(rAccessor(d))*1.4)
-                                  .attr("fill", "#801080")
+                                  .attr("fill", hoverFillAccessor(d))
                  })
                 .on("mouseout", function(d){
                    d3.select(this).transition()
@@ -94,6 +95,12 @@ function(d3) {
     drawTheWhimsy.fill = function(accessor){
       if (!arguments.length) return fillAccessor;
       fillAccessor = accessor;
+      return drawTheWhimsy;
+    }
+
+    drawTheWhimsy.hoverFill = function(accessor){
+      if (!arguments.length) return hoverFillAccessor;
+      hoverFillAccessor = accessor;
       return drawTheWhimsy;
     }
 

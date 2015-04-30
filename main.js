@@ -18,6 +18,14 @@ function(d3, circles, whim){
                             .controlPoint(140, 0)
                             .startColour(192, 16, 16)
                             .endColour(192, 192, 16)
+                            .startHoverColour(128, 16, 128)
+                            .endHoverColour(16, 192, 128)
+
+  var circleData = circleDataGenerator();
+  // Now add another set of circles. Identical apart from the position of the control point.
+  circleDataGenerator.controlPoint(80,80);
+  circleData = circleData.concat(circleDataGenerator());
+
   // These are actual pixel sizes.
   var whimthing=whim()
                 .width(window.innerWidth)
@@ -25,9 +33,10 @@ function(d3, circles, whim){
                 .x(function(d){return d.x})
                 .y(function(d){return d.y})
                 .r(function(d){return d.r})
-                .fill(function(d){return d.colour});
+                .fill(function(d){return d.colour})
 
   d3.selectAll(".container")
-    .datum(circleDataGenerator())
+    .datum(circleData)
     .call(whimthing);
+
 });

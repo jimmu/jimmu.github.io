@@ -1,7 +1,9 @@
 define (["spline"
-       , "interpolate"]
+       , "interpolate"
+       , "colourInterpolate"
+       ]
 ,
-function createCircleData(spline, interpolate){
+function createCircleData(spline, interpolate, colourInterpolate){
   return function(){
     var numCircles = 25; // All the below are defaults
     var startRadius = 1; // They're all settable + gettable.
@@ -14,12 +16,13 @@ function createCircleData(spline, interpolate){
     // Don't use values below 16. That is, stay in double digit hex numbers.
     var startColour = {"red":16, "green":128, "blue":30};
     var endColour = {"red":255, "green":128, "blue":30};
+    var startHoverColour = {"red":30, "green":128, "blue":16};
+    var endHoverColour = {"red":30, "green":128, "blue":255};
     
     function generateData(){
-      var redRange = interpolate(startColour.red, endColour.red, numCircles);
-      var greenRange = interpolate(startColour.green, endColour.green, numCircles);
-      var blueRange = interpolate(startColour.blue, endColour.blue, numCircles);
       var radiusRange = interpolate(startRadius, endRadius, numCircles);
+      var colourRange = colourInterpolate(startColour, endColour, numCircles);
+      var hoverColourRange = colourInterpolate(startHoverColour, endHoverColour, numCircles);
 
       var circleData = [];
       // Place the circles along a simple spline curve
@@ -28,14 +31,11 @@ function createCircleData(spline, interpolate){
       var splineCalcY = spline(start.y, end.y, control.y, numCircles);
 
       for (var i=1; i<=numCircles; i++){
-	var red=Math.floor(redRange.next()).toString(16);
-	var green=Math.floor(greenRange.next()).toString(16);
-	var blue=Math.floor(blueRange.next()).toString(16);
-	var colour="#"+red+green+blue;
 	var thisCircle = {"x": splineCalcX()
 		      , "y": splineCalcY()
 		      , "r": radiusRange.next()
-		      , "colour": colour
+		      , "colour": colourRange.next()
+                      , "hoverColour": hoverColourRange.next()
 		      };
 	circleData.push(thisCircle);
       }
@@ -99,6 +99,18 @@ function createCircleData(spline, interpolate){
     generateData.endColour = function(r,g,b){
       if(!arguments.length) return endColour;
       endColour = {"red": r, "green": g, "blue": b};
+      return generateData;
+    }
+
+    generateData.startHoverColour = function(r,g,b){
+      if(!arguments.length) return startHoverColour;
+      startHoverColour = {"red": r, "green": g, "blue": b};
+      return generateData;
+    }
+
+    generateData.endHoverColour = function(r,g,b){
+      if(!arguments.length) return endHoverColour;
+      endHoverColour = {"red": r, "green": g, "blue": b};
       return generateData;
     }
 
