@@ -18,11 +18,10 @@ function (interpolate){
     var firstLinePosition = ((n-1)*firstLineLeftEdge + firstLineRightEdge)/n;
     var initialStepSize = firstLinePosition - x1;
 
-    // Calculate the position on the intermediate line one step before the end.
-    var lastLineRightEdge = x2-secondPartStepSize;
-    var lastLineLeftEdge = cx-firstPartStepSize;
-    var lastLinePosition = (lastLineLeftEdge + (n-1)*lastLineRightEdge)/n;
-    var finalStepSize = x2 - lastLinePosition;
+    // The average step size is trivial to calculate.
+    // From that and the first step size we can work out the last step.
+    var averageStepSize = (x2-x1)/n;
+    var finalStepSize = (2*averageStepSize)-initialStepSize;
 
     // So we know the sizes of the first and last steps.
     // All the other step sizes are linear interpolations between those.
@@ -31,7 +30,7 @@ function (interpolate){
 
     // All the stuff up there was a one-off.
     // Here's the bit which is called repeatedly.
-    // It has no slow maths in it.
+    // It has no multiplications or divisions in it.
     return function(){
       thisStep++;
       if (thisStep > n){
