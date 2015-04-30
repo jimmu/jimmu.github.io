@@ -1,14 +1,15 @@
 define(["interpolate"]
 ,
 function (interpolate){
-  // We'll plot a spline curve from x1 to x2 
-  // via a control x in n steps.
+  // We'll plot a spline curve from x1 to x2 via a control.
   // What we'll return is a function that returns
   // the next value each time it is called.
   // This looks fairly complex, but that's all so that we can
   // avoid doing any multiplication in the repeated calculation method.
   // We do it all by forward differences.
-  return function (x1, x2, cx, n){
+  return function (x1, x2, cx, numCircles){
+    // For n points, starting and ending at x1 and x2, there are n-1 steps.
+    var n=numCircles-1;
     var thisStep = 0;
     var firstPartStepSize = (cx-x1)/n;
     var secondPartStepSize = (x2-cx)/n;
@@ -36,8 +37,9 @@ function (interpolate){
       if (thisStep > n){
         return x2;
       } 
+      var positionBeforeIncrement = currentPosition;
       currentPosition += stepSize.next();
-      return currentPosition;
+      return positionBeforeIncrement;
     }
   }
 });
