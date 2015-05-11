@@ -1,8 +1,8 @@
 require(["libs/d3v3min"
        , "circleData"
-       , "whimsy"]
+       , "circleDrawer"]
 ,
-function(d3, circles, whim){
+function(d3, circles, renderer){
   // The numeric ranges here are kind of arbitrary, 
   // as the actual display size will be scaled
   // when we do the rendering.
@@ -27,7 +27,7 @@ function(d3, circles, whim){
   circleData = circleData.concat(circleDataGenerator());
 
   // These are actual pixel sizes.
-  var whimthing=whim()
+  var rendererThing=renderer()
                 .width(window.innerWidth)
                 .height(window.innerHeight)
                 .x(function(d){return d.x})
@@ -54,6 +54,6 @@ function(d3, circles, whim){
 
   d3.selectAll(".container")
     .datum(circleData)
-    .call(whimthing);
+    .call(rendererThing);
 
 });

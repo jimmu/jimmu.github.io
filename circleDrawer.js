@@ -1,4 +1,3 @@
-// A reusable d3 version of the visual whimsy
 define(["libs/d3v3min"
        ]
 ,
@@ -13,7 +12,7 @@ function(d3) {
     var eventHandlers = {}
 
     // Render the circleywhatnots in each element of the current selection.
-    function drawTheWhimsy(selection){
+    function drawTheThing(selection){
       selection.each(function(data,i){
         // Scale the coordinates of the data to fit in this node.
         var xScale = d3.scale.linear()
@@ -58,49 +57,49 @@ function(d3) {
       });
     }
 
-    drawTheWhimsy.width =function(value){
+    drawTheThing.width =function(value){
       if (!arguments.length) return width;
       width = value;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.height =function(value){
+    drawTheThing.height =function(value){
       if (!arguments.length) return height;
       height = value;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.x = function(accessor){
+    drawTheThing.x = function(accessor){
       if (!arguments.length) return xAccessor;
       xAccessor = accessor;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.y = function(accessor){
+    drawTheThing.y = function(accessor){
       if (!arguments.length) return yAccessor;
       yAccessor = accessor;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.r = function(accessor){
+    drawTheThing.r = function(accessor){
       if (!arguments.length) return rAccessor;
       rAccessor = accessor;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.fill = function(accessor){
+    drawTheThing.fill = function(accessor){
       if (!arguments.length) return fillAccessor;
       fillAccessor = accessor;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    drawTheWhimsy.handle = function(name, fn){
+    drawTheThing.handle = function(name, fn){
       if (arguments.length === 1) return eventHandlers[name];
       eventHandlers[name] = fn;
-      return drawTheWhimsy;
+      return drawTheThing;
     }
 
-    return drawTheWhimsy;
+    return drawTheThing;
   }
 })
 
