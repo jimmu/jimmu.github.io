@@ -7,9 +7,9 @@ function (interpolate){
   // This looks fairly complex, but that's all so that we can
   // avoid doing any multiplication in the repeated calculation method.
   // We do it all by forward differences.
-  return function (x1, x2, cx, numCircles){
+  return function (x1, x2, cx, numPoints){
     // For n points, starting and ending at x1 and x2, there are n-1 steps.
-    var n=numCircles-1;
+    var n=numPoints-1;
     var thisStep = 0;
     var firstPartStepSize = (cx-x1)/n;
     var secondPartStepSize = (x2-cx)/n;
