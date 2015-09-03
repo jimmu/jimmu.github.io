@@ -34,23 +34,29 @@ function(d3, circles, renderer){
                 .y(function(d){return d.y})
                 .r(function(d){return d.r})
                 .fill(function(d){return d.colour})
-                .handle("mouseover", function(d){
-                      var me = d3.select(this);
-                      if (!me.attr("originalR")){
-                        me.attr("originalR", me.attr("r"));
-                      }
-                      me.transition()
-                        .attr("r", me.attr("originalR")*1.4)
-                        .attr("fill", d.hoverColour)
-                    })
-                 .handle("mouseout", function(d){
-                       var me = d3.select(this);
-                       if (me.attr("originalR")){
-                         me.transition()
-                           .attr("r", me.attr("originalR"))
-                           .attr("fill", d.colour)
-                       }
-                   })
+                .handle("mouseover", mouseover)
+                .handle("mouseout", mouseout)
+
+  function mouseover(d){
+    var me = d3.select(this);
+    if (!me.attr("originalR")){
+      me.attr("originalR", me.attr("r"));
+    }
+    animate(me, me.attr("originalR")*1.4, d.hoverColour);
+  }
+
+  function mouseout(d){
+     var me = d3.select(this);
+     if (me.attr("originalR")){
+       animate(me, me.attr("originalR"), d.colour);
+     }
+  }
+
+  function animate(me, newR, newFill){
+     me.transition()
+       .attr("r", newR)
+       .attr("fill", newFill)
+  }
 
   d3.selectAll(".container")
     .datum(circleData)
