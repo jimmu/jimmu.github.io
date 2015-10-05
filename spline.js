@@ -10,7 +10,6 @@ function (interpolate){
   return function (x1, x2, cx, numPoints){
     // For n points, starting and ending at x1 and x2, there are n-1 steps.
     var n=numPoints-1;
-    var thisStep = 0;
     var firstPartStepSize = (cx-x1)/n;
     var secondPartStepSize = (x2-cx)/n;
     // Calculate the position on the intermediate line after one step.
@@ -33,10 +32,6 @@ function (interpolate){
     // Here's the bit which is called repeatedly.
     // It has no multiplications or divisions in it.
     return function(){
-      thisStep++;
-      if (thisStep > n){
-        return x2;
-      } 
       var positionBeforeIncrement = currentPosition;
       currentPosition += stepSize.next();
       return positionBeforeIncrement;
