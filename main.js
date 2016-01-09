@@ -28,8 +28,8 @@ function(d3, circles, renderer){
 
   // These are actual pixel sizes.
   var rendererThing=renderer()
-                .width(window.innerWidth)
-                .height(window.innerHeight)
+                .width(window.innerWidth-30)
+                .height(window.innerHeight-30)
                 .x(function(d){return d.x})
                 .y(function(d){return d.y})
                 .r(function(d){return d.r})
