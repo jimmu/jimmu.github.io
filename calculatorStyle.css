@@ -1,9 +1,10 @@
 body {
     font-family: monospace;
+    background-color: green;
 }
 
 .calculator {
-    background-color: lightgray;
+    background-color: turquoise;
     width: 60%;
     height: 90%;
     font-size: 37pt;
@@ -25,3 +26,64 @@ body {
     border-style: inset;
     border-radius: 0.2em;
  }
+
+#one  {
+    background-color: red;
+}
+#two  {
+    background-color: blue;
+}
+
+#three  {
+    background-color: red;
+}
+
+#four  {
+    background-color: blue;
+}
+
+#five  {
+    background-color: red;
+}
+
+#six  {
+    background-color: blue;
+}
+
+#seven  {
+    background-color: red;
+}
+
+#eight  {
+    background-color: blue;
+}
+
+#nine  {
+    background-color: red;
+}
+
+#zero  {
+    background-color: blue;
+}
+
+#minus  {
+    background-color: blue;
+}
+
+#plus  {
+    background-color: red;
+}
+
+#times  {
+    background-color: red;
+}
+
+#divide  {
+    background-color: blue;
+}
+
+#equals  {
+    background-color: purple;
+}
+
+
