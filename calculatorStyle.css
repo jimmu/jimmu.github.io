@@ -1,0 +1,16 @@
+.calculator {
+    border: 2px solid;
+    border-radius: 5px;
+}
+
+
+table {
+    width: 50%;
+    font-size: 37pt;
+    border: 3px solid;
+    text-align: center;
+ }
+
+ td {
+ border: 3px solid;
+ }
