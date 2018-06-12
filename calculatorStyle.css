@@ -1,6 +1,11 @@
-table {
+body {
+    font-family: monospace;
+}
+
+.calculator {
     background-color: lightgray;
-    width: 50%;
+    width: 60%;
+    height: 90%;
     font-size: 37pt;
     border: 8px;
     border-style: outset;
@@ -11,8 +16,12 @@ table {
  td {
     border: 3px;
     border-style: outset;
+    border-radius: 0.4em;
  }
 
  .screen {
     text-align: right;
+    padding-right: 0.2em;
+    border-style: inset;
+    border-radius: 0;
  }
