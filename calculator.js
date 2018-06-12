@@ -4,21 +4,19 @@ var rememberedNumber = 0;
 var currentNumber = 0;
 var state = "enteringFirstNumber";
 
-$("#seven").click(function(){numberClicked(7);});
-$("#eight").click(function(){numberClicked(8);});
-$("#nine").click(function(){numberClicked(9);});
-$("#four").click(function(){numberClicked(4)});
-$("#five").click(function(){numberClicked(5)});
-$("#six").click(function(){numberClicked(6)});
+$("#zero").click(function(){numberClicked(0)});
 $("#one").click(function(){numberClicked(1)});
 $("#two").click(function(){numberClicked(2)});
 $("#three").click(function(){numberClicked(3)});
-$("#zero").click(function(){numberClicked(0)});
+$("#four").click(function(){numberClicked(4)});
+$("#five").click(function(){numberClicked(5)});
+$("#six").click(function(){numberClicked(6)});
+$("#seven").click(function(){numberClicked(7);});
+$("#eight").click(function(){numberClicked(8);});
+$("#nine").click(function(){numberClicked(9);});
 
 $("#minus").click(function(){
-    symbol = "-";
-    numberDisplay = numberDisplay + "-";
-    updateTheScreen();
+    operationClicked("-");
 });
 
 $("#plus").click(function(){
@@ -30,15 +28,12 @@ $("#divide").click(function(){
 });
 
 $("#times").click(function(){
-    operationClicked("*");
+    operationClicked("x");
 });
 
 $("#equals").click(function(){
-    // Work out the answer
-    currentNumber = 11111;
-
+    currentNumber = doTheSum(rememberedNumber, symbol, currentNumber);
     state = "justPressedEquals";
-    // Write it on the screen.
     updateTheScreen();
 });
 
@@ -59,6 +54,11 @@ function operationClicked(theOperation){
     currentNumber = 0;
     state = "enteringSecondNumber";
     updateTheScreen();
+}
+
+function doTheSum(oneNumber, symbol, otherNumber){
+    //TODO. The real calculation
+    return 11111;
 }
 
 function updateTheScreen(){
