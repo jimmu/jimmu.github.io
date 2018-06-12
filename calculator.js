@@ -4,6 +4,9 @@ var rememberedNumber = 0;
 var currentNumber = 0;
 var state = "enteringFirstNumber";
 
+var divideSymbol = '\u00f7';
+var multiplySymbol = 'x';
+
 $("#zero").click(function(){numberClicked(0)});
 $("#one").click(function(){numberClicked(1)});
 $("#two").click(function(){numberClicked(2)});
@@ -24,19 +27,20 @@ $("#plus").click(function(){
 });
 
 $("#divide").click(function(){
-    operationClicked("/");
+    operationClicked(divideSymbol);
 });
 
 $("#times").click(function(){
-    operationClicked("x");
+    operationClicked(multiplySymbol);
 });
 
-$("#equals").click(function(){
+$("#equals").click(equalsClicked);
+
+function equalsClicked(){
     currentNumber = doTheSum(rememberedNumber, symbol, currentNumber);
     state = "justPressedEquals";
     updateTheScreen();
-});
-
+}
 
 function numberClicked(theNumber){
     if ("justPressedEquals" == state){
@@ -49,16 +53,28 @@ function numberClicked(theNumber){
 }
 
 function operationClicked(theOperation){
-    symbol = theOperation;
-    rememberedNumber = currentNumber;
-    currentNumber = 0;
-    state = "enteringSecondNumber";
-    updateTheScreen();
+    if ("enteringSecondNumber" != state ){
+        symbol = theOperation;
+        rememberedNumber = currentNumber;
+        currentNumber = 0;
+        state = "enteringSecondNumber";
+        updateTheScreen();
+    }
 }
 
 function doTheSum(oneNumber, symbol, otherNumber){
-    //TODO. The real calculation
-    return 11111;
+    if (symbol == "+"){
+        return oneNumber+otherNumber;
+    }
+    else if (symbol == "-"){
+        return oneNumber-otherNumber;
+    }
+    else if (symbol == multiplySymbol){
+        return oneNumber*otherNumber;
+    }
+    else if (symbol == divideSymbol){
+        return oneNumber/otherNumber;
+    }
 }
 
 function updateTheScreen(){
@@ -77,5 +93,3 @@ function updateTheScreen(){
     }
     $("#screenDisplay").text(whatToDisplay);
 }
-
-//$("body").append($("<div>").attr("class", "calculator").text("Helloo"));

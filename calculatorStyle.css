@@ -9,7 +9,7 @@ body {
     font-size: 37pt;
     border: 8px;
     border-style: outset;
-    border-radius: 5px;
+    border-radius: 0.5em;
     text-align: center;
  }
 
@@ -23,5 +23,5 @@ body {
     text-align: right;
     padding-right: 0.2em;
     border-style: inset;
-    border-radius: 0;
+    border-radius: 0.2em;
  }
