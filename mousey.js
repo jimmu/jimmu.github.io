@@ -19,7 +19,8 @@ function(d3){
 	var previousX;
 	var previousY;
 	
-	function touchmove(e){
+	function touchmove(){
+		alert(d3.touches(svg.node()));
 		var x = e.targetTouches[0].pageX;
 		var y = e.targetTouches[0].pageY;
 		alert(x+","+y);
