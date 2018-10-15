@@ -51,18 +51,18 @@ function(d3){
 				.append("circle");
 		circles.attr("cx", function(d){return d.x})
 			.attr("cy", function(d){return d.y})
-			.attr("r", 1)
+			.attr("r", 0.5)
 			.attr("fill", function(d){return d.colour})
 			.transition().attr("r", function(d){return d.r + (Math.random()*4)}).duration(1500)//.ease("easeElasticOut")
-			.transition().attr("fill", "#ffffff").duration(10000); // TODO. On end of transition, remove this circle from the data
-
+			.transition().delay(5000).
+							style("opacity", "0")							
+							.duration(10000)
+							.each("end", function(d, i){
+								data.splice(0, 1);	//Assumption that the oldest circles end their transitions first.
+							}).remove();
+			
 		previousX = x;
 		previousY = y;
-
-		//circleGroup.selectAll("circle")
-		//		.data(data)
-		//		.update()
-		//		.attr("r", function(d){return d.r + (Math.random()*4)});
 	}	
 	
 });
