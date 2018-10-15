@@ -75,6 +75,9 @@ function doTheSum(oneNumber, symbol, otherNumber){
     else if (symbol == divideSymbol){
         return oneNumber/otherNumber;
     }
+    else {
+        return currentNumber;
+    }
 }
 
 function updateTheScreen(){
