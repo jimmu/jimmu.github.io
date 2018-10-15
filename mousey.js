@@ -14,9 +14,14 @@ function(d3){
 		
 	var circleGroup = svg.append("g");
 	svg.on("mousemove", mousemove);
+	svg.on("touchmove", touchmove);
 
 	var previousX;
 	var previousY;
+	
+	function touchmove(){
+		alert("Hello");
+	}
 	
 	function mousemove(){
 		var coordinates = [0, 0];
