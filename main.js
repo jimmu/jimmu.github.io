@@ -54,7 +54,7 @@ function(d3, circles, renderer){
   }
 
   function click(d){
-	  window.location="index2.html";
+	  window.location.href = "index2.html";
   }
   
   function animate(me, newR, newFill){
