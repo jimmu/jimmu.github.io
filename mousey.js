@@ -19,8 +19,10 @@ function(d3){
 	var previousX;
 	var previousY;
 	
-	function touchmove(){
-		alert("Hello");
+	function touchmove(e){
+		var x = e.targetTouches[0].pageX;
+		var y = e.targetTouches[0].pageY;
+		addCircle(x, y);
 	}
 	
 	function mousemove(){
@@ -28,7 +30,10 @@ function(d3){
 		coordinates = d3.mouse(svg.node());
 		var x = coordinates[0];
 		var y = coordinates[1];
-		
+		addCircle(x, y);
+	}	
+	
+	function addCircle(x, y){
 		if (! previousX){
 			previousX = x;
 			previousY = y;
@@ -67,7 +72,6 @@ function(d3){
 							}).remove();
 			
 		previousX = x;
-		previousY = y;
-	}	
-	
+		previousY = y;		
+	}
 });
