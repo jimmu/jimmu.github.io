@@ -20,10 +20,10 @@ function(d3){
 	var previousY;
 	
 	function touchmove(){
-		alert(d3.touches(svg.node()));
+		//alert(d3.touches(svg.node()));
 		var x = e.targetTouches[0].pageX;
 		var y = e.targetTouches[0].pageY;
-		alert(x+","+y);
+		//alert(x+","+y);
 		addCircle(x, y);
 	}
 	
