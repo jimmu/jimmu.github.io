@@ -15,6 +15,7 @@ function(d3){
 	var circleGroup = svg.append("g");
 	svg.on("mousemove", mousemove);
 	svg.on("touchmove", touchmove);
+	svg.on("touchstart", touchmove);
 
 	var previousX;
 	var previousY;
