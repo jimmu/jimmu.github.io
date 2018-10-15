@@ -36,6 +36,7 @@ function(d3, circles, renderer){
                 .fill(function(d){return d.colour})
                 .handle("mouseover", mouseover)
                 .handle("mouseout", mouseout)
+				.handle("click", click)
 
   function mouseover(d){
     var me = d3.select(this);
@@ -52,6 +53,10 @@ function(d3, circles, renderer){
      }
   }
 
+  function click(d){
+	  window.location="index2.html";
+  }
+  
   function animate(me, newR, newFill){
      me.transition()
        .attr("r", newR)
