@@ -22,6 +22,7 @@ function(d3){
 	function touchmove(e){
 		var x = e.targetTouches[0].pageX;
 		var y = e.targetTouches[0].pageY;
+		alert(x+","+y);
 		addCircle(x, y);
 	}
 	
