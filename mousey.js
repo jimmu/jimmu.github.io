@@ -14,8 +14,9 @@ function(d3){
 		
 	var circleGroup = svg.append("g");
 	svg.on("mousemove", mousemove);
-	svg.on("touchmove", touchmove);
-	svg.on("touchstart", touchmove);
+	//svg.on("touchmove", touchmove);
+	//svg.on("touchstart", touchmove);
+	svg.addEventListener('touchmove', touchmove, false);
 
 	var previousX;
 	var previousY;
@@ -28,11 +29,10 @@ function(d3){
 	}
 	
 	function touchmove(){
-		//alert(d3.touches(svg.node()));
-		var x = e.targetTouches[0].pageX;
-		var y = e.targetTouches[0].pageY;
-		//alert(x+","+y);
+		var coords = getTouchPos();
+		addCircle(coords.x, coords.y);
 		addCircle(x, y);
+		event.preventDefault();
 	}
 	
 	function mousemove(){
@@ -45,6 +45,21 @@ function(d3){
 		//boxTo(x,y);
 	}	
 	
+	function getTouchPos(e) {
+        if (!e){
+			var e = event;
+		}
+		
+        if (e.touches) {
+            if (e.touches.length == 1) { // Only deal with one finger
+                var touch = e.touches[0]; // Get the information for finger #1
+                return {"x": touch.pageX-touch.target.offsetLeft,
+                        "y": touchY=touch.pageY-touch.target.offsetTop
+				}
+            }
+        }
+	}
+		
 	function addCircle(x, y){
 		if (! previousX){
 			previousX = x;
