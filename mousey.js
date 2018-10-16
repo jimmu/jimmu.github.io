@@ -16,7 +16,7 @@ function(d3){
 	svg.on("mousemove", mousemove);
 	//svg.on("touchmove", touchmove);
 	//svg.on("touchstart", touchmove);
-	svg.addEventListener('touchmove', touchmove, false);
+	svg.node().addEventListener('touchmove', touchmove, false);
 
 	var previousX;
 	var previousY;
