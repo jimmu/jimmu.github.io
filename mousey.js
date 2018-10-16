@@ -28,8 +28,8 @@ function(d3){
 		}
 	}
 	
-	function touchmove(){
-		var coords = getTouchPos();
+	function touchmove(e){
+		var coords = getTouchPos(e);
 		addCircle(coords.x, coords.y);
 		addCircle(x, y);
 		event.preventDefault();
@@ -42,7 +42,7 @@ function(d3){
 		var y = coordinates[1];
 		renderer(x, y);
 		//drawTo(x, y);
-		//boxTo(x,y);
+		//boxTo(x,y);		
 	}	
 	
 	function getTouchPos(e) {
