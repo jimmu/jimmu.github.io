@@ -16,7 +16,7 @@ function(d3){
 	svg.on("mousemove", mousemove);
 	//svg.on("touchmove", touchmove);
 	//svg.on("touchstart", touchmove);
-	window.addEventListener('touchmove', touchmove, false);
+	//window.addEventListener('touchmove', touchmove, false);
 
 	var previousX;
 	var previousY;
@@ -59,24 +59,14 @@ function(d3){
 	}
 		
 	function addCircle(x, y){
-		if (! previousX){
-			previousX = x;
-			previousY = y;
-		}
-		var speed = ((x-previousX)*(x-previousX))+((y-previousY)*(y-previousY)); // The square of the distance between successive points.
-		speed = Math.sqrt(speed);
-		//console.log(speed);
-		// The faster we're moving, the smaller the circle we'll draw.
-		// But make this a bit more sophisticated.
-		radius = Math.max(4, 20-speed);
+		var speed = getSpeed(x, y);
+		radius = Math.max(4, 20-speed.speed);
 		
-		//console.log(x+","+y);
 		// Add a circle at the current mouse coords.
 		var thisCircle = {"x": x
 		  , "y": y
 		  , "r": radius
 		  , "colour": "#ff8822"
-		  , "hoverColour": "#2288ff"
 		};
 		data.push(thisCircle);
 		
@@ -95,28 +85,16 @@ function(d3){
 							.each("end", function(d, i){
 								data.splice(0, 1);	//Assumption that the oldest circles end their transitions first.
 							}).remove();
-			
-		previousX = x;
-		previousY = y;		
 	}
 
 	function drawTo(x, y){
-		if (! previousX){
-			previousX = x;
-			previousY = y;
-		}
-		var speed = ((x-previousX)*(x-previousX))+((y-previousY)*(y-previousY)); // The square of the distance between successive points.
-		speed = Math.sqrt(speed);
-		//console.log(speed);
-		// The faster we're moving, the smaller the circle we'll draw.
-		// But make this a bit more sophisticated.
-		lineWidth = Math.max(4, 30-speed);
+		var speed = getSpeed(x, y);
+		lineWidth = Math.max(4, 30-speed.speed);
 		
-		//console.log(x+","+y);
 		// Add a line segment to the current mouse coords.
-		var thisLine = {"x1": previousX
+		var thisLine = {"x1": x-speed.xDiff
 						,"x2": x 
-						,"y1": previousY 
+						,"y1": y-speed.yDiff 
 						,"y2": y 
 						,"thickness": lineWidth
 						, "colour": "#ff8822"
@@ -135,7 +113,7 @@ function(d3){
 			.attr("stroke", function(d){return d.colour})
 			.attr("stroke-linecap", "round")
 			.transition().attr("stroke-width", function(d){return d.thickness}).duration(1500)
-			.transition().delay(1000).duration(0000)
+			.transition().delay(1000).duration(0000).ease("quad-in")
 			.attr("y1", height/2)
 			.attr("x1", width/2)
 			.attr("x2", width/2)
@@ -146,28 +124,19 @@ function(d3){
 							.each("end", function(d, i){
 								data.splice(0, 1);	//Assumption that the oldest lines end their transitions first.
 							}).remove();
-			
-		previousX = x;
-		previousY = y;		
 	}
 
 	function boxTo(x, y){
-		if (! previousX){
-			previousX = x;
-			previousY = y;
-		}
-		var speed = ((x-previousX)*(x-previousX))+((y-previousY)*(y-previousY)); // The square of the distance between successive points.
-		speed = Math.sqrt(speed);
-		//console.log(speed);
+		var speed = getSpeed(x, y);
 		// The faster we're moving, the smaller the circle we'll draw.
 		// But make this a bit more sophisticated.
-		lineWidth = Math.max(1, (20-speed)/2);
+		lineWidth = Math.max(1, (20-speed.speed)/2);
 		//console.log(x+","+y);
 		// Add a rectangle to the current mouse coords.
-		var thisRect = {"x": Math.min(x, previousX)
-						,"y": Math.min(y, previousY) 
-						,"width": Math.abs(x-previousX)
-						,"height": Math.abs(y-previousY) 
+		var thisRect = {"x": Math.min(x, x-speed.xDiff)
+						,"y": Math.min(y, y-speed.yDiff) 
+						,"width": Math.abs(speed.xDiff)
+						,"height": Math.abs(speed.yDiff) 
 						,"thickness": lineWidth
 						, "colour": "#ff8822"
 						};
@@ -194,25 +163,14 @@ function(d3){
 							.duration(10000)
 							.each("end", function(d, i){
 								data.splice(0, 1);	//Assumption that the oldest boxes end their transitions first.
-							}).remove();
-			
-		previousX = x;
-		previousY = y;		
+							}).remove();			
 	}
 
 	function throwCircle(x, y){
-		if (! previousX){
-			previousX = x;
-			previousY = y;
-		}
-		var xDiff = x-previousX;
-		var yDiff = y-previousY;
-		var speed = ((xDiff)*(xDiff))+((yDiff)*(yDiff)); // The square of the distance between successive points.
-		speed = Math.sqrt(speed);
-		//console.log(speed);
+		var speed = getSpeed(x, y);
 		// The faster we're moving, the smaller the circle we'll draw.
 		// But make this a bit more sophisticated.
-		radius = Math.max(4, 20-speed);
+		radius = Math.max(4, 20-speed.speed);
 		
 		//console.log(x+","+y);
 		// Add a circle at the current mouse coords.
@@ -220,9 +178,8 @@ function(d3){
 		  , "y": y
 		  , "r": radius
 		  , "colour": "#ff8822"
-		  , "hoverColour": "#2288ff"
-		  , "xSpeed" : xDiff
-		  , "ySpeed" : yDiff
+		  , "xSpeed" : speed.xDiff
+		  , "ySpeed" : speed.yDiff
 		};
 		data.push(thisCircle);
 		
@@ -234,17 +191,26 @@ function(d3){
 			.attr("cy", function(d){return d.y})
 			.attr("r", function(d){return d.r})
 			.attr("fill", function(d){return d.colour})
-			.transition().duration(10000)
+			.transition().duration(15000)
 			.ease("quad-out")
-			.attr("cx", function(d){return d.x + (20*d.xSpeed)})
-			.attr("cy", function(d){return d.y + (20*d.ySpeed)})
+			.attr("cx", function(d){return d.x + (25*d.xSpeed)})
+			.attr("cy", function(d){return d.y + (25*d.ySpeed)})
 			.style("opacity", "0")							
 					.each("end", function(d, i){
 						data.splice(0, 1);	//Assumption that the oldest circles end their transitions first.
 					}).remove();
-			
+	}
+
+	function getSpeed(x, y){
+		if (! previousX){
+			previousX = x;
+			previousY = y;
+		}
+		var xDiff = x-previousX;
+		var yDiff = y-previousY;
+		var speed = ((xDiff*xDiff)+(yDiff*yDiff)); // The square of the distance between successive points.
 		previousX = x;
 		previousY = y;		
+		return {"speed": Math.sqrt(speed), "xDiff" : xDiff, "yDiff" : yDiff};
 	}
-	
 });
