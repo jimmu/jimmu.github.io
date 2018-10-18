@@ -13,18 +13,15 @@ function(d3){
 
 		
 	var circleGroup = svg.append("g");
-	svg.on("mousemove", mousemove);
+	svg.on("mousemove", mousemove);	
 	//svg.on("touchmove", touchmove);
 	//svg.on("touchstart", touchmove);
 	//window.addEventListener('touchmove', touchmove, false);
 
 	var previousX;
 	var previousY;
-	var renderer = addCircle;
-	var rndm = Math.random();
-	if (rndm > 0.25){renderer = drawTo};
-	if (rndm > 0.50){renderer = boxTo};
-	if (rndm > 0.75){renderer = throwCircle};
+	var renderer = randomRenderer();
+	//renderer = expandingStar;
 	
 	function touchmove(e){
 		var coords = getTouchPos(e);
@@ -89,7 +86,7 @@ function(d3){
 
 	function drawTo(x, y){
 		var speed = getSpeed(x, y);
-		lineWidth = Math.max(4, 30-speed.speed);
+		lineWidth = Math.max(2, 40/(Math.max(1, Math.sqrt(speed.speed))));
 		
 		// Add a line segment to the current mouse coords.
 		var thisLine = {"x1": x-speed.xDiff
@@ -150,11 +147,11 @@ function(d3){
 			.attr("y", function(d){return d.y})
 			.attr("width", function(d){return d.width})
 			.attr("height", function(d){return d.height})
-			.attr("stroke-width", 0.5)
+			.attr("stroke-width", function(d){return d.thickness})
 			.attr("stroke", function(d){return d.colour})
 			.attr("fill", "none")
-			.transition().attr("stroke-width", function(d){return d.thickness}).duration(1500)//.ease("elastic-out")
 			.transition().delay(1000).duration(10000)
+			.attr("stroke-width", 0.5)
 			.attr("y", height)
 			.attr("x", x/2+width/4)
 			.attr("width", 0)
@@ -201,6 +198,46 @@ function(d3){
 					}).remove();
 	}
 
+	function expandingStar(x, y){
+		var speed = getSpeed(x, y);
+		// The faster we're moving, the smaller the circle we'll draw.
+		// But make this a bit more sophisticated.
+		lineWidth = Math.max(1, (20-speed.speed)/2);
+		//console.log(x+","+y);
+		// Add a rectangle to the current mouse coords.
+		var thisRect = {"x": Math.min(x, x-speed.xDiff)
+						,"y": Math.min(y, y-speed.yDiff) 
+						,"width": Math.abs(speed.xDiff)
+						,"height": Math.abs(speed.yDiff) 
+						,"thickness": lineWidth
+						, "colour": "#ff8822"
+						};
+		data.push(thisRect);
+		
+		var boxes = circleGroup.selectAll("rect")
+				.data(data)
+				.enter()
+				.append("rect");
+		boxes.attr("x", function(d){return d.x})
+			.attr("y", function(d){return d.y})
+			.attr("width", function(d){return d.width})
+			.attr("height", function(d){return d.height})
+			.attr("stroke-width", 0.5)
+			.attr("stroke", function(d){return d.colour})
+			//.attr("fill", "none")
+			.transition().attr("stroke-width", function(d){return d.thickness}).duration(1500)//.ease("elastic-out")
+			.attr("width", function(d){return d.width * 6})
+			.attr("height", function(d){return d.height * 6})
+			.attr("x", function(d){return d.x - (d.width * 3)})
+			.attr("y", function(d){return d.y - (d.height * 3)})
+			.transition().delay(1000).duration(10000)
+			.style("opacity", "0")							
+							.duration(1)
+							.each("end", function(d, i){
+								data.splice(0, 1);	//Assumption that the oldest boxes end their transitions first.
+							}).remove();			
+	}
+
 	function getSpeed(x, y){
 		if (! previousX){
 			previousX = x;
@@ -212,5 +249,14 @@ function(d3){
 		previousX = x;
 		previousY = y;		
 		return {"speed": Math.sqrt(speed), "xDiff" : xDiff, "yDiff" : yDiff};
+	}
+	
+	function randomRenderer(){
+		var renderer = addCircle;
+		var rndm = Math.random();
+		if (rndm > 0.25){renderer = drawTo};
+		if (rndm > 0.50){renderer = boxTo};
+		if (rndm > 0.75){renderer = throwCircle};
+		return renderer;
 	}
 });
