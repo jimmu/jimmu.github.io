@@ -1,9 +1,8 @@
 define(["simpleShape", "simpleBoxFactory", "simpleCircleFactory"],
 function(simpleShape, simpleBoxFactory, simpleCircleFactory) {
-  return function(world, stage){
+  return function(world){
 	"use strict";  
 
-	var pixelsPerMeter = 100;
 	var	b2Vec2		= Box2D.Common.Math.b2Vec2,
 	b2BodyDef	= Box2D.Dynamics.b2BodyDef,
 	b2Body		= Box2D.Dynamics.b2Body,
@@ -12,6 +11,7 @@ function(simpleShape, simpleBoxFactory, simpleCircleFactory) {
 	b2PolygonShape	= Box2D.Collision.Shapes.b2PolygonShape,
 	b2CircleShape	= Box2D.Collision.Shapes.b2CircleShape;
 
+	var stage = world.getStage();
 	var boxFactory = simpleBoxFactory();
 	var circleFactory = simpleCircleFactory();
 	
@@ -44,8 +44,8 @@ function(simpleShape, simpleBoxFactory, simpleCircleFactory) {
 		image.addEventListener(MouseEvent.MOUSE_OUT, function(e){console.log("mouse out")});
 		var body = shape.getBody();
 		image.addEventListener(MouseEvent.MOUSE_OVER, function(e){console.log("mouse over");
-			var localCoordX = image.mouseX/pixelsPerMeter;
-			var localCoordY = image.mouseY/pixelsPerMeter;
+			var localCoordX = world.pixelsToMeters(image.mouseX);
+			var localCoordY = world.pixelsToMeters(image.mouseY);
 			var newWorldX = body.GetPosition().x + localCoordX;
 			var newWorldY = body.GetPosition().y + localCoordY;
 			body.ApplyImpulse(world.getMouseVelocity(), new b2Vec2(newWorldX, newWorldY));
@@ -56,10 +56,14 @@ function(simpleShape, simpleBoxFactory, simpleCircleFactory) {
 
 	return {
 		createBox: function(width, height, xPos, yPos, angle){
-			return createSomething(boxFactory.getFixtureDefinition(width, height), boxFactory.getSprite(width, height), xPos, yPos, angle);
+			return createSomething(boxFactory.getFixtureDefinition(width, height), 
+								   boxFactory.getSprite(world.metersToPixels(width), world.metersToPixels(height)), 
+								   xPos, yPos, angle);
 		},
 		createCircle: function(radius, xPos, yPos, angle){
-			return createSomething(circleFactory.getFixtureDefinition(radius), circleFactory.getSprite(radius), xPos, yPos, angle);
+			return createSomething(circleFactory.getFixtureDefinition(radius), 
+								   circleFactory.getSprite(world.metersToPixels(radius)), 
+								   xPos, yPos, angle);
 		}
 		
 	};

@@ -1,6 +1,6 @@
 define(
 function() {
-	return function(stage){
+	return function(stageName){
 		// Take in a position, size, angle - in box2d units.
 		// Create something which can be manipluated as a box2d object and can render itself as graphics.
 		// Create a box               
@@ -11,6 +11,7 @@ function() {
 		var previousMouseY;
 		var mouseVelocity;
 		
+		var stage = new Stage(stageName);
 		var background = new Sprite();
 		stage.addChild(background);
 
@@ -91,6 +92,9 @@ function() {
 					world.Step(1/60, 4, 4);
 					world.ClearForces();
 				},
+				getStage(){
+					return stage;
+				},				
 				createBody: function(bodyDefinition){
 					return world.CreateBody(bodyDefinition);
 				},
@@ -99,7 +103,13 @@ function() {
 				},
 				addShape: function(shape){
 					objects.push(shape);
-				}
+				},
+				pixelsToMeters: function(sizeInPixels){
+					return sizeInPixels/pixelsPerMeter;
+				},
+				metersToPixels: function(sizeInMeters){
+					return sizeInMeters*pixelsPerMeter;
+				}				
 			}
 		
 		function onEnterFrame(e){
