@@ -2,6 +2,7 @@ var gridWidth = 20;
 var gridHeight = 20;
 var cellWidthInPixels = 25;
 var framesPerSecond = 5;
+var chanceOfGoldenApple = 1/10;
 
 var snakeBodyColour = "green";
 var normalAppleColour = "red";
@@ -17,7 +18,7 @@ var gridCells;
 var snakeBodyCoords;
 var appleCoords;
 var snakeDirection;
-var nextDirection;
+var nextDirections;
 var snakeLength;
 var svg;
 var gameInProgress;
@@ -25,10 +26,9 @@ var ateTheApple;
 var score;
 var highScore;
 var appleValue;
+var appleFramesUntilExpiry;
 
 init();
-
-setInterval(gameLoop, 1000/framesPerSecond);
 
 function gameLoop(){
 	// this will check the snake repeatedly
@@ -42,12 +42,14 @@ function gameLoop(){
 function init(){
 	console.log('Hello from init');
 	createGridCells();
+	nextDirections = [];
 	document.addEventListener("keydown", checkKeypress);
 	
 	score = 0;
 	highScore = 0;
 	redrawScore();
 	gameInProgress = false;
+	setInterval(gameLoop, 1000/framesPerSecond);
 }
 
 function startNewGame(){
@@ -77,7 +79,7 @@ function startNewGame(){
 	snakeBodyCoords.push(headCoord);	
 	
 	snakeDirection = "right";
-	nextDirection = snakeDirection;
+	nextDirections = [];
 	snakeLength = snakeBodyCoords.length;
 
 	drawCell(headCoord);
@@ -126,28 +128,37 @@ function createGridCells(){
 
 function checkKeypress(e){
 	console.log('Keypress '+e.keyCode);
-	if (snakeDirection == "up" || snakeDirection == "down"){
+	var latestDirection;
+	if (nextDirections.length == 0){
+		latestDirection = snakeDirection;
+	}
+	else {
+		latestDirection = nextDirections[nextDirections.length-1];
+	}
+	
+	if (latestDirection == "up" || latestDirection == "down"){
 		if (e.keyCode == 37){
-			nextDirection = "left";
+			nextDirections.push("left");
 		}		
 		else if (e.keyCode == 39){
-			nextDirection = "right";
+			nextDirections.push("right");
 		}
 	}
-	else if (snakeDirection == "left" || snakeDirection == "right"){
+	else if (latestDirection == "left" || latestDirection == "right"){
 		if (e.keyCode == 38){
-			nextDirection = "up";
+			nextDirections.push("up");
 		}		
 		else if (e.keyCode == 40){
-			nextDirection = "down";
+			nextDirections.push("down");
 		}
 	}
+	
 	if (!gameInProgress){
 		if (e.keyCode == 32){
 			startNewGame();
 		}
 	}
-	console.log('Next direction is '+nextDirection);
+	console.log('Next directions are '+nextDirections);
 }
 
 function checkCollisions(){
@@ -165,13 +176,21 @@ function checkCollisions(){
 			}
 		}
 	}
-	if (headCoords.x == appleCoords.x && headCoords.y == appleCoords.y){
-		ateTheApple = true;
-		score = score + appleValue;
-		if (score > highScore){
-			highScore = score;
+	if (appleFramesUntilExpiry > 0){
+		if (headCoords.x == appleCoords.x && headCoords.y == appleCoords.y){
+			ateTheApple = true;
+			score = score + appleValue;
+			if (score > highScore){
+				highScore = score;
+			}
+			console.log('Ate the apple! Score: ' + score);
 		}
-		console.log('Ate the apple! Score: ' + score);
+		appleFramesUntilExpiry--;
+		if (appleFramesUntilExpiry == 0 && appleValue > normalAppleValue){
+			appleValue = normalAppleValue;
+			drawCell({x: appleCoords.x, y: appleCoords.y, colour: normalAppleColour});
+			appleFramesUntilExpiry = gridWidth * gridHeight;
+		}
 	}
 }
 
@@ -204,7 +223,10 @@ function deleteCell(coords){
 }
 
 function updateSnakePosition(){
-	snakeDirection = nextDirection;
+	if (nextDirections.length > 0){
+		snakeDirection = nextDirections[0];
+		nextDirections.shift();
+	}
 
 	var currentHeadCoords = snakeBodyCoords[snakeLength - 1];
 	var newHeadCoords = {x: currentHeadCoords.x, y: currentHeadCoords.y};
@@ -252,20 +274,22 @@ function addAnApple(){
 	}
 
 	
-	if (Math.random() > 0.9){
+	if (Math.random() > 1-chanceOfGoldenApple){
 		// Golden!
 		appleCoords = {x: appleX, y: appleY, colour: goldenAppleColour};
 		appleValue = goldenAppleValue;
-		setTimeout(function(){
-			// Do this stuff when the time runs out
-			console.log("Delete the golden apple");
-			appleValue = 1;
-			drawCell({x: appleCoords.x, y: appleCoords.y, colour: normalAppleColour});
-		}, 1000 * gridWidth/framesPerSecond);		
+		appleFramesUntilExpiry = gridWidth;
+		//setTimeout(function(){
+		//	// Do this stuff when the time runs out
+		//	console.log("Delete the golden apple");
+		//	appleValue = 1;
+		//	drawCell({x: appleCoords.x, y: appleCoords.y, colour: normalAppleColour});
+		//}, 1000 * gridWidth/framesPerSecond);		
 	}
 	else {
 		appleCoords = {x: appleX, y: appleY, colour: normalAppleColour};
 		appleValue = normalAppleValue;
+		appleFramesUntilExpiry = gridWidth*gridHeight;
 	}
 	drawCell(appleCoords);
 	ateTheApple = false;
