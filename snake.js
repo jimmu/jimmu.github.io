@@ -1,6 +1,7 @@
 var gridWidth = 20;
 var gridHeight = 20;
 var cellWidthInPixels = 25;
+var framesPerSecond = 5;
 
 var snakeBodyColour = "green";
 var normalAppleColour = "red";
@@ -11,6 +12,7 @@ var gridLineColour = "gray";
 
 var gameDiv = document.getElementById("gameDiv");
 var startMessageDiv = document.getElementById("replay");
+var scoreSpan = document.getElementById("scores");
 var gridCells;
 var snakeBodyCoords;
 var appleCoords;
@@ -18,11 +20,10 @@ var snakeDirection;
 var nextDirection;
 var snakeLength;
 var svg;
-var framesPerSecond = 5;
 var gameInProgress;
 var ateTheApple;
-var score = 0;
-var highScore = 0;
+var score;
+var highScore;
 var appleValue;
 
 init();
@@ -32,11 +33,9 @@ setInterval(gameLoop, 1000/framesPerSecond);
 function gameLoop(){
 	// this will check the snake repeatedly
 	if (gameInProgress){
-		updateSnakePosition();
-		
-		checkCollisions();
-		
-		redraw();
+		updateSnakePosition();		
+		checkCollisions();		
+		redrawScore();
 	}
 }
 
@@ -45,7 +44,9 @@ function init(){
 	createGridCells();
 	document.addEventListener("keydown", checkKeypress);
 	
+	score = 0;
 	highScore = 0;
+	redrawScore();
 	gameInProgress = false;
 }
 
@@ -174,8 +175,7 @@ function checkCollisions(){
 	}
 }
 
-function redraw(){
-	var scoreSpan = document.getElementById("scores");
+function redrawScore(){
 	while(scoreSpan.firstChild) {
 		scoreSpan.removeChild( scoreSpan.firstChild );
 	}
@@ -234,18 +234,24 @@ function updateSnakePosition(){
 		ateTheApple = false;
 		addAnApple();
 	}
-	
-	//console.log('Snake head coords: '  + JSON.stringify(newHeadCoords));
-	//console.log('Snake old tail: ' + JSON.stringify(oldTailCoords));
-
-	// TODO - return these coords instead of doing the drawing here.
-	// Draw the new snake head
 	drawCell(newHeadCoords);	
 }
 
 function addAnApple(){
-	var appleX = Math.floor(Math.random() * gridWidth);
-	var appleY = Math.floor(Math.random() * gridHeight);
+	var goodCoords = false;
+	while (!goodCoords){
+		var appleX = Math.floor(Math.random() * gridWidth);
+		var appleY = Math.floor(Math.random() * gridHeight);
+		// Check that the apple is not inside the snake.
+		var hitTheSnake = false;
+		for(let i = 0; i < snakeLength && !hitTheSnake; i++) {
+			var bodySegmentCoords = snakeBodyCoords[i];
+			hitTheSnake = hitTheSnake || (appleX == bodySegmentCoords.x &&  appleY == bodySegmentCoords.y);
+		}
+		goodCoords = !hitTheSnake;
+	}
+
+	
 	if (Math.random() > 0.9){
 		// Golden!
 		appleCoords = {x: appleX, y: appleY, colour: goldenAppleColour};
