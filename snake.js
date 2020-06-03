@@ -1,6 +1,5 @@
 var gridWidth = 20;
 var gridHeight = 20;
-var cellWidthInPixels = 25;
 var framesPerSecond = 5;
 var chanceOfGoldenApple = 1/10;
 
@@ -102,9 +101,12 @@ function clearGrid(){
 
 function createGridCells(){
 	console.log("Creating cereal sized pixels");
+	var maxWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	var maxHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	var shortestDimension = Math.min(maxWidth, maxHeight);
 	svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	svg.setAttribute ("width", gridWidth * cellWidthInPixels );
-	svg.setAttribute ("height", gridHeight * cellWidthInPixels );
+	svg.setAttribute ("width", shortestDimension*0.8);
+	svg.setAttribute ("height", shortestDimension*0.8);
 	gameDiv.appendChild(svg);
 
 	gridCells = new Array(gridHeight);
@@ -112,10 +114,10 @@ function createGridCells(){
 		var thisRow = new Array(gridWidth);
 		for (let x = 0; x < gridWidth; x++){
 			var square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-			square.setAttribute("x", x * cellWidthInPixels);
-			square.setAttribute("y", y * cellWidthInPixels);
-			square.setAttribute("width", cellWidthInPixels);
-			square.setAttribute("height", cellWidthInPixels);
+			square.setAttribute("x", (100 * x / gridWidth) + "%");
+			square.setAttribute("y", (100 * y / gridWidth) + "%");
+			square.setAttribute("width", 100 / gridWidth + "%");
+			square.setAttribute("height", 100 / gridHeight + "%");
 			square.setAttribute("fill", "none");
 			square.setAttribute("stroke", gridLineColour);
 			square.setAttribute("stroke-width", 1);
