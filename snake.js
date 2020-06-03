@@ -199,6 +199,9 @@ function touchStarted(e){
 	touchStartX = parseInt(touchObj.clientX);
 	touchStartY = parseInt(touchObj.clientY);
 	console.log("Touch started at "+touchStartX + ", " + touchStartY);
+	if (!gameInProgress){
+		startNewGame();
+	}
 	e.preventDefault();
 }
 
