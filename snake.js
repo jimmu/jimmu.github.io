@@ -198,7 +198,7 @@ function touchStarted(e){
 	var touchObj = e.changedTouches[0]; // First finger
 	touchStartX = parseInt(touchObj.clientX);
 	touchStartY = parseInt(touchObj.clientY);
-	console.log("Touch started at "+touchStartX + ", " + touchStartY);
+	//console.log("Touch started at "+touchStartX + ", " + touchStartY);
 	if (!gameInProgress){
 		startNewGame();
 	}
@@ -210,8 +210,8 @@ function touchMoved(e){
 	var distX = parseInt(touchObj.clientX) - touchStartX;
 	var distY = parseInt(touchObj.clientY) - touchStartY;
 	var totalDistSquared = (distX * distX) + (distY * distY);
-	console.log("Touch moved "+distX + ", " + distY);
 	if (totalDistSquared > 100){
+		console.log("Touch moved "+distX + ", " + distY);
 		var swipeDirection;
 		if (Math.abs(distX) >= Math.abs(distY)){
 			// It's left or right.
@@ -228,7 +228,7 @@ function touchMoved(e){
 
 function touchEnded(e){
 	var touchObj = e.changedTouches[0]; // First finger
-	console.log("Touch ended");
+	//console.log("Touch ended");
 	e.preventDefault();
 }
 
