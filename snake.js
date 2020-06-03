@@ -27,6 +27,9 @@ var highScore;
 var appleValue;
 var appleFramesUntilExpiry;
 
+var touchStartX;
+var touchStartY;
+
 init();
 
 function gameLoop(){
@@ -42,7 +45,11 @@ function init(){
 	console.log('Hello from init');
 	createGridCells();
 	nextDirections = [];
-	document.addEventListener("keydown", checkKeypress);
+	document.addEventListener("keydown", checkKeypress, false);
+	document.addEventListener("touchstart", touchStarted, false);
+	document.addEventListener("touchend", touchEnded, false);
+	document.addEventListener("touchmove", touchMoved, false);
+	document.addEventListener("click", mouseClick, false);
 	
 	score = 0;
 	highScore = 0;
@@ -130,6 +137,35 @@ function createGridCells(){
 
 function checkKeypress(e){
 	console.log('Keypress '+e.keyCode);
+	if (e.keyCode == 37){
+		pressedDirection("left");
+	}		
+	else if (e.keyCode == 39){
+		pressedDirection("right");
+	}
+	
+	else if (e.keyCode == 38){
+		pressedDirection("up");
+	}		
+	else if (e.keyCode == 40){
+		pressedDirection("down");
+	}
+
+	if (!gameInProgress){
+		if (e.keyCode == 32){
+			startNewGame();
+		}
+	}
+	console.log('Next directions are '+nextDirections);
+}
+
+function mouseClick(e){
+	if (!gameInProgress){
+		startNewGame();
+	}
+}
+
+function pressedDirection(dirPressed){
 	var latestDirection;
 	if (nextDirections.length == 0){
 		latestDirection = snakeDirection;
@@ -139,28 +175,58 @@ function checkKeypress(e){
 	}
 	
 	if (latestDirection == "up" || latestDirection == "down"){
-		if (e.keyCode == 37){
+		if (dirPressed == "left"){
 			nextDirections.push("left");
 		}		
-		else if (e.keyCode == 39){
+		else if (dirPressed == "right"){
 			nextDirections.push("right");
 		}
 	}
 	else if (latestDirection == "left" || latestDirection == "right"){
-		if (e.keyCode == 38){
+		if (dirPressed == "up"){
 			nextDirections.push("up");
 		}		
-		else if (e.keyCode == 40){
+		else if (dirPressed == "down"){
 			nextDirections.push("down");
 		}
 	}
-	
-	if (!gameInProgress){
-		if (e.keyCode == 32){
-			startNewGame();
-		}
-	}
 	console.log('Next directions are '+nextDirections);
+	
+}
+
+function touchStarted(e){
+	var touchObj = e.changedTouches[0]; // First finger
+	touchStartX = parseInt(touchObj.clientX);
+	touchStartY = parseInt(touchObj.clientY);
+	console.log("Touch started at "+touchStartX + ", " + touchStartY);
+	e.preventDefault();
+}
+
+function touchMoved(e){
+	var touchObj = e.changedTouches[0]; // First finger
+	var distX = parseInt(touchObj.clientX) - touchStartX;
+	var distY = parseInt(touchObj.clientY) - touchStartY;
+	var totalDistSquared = (distX * distX) + (distY * distY);
+	console.log("Touch moved "+distX + ", " + distY);
+	if (totalDistSquared > 100){
+		var swipeDirection;
+		if (Math.abs(distX) >= Math.abs(distY)){
+			// It's left or right.
+			swipeDirection = distX > 0 ? "right" : "left";
+		}
+		else {
+			// It's up or down.
+			swipeDirection = distY > 0 ? "up" : "down";
+		}
+		pressedDirection(swipeDirection);
+	}
+	e.preventDefault();
+}
+
+function touchEnded(e){
+	var touchObj = e.changedTouches[0]; // First finger
+	console.log("Touch ended");
+	e.preventDefault();
 }
 
 function checkCollisions(){
