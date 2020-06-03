@@ -219,7 +219,7 @@ function touchMoved(e){
 		}
 		else {
 			// It's up or down.
-			swipeDirection = distY > 0 ? "up" : "down";
+			swipeDirection = distY < 0 ? "up" : "down";
 		}
 		pressedDirection(swipeDirection);
 	}
