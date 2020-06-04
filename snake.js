@@ -222,6 +222,9 @@ function touchMoved(e){
 			swipeDirection = distY < 0 ? "up" : "down";
 		}
 		pressedDirection(swipeDirection);
+		// Reset where we measure movements from.
+		touchStartX = parseInt(touchObj.clientX);
+		touchStartY = parseInt(touchObj.clientY);
 	}
 	e.preventDefault();
 }
