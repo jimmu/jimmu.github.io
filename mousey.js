@@ -14,20 +14,19 @@ function(d3){
 		
 	var circleGroup = svg.append("g");
 	svg.on("mousemove", mousemove);	
-	//svg.on("touchmove", touchmove);
-	//svg.on("touchstart", touchmove);
-	//window.addEventListener('touchmove', touchmove, false);
+	document.addEventListener("touchmove", touchMoved, false);
 
 	var previousX;
 	var previousY;
 	var renderer = randomRenderer();
 	//renderer = expandingStar;
 	
-	function touchmove(e){
-		var coords = getTouchPos(e);
-		addCircle(coords.x, coords.y);
-		addCircle(x, y);
-		event.preventDefault();
+	function touchMoved(e){
+		var touchObj = e.changedTouches[0]; // First finger
+		var x = parseInt(touchObj.clientX);
+		var y = parseInt(touchObj.clientY);
+		renderer(x,y);
+		e.preventDefault();
 	}
 	
 	function mousemove(){
@@ -39,22 +38,7 @@ function(d3){
 		//drawTo(x, y);
 		//boxTo(x,y);		
 	}	
-	
-	function getTouchPos(e) {
-        if (!e){
-			var e = event;
-		}
-		
-        if (e.touches) {
-            if (e.touches.length == 1) { // Only deal with one finger
-                var touch = e.touches[0]; // Get the information for finger #1
-                return {"x": touch.pageX-touch.target.offsetLeft,
-                        "y": touchY=touch.pageY-touch.target.offsetTop
-				}
-            }
-        }
-	}
-		
+			
 	function addCircle(x, y){
 		var speed = getSpeed(x, y);
 		radius = Math.max(4, 20-speed.speed);
