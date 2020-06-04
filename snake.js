@@ -122,7 +122,7 @@ function createGridCells(){
 		for (let x = 0; x < gridWidth; x++){
 			var square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 			square.setAttribute("x", (100 * x / gridWidth) + "%");
-			square.setAttribute("y", (100 * y / gridWidth) + "%");
+			square.setAttribute("y", (100 * y / gridHeight) + "%");
 			square.setAttribute("width", 100 / gridWidth + "%");
 			square.setAttribute("height", 100 / gridHeight + "%");
 			square.setAttribute("fill", "none");
