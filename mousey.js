@@ -15,6 +15,7 @@ function(d3){
 	var circleGroup = svg.append("g");
 	svg.on("mousemove", mousemove);	
 	document.addEventListener("touchmove", touchMoved, false);
+	document.addEventListener("touchstart", touchStarted, false);
 
 	var previousX;
 	var previousY;
@@ -26,6 +27,14 @@ function(d3){
 		var x = parseInt(touchObj.clientX);
 		var y = parseInt(touchObj.clientY);
 		renderer(x,y);
+		e.preventDefault();
+	}
+
+	function touchStarted(e){
+		var touchObj = e.changedTouches[0]; // First finger
+		previousX = parseInt(touchObj.clientX);
+		previousY = parseInt(touchObj.clientY);
+		renderer(previousX, previousY);
 		e.preventDefault();
 	}
 	
