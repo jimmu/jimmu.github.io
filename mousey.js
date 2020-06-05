@@ -238,9 +238,9 @@ function(d3){
 	function randomRenderer(){
 		var renderer = addCircle;
 		var rndm = Math.random();
-		if (rndm > 0.25){renderer = drawTo};
-		if (rndm > 0.50){renderer = boxTo};
-		if (rndm > 0.75){renderer = throwCircle};
+		if (rndm > 0.16){renderer = drawTo};
+		if (rndm > 0.33){renderer = boxTo};
+		if (rndm > 0.5){renderer = throwCircle};
 		return renderer;
 	}
 });
