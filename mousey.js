@@ -50,7 +50,7 @@ function(d3){
 			
 	function addCircle(x, y){
 		var speed = getSpeed(x, y);
-		radius = Math.max(4, 20-speed.speed);
+		radius = Math.max(3, 28-speed.speed);
 		
 		// Add a circle at the current mouse coords.
 		var thisCircle = {"x": x
@@ -160,7 +160,7 @@ function(d3){
 		var speed = getSpeed(x, y);
 		// The faster we're moving, the smaller the circle we'll draw.
 		// But make this a bit more sophisticated.
-		radius = Math.max(4, 20-speed.speed);
+		radius = Math.max(3, 28-speed.speed);
 		
 		//console.log(x+","+y);
 		// Add a circle at the current mouse coords.
