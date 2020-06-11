@@ -1,3 +1,40 @@
 body {
 	overscroll-behavior: contain;
+	font-family: sans-serif;
+	font-size: 28pt;
+	background-color: gray;
+	text-align: center;
+}
+
+#replay {
+	clear: both;
+	text-align: center;
+	width: 80%;
+}
+#replay h1 {
+	font-size: 15pt;
+	color: white;
+}
+
+svg {
+	background-color: black;	
+}
+
+#gameDiv {
+	width: 80%;
+	float: left;
+}
+
+#scores {
+	width: 80%;
+	float: left;
+	color: white;
+}
+
+#appleScores {
+	width: 15%;
+	float: right;
+	color: #9955aa;
+	border-style: solid;
+	border-color: red
 }
