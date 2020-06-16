@@ -1,18 +1,27 @@
-var gridWidth = 16;
-var gridHeight = 16;
-var framesPerSecond = 5;
-var chanceOfGoldenApple = 1/10;
+const gridWidth = 16;
+const gridHeight = 16;
+const framesPerSecond = 5;
+const chanceOfGoldenApple = 1/10;
+const minNewApplesAfterEatingPurple = 4;
+const maxNewApplesAfterEatingPurple = 10;
+const chanceOfPurpleApple = 1/(2*maxNewApplesAfterEatingPurple);
+const normalAppleTimeToLive = gridWidth * gridHeight;
+const goldenAppleTimeToLive = Math.floor(gridWidth * 1.4);
+const purpleAppleTimeToLive = Math.floor(gridWidth * 1.2);
 
-var snakeBodyColour = "green";
-var normalAppleColour = "red";
-var goldenAppleColour = "gold";
-var normalAppleValue = 1;
-var goldenAppleValue = 5;
-var gridLineColour = "gray";
+const snakeBodyColour = "green";
+const normalAppleColour = "red";
+const goldenAppleColour = "gold";
+const purpleAppleColour = "purple";
+const normalAppleValue = 1;
+const goldenAppleValue = 5;
+const purpleAppleValue = 0;
+const gridLineColour = "gray";
 
-var gameDiv = document.getElementById("gameDiv");
-var startMessageDiv = document.getElementById("replay");
-var scoreSpan = document.getElementById("scores");
+const gameDiv = document.getElementById("gameDiv");
+const startMessageDiv = document.getElementById("replay");
+const scoreSpan = document.getElementById("scores");
+
 var gridCells;
 var snakeBodyCoords;
 var snakeDirection;
@@ -23,13 +32,12 @@ var gameInProgress;
 var ateTheApple;
 var score;
 var highScore;
-//var appleCoords;
-//var appleValue;
-//var appleFramesUntilExpiry;
 var apples;
 
 var touchStartX;
 var touchStartY;
+
+console.log(goldenAppleTimeToLive)
 
 init();
 
@@ -191,8 +199,7 @@ function pressedDirection(dirPressed){
 			nextDirections.push("down");
 		}
 	}
-	//console.log('Next directions are '+nextDirections);
-	
+	//console.log('Next directions are '+nextDirections);	
 }
 
 function touchStarted(e){
@@ -253,22 +260,31 @@ function checkCollisions(){
 	}
 	// Now check for collision with any apple.
 	var appleCollidedWith;
+	var ateAPurple = false;
 	for(let i = 0; i < apples.length && !appleCollidedWith; i++) {
 		var thisApple = apples[i];
 		if (thisApple.framesUntilExpiry > 0){
 			if (headCoords.x == thisApple.x && headCoords.y == thisApple.y){
 				appleCollidedWith = i;
 				ateTheApple = true;
+				ateAPurple = (thisApple.colour == purpleAppleColour);
 				score += thisApple.value;
 				if (score > highScore){
 					highScore = score;
 				}
 			}
 			thisApple.framesUntilExpiry--;
-			if (thisApple.framesUntilExpiry == 0 && thisApple.value > normalAppleValue){
-				thisApple.value = normalAppleValue;
-				thisApple.colour = ateTheApple? snakeBodyColour : normalAppleColour;
-				thisApple.framesUntilExpiry = gridWidth*gridHeight;
+			if (thisApple.framesUntilExpiry == 0 && thisApple.value != normalAppleValue){
+				if (thisApple.colour == purpleAppleColour){
+					thisApple.value = goldenAppleValue;
+					thisApple.colour = ateTheApple? snakeBodyColour : goldenAppleColour;
+					thisApple.framesUntilExpiry = goldenAppleTimeToLive;					
+				}
+				else if (thisApple.colour == goldenAppleColour){
+					thisApple.value = normalAppleValue;
+					thisApple.colour = ateTheApple? snakeBodyColour : normalAppleColour;
+					thisApple.framesUntilExpiry = normalAppleTimeToLive;					
+				}
 				drawCell(thisApple);
 			}
 		}
@@ -276,6 +292,12 @@ function checkCollisions(){
 	if (ateTheApple){
 		console.log("Ate apple " + appleCollidedWith);
 		apples.splice(appleCollidedWith, 1);
+		if (ateAPurple){
+			var numberOfNewApples = minNewApplesAfterEatingPurple + Math.floor(Math.random() * (maxNewApplesAfterEatingPurple - minNewApplesAfterEatingPurple));
+			for(let i = 0; i < numberOfNewApples; i++) {
+				addAnApple();
+			}
+		}
 	}
 	
 }
@@ -340,7 +362,10 @@ function updateSnakePosition(){
 	else {
 		snakeLength++;
 		ateTheApple = false;
-		addAnApple();
+		// Only replace the eaten apple if it was the last one
+		if (apples.length == 0){
+			addAnApple();
+		}
 	}
 	drawCell(newHeadCoords);	
 }
@@ -360,18 +385,16 @@ function addAnApple(){
 		goodCoords = !hitTheSnake;
 	}
 
-	if (Math.random() > 1-chanceOfGoldenApple){
+	if (Math.random() < chanceOfPurpleApple){
+		// Purple!
+		theNewApple = {x: appleX, y: appleY, colour: purpleAppleColour, value: purpleAppleValue, framesUntilExpiry: purpleAppleTimeToLive};
+	}
+	else if (Math.random() < chanceOfGoldenApple + chanceOfPurpleApple){
 		// Golden!
-		theNewApple = {x: appleX, y: appleY, colour: goldenAppleColour, value: goldenAppleValue, framesUntilExpiry: gridWidth};
-		//appleCoords = {x: appleX, y: appleY, colour: goldenAppleColour};
-		//appleValue = goldenAppleValue;
-		//appleFramesUntilExpiry = gridWidth;
+		theNewApple = {x: appleX, y: appleY, colour: goldenAppleColour, value: goldenAppleValue, framesUntilExpiry: goldenAppleTimeToLive};
 	}
 	else {
-		theNewApple = {x: appleX, y: appleY, colour: normalAppleColour, value: normalAppleValue, framesUntilExpiry: gridWidth*gridHeight};
-		//appleCoords = {x: appleX, y: appleY, colour: normalAppleColour};
-		//appleValue = normalAppleValue;
-		//appleFramesUntilExpiry = gridWidth*gridHeight;
+		theNewApple = {x: appleX, y: appleY, colour: normalAppleColour, value: normalAppleValue, framesUntilExpiry: normalAppleTimeToLive};
 	}
 	apples.push(theNewApple);
 	drawCell(theNewApple);
