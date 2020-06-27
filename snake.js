@@ -2,20 +2,23 @@ const gridWidth = 16;
 const gridHeight = 16;
 const framesPerSecond = 5;
 const chanceOfGoldenApple = 1/10;
-const minNewApplesAfterEatingPurple = 4;
+const minNewApplesAfterEatingPurple = 6;
 const maxNewApplesAfterEatingPurple = 10;
 const chanceOfPurpleApple = 1/(2*maxNewApplesAfterEatingPurple);
-const normalAppleTimeToLive = gridWidth * gridHeight;
+const normalAppleTimeToLive = (gridWidth + gridHeight)*2;
 const goldenAppleTimeToLive = Math.floor(gridWidth * 1.4);
 const purpleAppleTimeToLive = Math.floor(gridWidth * 1.2);
+const rottenAppleTimeToLive = gridWidth * gridHeight;
 
 const snakeBodyColour = "green";
 const normalAppleColour = "red";
 const goldenAppleColour = "gold";
 const purpleAppleColour = "purple";
+const rottenAppleColour = "#664400";
 const normalAppleValue = 1;
 const goldenAppleValue = 5;
 const purpleAppleValue = 0;
+const rottenAppleValue = -1;
 const gridLineColour = "gray";
 
 const gameDiv = document.getElementById("gameDiv");
@@ -36,8 +39,6 @@ var apples;
 
 var touchStartX;
 var touchStartY;
-
-console.log(goldenAppleTimeToLive)
 
 init();
 
@@ -274,7 +275,7 @@ function checkCollisions(){
 				}
 			}
 			thisApple.framesUntilExpiry--;
-			if (thisApple.framesUntilExpiry == 0 && thisApple.value != normalAppleValue){
+			if (thisApple.framesUntilExpiry == 0){
 				if (thisApple.colour == purpleAppleColour){
 					thisApple.value = goldenAppleValue;
 					thisApple.colour = ateTheApple? snakeBodyColour : goldenAppleColour;
@@ -284,6 +285,11 @@ function checkCollisions(){
 					thisApple.value = normalAppleValue;
 					thisApple.colour = ateTheApple? snakeBodyColour : normalAppleColour;
 					thisApple.framesUntilExpiry = normalAppleTimeToLive;					
+				}
+				else if (thisApple.colour == normalAppleColour){
+					thisApple.value = rottenAppleValue;
+					thisApple.colour = rottenAppleColour;
+					thisApple.framesUntilExpiry = rottenAppleTimeToLive;
 				}
 				drawCell(thisApple);
 			}
@@ -383,6 +389,12 @@ function addAnApple(){
 			hitTheSnake = hitTheSnake || (appleX == bodySegmentCoords.x &&  appleY == bodySegmentCoords.y);
 		}
 		goodCoords = !hitTheSnake;
+		// Check we're not duplicating an existing apple, either.
+		if (goodCoords){
+			for (let i=0; i<apples.length && goodCoords; i++){
+				goodCoords = goodCoords && !(appleX == apples[i].x && appleY == apples[i].y);
+			}
+		}
 	}
 
 	if (Math.random() < chanceOfPurpleApple){
