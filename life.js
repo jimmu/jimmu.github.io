@@ -1,3 +1,5 @@
+"use strict";
+
 const gridWidth = 48;
 const gridHeight = 48;
 const framesPerSecond = 15;
@@ -10,6 +12,7 @@ var initialChanceOfBeingDead = 0.8;
 var gridCells;
 var svg;
 var currentGeneration;
+var lineChanges;
 var running = false;
 var startStopButton;
 
@@ -75,6 +78,7 @@ function createGridCells(){
 	gameDiv.appendChild(svg);
 
 	gridCells = new Array(gridHeight);
+	lineChanges = new Array(gridHeight);
     for(let y = 0; y < gridHeight; y++) {
 		var thisRow = new Array(gridWidth);
 		for (let x = 0; x < gridWidth; x++){
@@ -94,6 +98,7 @@ function createGridCells(){
 			svg.appendChild(square);
 		}
         gridCells[y]=thisRow;
+		lineChanges[y]=true;
     }	
 }
 
@@ -134,6 +139,7 @@ function stop(event){
 function squareClicked(x, y){
 	//console.log("clicked "+x+","+y);
 	currentGeneration[x][y] = !currentGeneration[x][y];
+	lineChanges[x]=true;
 	drawCurrentGeneration();
 }
 
@@ -146,44 +152,59 @@ function createFirstGeneration(chanceOfBeingDead){
 			thisRow[x]=cell;
 		}
         currentGeneration[y]=thisRow;
+		lineChanges[y]=true;
     }	
 }
 
 function calculateNextGeneration(){
-	var anyChanges = false;
+	//console.log("Lines changed last time round: "+lineChanges);
 	var nextGeneration = new Array(gridHeight);
+	var changedInNextGen = new Array(gridHeight);
+	var linesRecalculated = 0;
     for(let y = 0; y < gridHeight; y++) {
+		// Only recalculate this row if something near it changed last time round.
 		var thisRow = new Array(gridWidth);
-		for (let x = 0; x < gridWidth; x++){
-			// How many neighbours do we have?
-			var count = 0;
-			count = count + checkNeighbour(x, y, -1, -1);
-			count = count + checkNeighbour(x, y, 0, -1);
-			count = count + checkNeighbour(x, y, 1, -1);
+		if (lineChanges[y] || lineChanges[Math.max(y-1, 0)] || lineChanges[Math.min(y+1, gridHeight-1)]){
+			//console.log("Have to recalculate line "+y);
+			linesRecalculated++;
+			for (let x = 0; x < gridWidth; x++){
+				// How many neighbours do we have?
+				var count = 0;
+				count = count + checkNeighbour(x, y, -1, -1);
+				count = count + checkNeighbour(x, y, 0, -1);
+				count = count + checkNeighbour(x, y, 1, -1);
 
-			count = count + checkNeighbour(x, y, -1, 0);
-			count = count + checkNeighbour(x, y, 1, 0);
+				count = count + checkNeighbour(x, y, -1, 0);
+				count = count + checkNeighbour(x, y, 1, 0);
 
-			count = count + checkNeighbour(x, y, -1, 1);
-			count = count + checkNeighbour(x, y, 0, 1);
-			count = count + checkNeighbour(x, y, 1, 1);
-			// Be we alive or be we dead?
-			var newVal;
-			if (currentGeneration[y][x]){
-				newVal = (count == 2 || count == 3);
+				count = count + checkNeighbour(x, y, -1, 1);
+				count = count + checkNeighbour(x, y, 0, 1);
+				count = count + checkNeighbour(x, y, 1, 1);
+				// Be we alive or be we dead?
+				var newVal;
+				if (currentGeneration[y][x]){
+					newVal = (count == 2 || count == 3);
+				}
+				else {
+					newVal = (count == 3);
+				}
+				var changed = currentGeneration[y][x] != newVal;
+				changedInNextGen[y] = changedInNextGen[y] || changed;
+				thisRow[x] = newVal;
 			}
-			else {
-				newVal = (count == 3);
-			}
-			anyChanges = anyChanges || (currentGeneration[y][x] != newVal);
-			thisRow[x] = newVal;
+		}
+		else {
+			thisRow = currentGeneration[y].slice()
+			lineChanges[y] = false;
 		}
         nextGeneration[y] = thisRow;
     }	
 	currentGeneration = nextGeneration.slice();
-	if (!anyChanges && running){
-		startOrStop();
+	if (linesRecalculated == 0 && running){	
+		stop();
 	}
+	lineChanges = changedInNextGen.slice();
+	console.log("Recalculated "+linesRecalculated+" lines out of "+gridHeight);
 }
 
 function checkNeighbour(ourX, ourY, xOffset, yOffset){
