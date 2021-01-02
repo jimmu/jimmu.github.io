@@ -34,6 +34,7 @@ function init(){
 	startStopButton = document.createElement("button");
 	startStopButton.textContent = "Start";
 	startStopButton.addEventListener("click", startOrStop);
+	startStopButton.addEventListener("touchstart", startOrStop);
 	gameDiv.appendChild(startStopButton);
 
 	var stepButton = document.createElement("button");
