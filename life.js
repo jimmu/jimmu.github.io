@@ -25,10 +25,10 @@ function init(){
 	createGridCells();
 	createFirstGeneration(initialChanceOfBeingDead);
 	drawCurrentGeneration();
-	document.addEventListener("keydown", checkKeypress, false);
-	document.addEventListener("touchstart", touchStarted, false);
-	document.addEventListener("touchend", touchEnded, false);
-	document.addEventListener("touchmove", touchMoved, false);
+	//document.addEventListener("keydown", checkKeypress, false);
+	//document.addEventListener("touchstart", touchStarted, false);
+	//document.addEventListener("touchend", touchEnded, false);
+	//document.addEventListener("touchmove", touchMoved, false);
 	//document.addEventListener("click", mouseClick, false);	
 	
 	startStopButton = document.createElement("button");
@@ -40,16 +40,19 @@ function init(){
 	var stepButton = document.createElement("button");
 	stepButton.textContent = "Step";
 	stepButton.addEventListener("click", step);
+	stepButton.addEventListener("touchstart", step);
 	gameDiv.appendChild(stepButton);
 		
 	var clearButton = document.createElement("button");
 	clearButton.textContent = "Clear";
 	clearButton.addEventListener("click", clear);
+	clearButton.addEventListener("touchstart", clear);
 	gameDiv.appendChild(clearButton);	
 
 	var randomButton = document.createElement("button");
 	randomButton.textContent = "Random";
 	randomButton.addEventListener("click", randomGrid);
+	randomButton.addEventListener("touchstart", randomGrid);
 	gameDiv.appendChild(randomButton);	
 
 }
@@ -86,6 +89,7 @@ function createGridCells(){
 			// Add an on-click listener
 			square.setAttribute("pointer-events", "bounding-box");
 			square.addEventListener("click", function(event){squareClicked(x, y)});
+			square.addEventListener("touchstart", function(event){squareClicked(x, y)});
 			thisRow[x]=square;
 			svg.appendChild(square);
 		}
