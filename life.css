@@ -1,0 +1,7 @@
+body {
+	overscroll-behavior: contain;
+}
+
+circle {
+  opacity: 0.6;
+}
