@@ -83,6 +83,9 @@ function createGridCells(){
 }
 
 function startOrStop(event){
+	if (event.type == "touchstart"){
+		event.srcElement.onclick = null;
+	}
 	running = !running
 	startStopButton.textContent = (running ? "Stop" : "Start");
 	drawCurrentGeneration();
@@ -184,7 +187,7 @@ function calculateNextGeneration(){
 		stop();
 	}
 	lineChanges = changedInNextGen.slice();
-	console.log("Recalculated "+linesRecalculated+" lines out of "+gridHeight);
+	//console.log("Recalculated "+linesRecalculated+" lines out of "+gridHeight);
 }
 
 function checkNeighbour(ourX, ourY, xOffset, yOffset){
@@ -223,6 +226,10 @@ function makeButton(label, doThis){
 	theButton.addEventListener("touchstart", doThis);
 	gameDiv.appendChild(theButton);	
 	return theButton;
+}
+
+function clickBehaviourWrapper(){
+	
 }
 
 function drawCell(coords){
