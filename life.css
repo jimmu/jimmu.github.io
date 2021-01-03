@@ -1,7 +1,10 @@
 body {
 	overscroll-behavior: contain;
+	text-align: center;
 }
 
-circle {
-  opacity: 0.6;
+button {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+	font-size: 200%;
 }

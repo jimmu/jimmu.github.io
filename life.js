@@ -7,6 +7,7 @@ const gridLineColour = "gray";
 const lifeColour = "green";
 
 const gameDiv = document.getElementById("life");
+var controlsDiv;
 
 var initialChanceOfBeingDead = 0.8;
 var gridCells;
@@ -28,12 +29,9 @@ function init(){
 	createGridCells();
 	createFirstGeneration(initialChanceOfBeingDead);
 	drawCurrentGeneration();
-	//document.addEventListener("keydown", checkKeypress, false);
-	//document.addEventListener("touchstart", touchStarted, false);
-	//document.addEventListener("touchend", touchEnded, false);
-	//document.addEventListener("touchmove", touchMoved, false);
-	//document.addEventListener("click", mouseClick, false);	
-	
+
+	controlsDiv = document.createElement("div");
+	gameDiv.appendChild(controlsDiv);
 	startStopButton = makeButton("Start", startOrStop);
 	makeButton("Step", step);
 	makeButton("Clear", clear);
@@ -86,7 +84,7 @@ function startOrStop(event){
 	if (event.type == "touchstart"){
 		event.srcElement.onclick = null;
 	}
-	running = !running
+	running = !running;
 	startStopButton.textContent = (running ? "Stop" : "Start");
 	drawCurrentGeneration();
 }
@@ -120,7 +118,6 @@ function stop(event){
 }
 
 function squareClicked(x, y){
-	//console.log("clicked "+x+","+y);
 	currentGeneration[x][y] = !currentGeneration[x][y];
 	lineChanges[x]=true;
 	drawCurrentGeneration();
@@ -147,6 +144,8 @@ function calculateNextGeneration(){
     for(let y = 0; y < gridHeight; y++) {
 		// Only recalculate this row if something near it changed last time round.
 		var thisRow = new Array(gridWidth);
+		// If this line or the one above or below changed the last time round we'd better do the math this time.
+		// If none of those lines changes then nothing on this line will change this time, so skip it.
 		if (lineChanges[y] || lineChanges[Math.max(y-1, 0)] || lineChanges[Math.min(y+1, gridHeight-1)]){
 			//console.log("Have to recalculate line "+y);
 			linesRecalculated++;
@@ -224,7 +223,7 @@ function makeButton(label, doThis){
 	theButton.textContent = label;
 	theButton.addEventListener("click", doThis);
 	theButton.addEventListener("touchstart", doThis);
-	gameDiv.appendChild(theButton);	
+	controlsDiv.appendChild(theButton);	
 	return theButton;
 }
 
