@@ -222,7 +222,7 @@ function makeButton(label, doThis){
 	var theButton = document.createElement("button");
 	theButton.textContent = label;
 	theButton.addEventListener("click", doThis);
-	theButton.addEventListener("touchstart", doThis);
+	//theButton.addEventListener("touchstart", doThis);
 	controlsDiv.appendChild(theButton);	
 	return theButton;
 }
