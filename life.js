@@ -16,6 +16,8 @@ var currentGeneration;
 var lineChanges;
 var running = false;
 var startStopButton;
+var topologyButton;
+var doughnut = true;
 
 var touchStartX;
 var touchStartY;
@@ -36,6 +38,7 @@ function init(){
 	makeButton("Step", step);
 	makeButton("Clear", clear);
 	makeButton("Random", randomGrid);
+	topologyButton = makeButton("Doughnut", topology);
 }
 
 function gameLoop(){
@@ -117,6 +120,12 @@ function stop(event){
 	}
 }
 
+function topology(event){
+	stop(event);
+	doughnut = !doughnut;
+	topologyButton.textContent = doughnut? "Doughnut" : "Flat";
+}
+
 function squareClicked(x, y){
 	currentGeneration[x][y] = !currentGeneration[x][y];
 	lineChanges[x]=true;
@@ -146,7 +155,18 @@ function calculateNextGeneration(){
 		var thisRow = new Array(gridWidth);
 		// If this line or the one above or below changed the last time round we'd better do the math this time.
 		// If none of those lines changes then nothing on this line will change this time, so skip it.
-		if (lineChanges[y] || lineChanges[Math.max(y-1, 0)] || lineChanges[Math.min(y+1, gridHeight-1)]){
+		var recalcThisLine;
+		if (doughnut){
+			recalcThisLine = lineChanges[y] 
+							|| lineChanges[(gridHeight + y -1)%gridHeight] 
+							|| lineChanges[(y + 1)%gridHeight];			
+		}
+		else {
+			recalcThisLine = lineChanges[y] 
+							|| lineChanges[Math.max(y-1, 0)] 
+							|| lineChanges[Math.min(y+1, gridHeight-1)];
+		}
+		if (recalcThisLine){
 			//console.log("Have to recalculate line "+y);
 			linesRecalculated++;
 			for (let x = 0; x < gridWidth; x++){
@@ -190,16 +210,23 @@ function calculateNextGeneration(){
 }
 
 function checkNeighbour(ourX, ourY, xOffset, yOffset){
-	var neighbourY = ourY + yOffset;
-	if (neighbourY >= 0 && neighbourY < gridHeight){
-		var neighbourX = ourX + xOffset;
-		if (neighbourX >= 0 && neighbourX < gridWidth){
-			if (currentGeneration[neighbourY][neighbourX]){
-				return 1;
+	if (doughnut){
+		var neighbourY = (gridHeight + ourY + yOffset)%gridHeight;
+		var neighbourX = (gridWidth + ourX + xOffset)%gridWidth;
+		return currentGeneration[neighbourY][neighbourX] ? 1 : 0;
+	}
+	else {
+		var neighbourY = ourY + yOffset;
+		if (neighbourY >= 0 && neighbourY < gridHeight){
+			var neighbourX = ourX + xOffset;
+			if (neighbourX >= 0 && neighbourX < gridWidth){
+				if (currentGeneration[neighbourY][neighbourX]){
+					return 1;
+				}
 			}
 		}
+		return 0;
 	}
-	return 0;
 }
 
 function drawCurrentGeneration(){
