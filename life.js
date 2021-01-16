@@ -5,6 +5,7 @@ const gridHeight = 48;
 const framesPerSecond = 15;
 const gridLineColour = "gray";
 const lifeColour = "green";
+const maxHistoryDepth = 100;
 
 const gameDiv = document.getElementById("life");
 var controlsDiv;
@@ -13,6 +14,9 @@ var initialChanceOfBeingDead = 0.8;
 var gridCells;
 var svg;
 var currentGeneration;
+var historyBuffer;
+var nextFreeHistorySlot;
+var currentHistoryDepth;
 var lineChanges;
 var running = false;
 var startStopButton;
@@ -28,14 +32,18 @@ setInterval(gameLoop, 1000/framesPerSecond);
 function init(){
 	console.log('Hello from init');
 	running = false;
+	historyBuffer = new Array(maxHistoryDepth);
+	nextFreeHistorySlot = 0;
+	currentHistoryDepth = 0;
 	createGridCells();
 	createFirstGeneration(initialChanceOfBeingDead);
 	drawCurrentGeneration();
-
+	
 	controlsDiv = document.createElement("div");
 	gameDiv.appendChild(controlsDiv);
 	startStopButton = makeButton("Start", startOrStop);
 	makeButton("Step", step);
+	makeButton("Back", stepBack);
 	makeButton("Clear", clear);
 	makeButton("Random", randomGrid);
 	topologyButton = makeButton("Doughnut", topology);
@@ -95,12 +103,29 @@ function startOrStop(event){
 function step(event){
 	console.log("Single step");
 	stop(event);
+	// If we have history available,use it instead of calculating. That way we won't lose handmade edits. 
+	// Or should hand editing just clear the history?
+	// Or should next-from-history and calculate-next be different buttons?
 	calculateNextGeneration();
 	drawCurrentGeneration();
 }
 
+function stepBack(event){
+	console.log("Step back");
+	lineChanges.fill(true);	// The lineChanges optimisation will be messed up by stepping back.
+	stop(event);
+	if (currentHistoryDepth > 0){
+		var previousHistorySlot = (maxHistoryDepth + nextFreeHistorySlot -1)%maxHistoryDepth;	// Circular buffer
+		currentGeneration = historyBuffer[previousHistorySlot].slice();
+		nextFreeHistorySlot = previousHistorySlot;
+		currentHistoryDepth--;
+		drawCurrentGeneration();
+	}
+}
+
 function clear(event){
 	stop(event);
+	currentHistoryDepth = 0;
 	createFirstGeneration(1);
 	drawCurrentGeneration();
 }
@@ -109,6 +134,7 @@ function randomGrid(event){
 	if (running){
 		startOrStop(event);
 	}
+	currentHistoryDepth = 0;
 	createFirstGeneration(initialChanceOfBeingDead);
 	drawCurrentGeneration();
 }
@@ -127,6 +153,7 @@ function topology(event){
 }
 
 function squareClicked(x, y){
+	currentHistoryDepth = 0;	// If we've edited the state then we're starting a new history. Sort of. See longer comment int the step function.
 	currentGeneration[x][y] = !currentGeneration[x][y];
 	lineChanges[x]=true;
 	drawCurrentGeneration();
@@ -200,7 +227,10 @@ function calculateNextGeneration(){
 			lineChanges[y] = false;
 		}
         nextGeneration[y] = thisRow;
-    }	
+    }
+	historyBuffer[nextFreeHistorySlot] = currentGeneration.slice();
+	nextFreeHistorySlot = (nextFreeHistorySlot + maxHistoryDepth + 1)%maxHistoryDepth;	// Circular buffer
+	currentHistoryDepth = Math.min(currentHistoryDepth + 1, maxHistoryDepth);
 	currentGeneration = nextGeneration.slice();
 	if (linesRecalculated == 0 && running){	
 		stop();
