@@ -1,11 +1,12 @@
 "use strict";
 
-const gridWidth = 48;
-const gridHeight = 48;
+const gridWidth = 8 * 6;		// Make the dimension a multiple of 6 for simplest base 64 bit twiddling when we load and save.
+const gridHeight = gridWidth;	// Square works best.
 const framesPerSecond = 15;
 const gridLineColour = "gray";
 const lifeColour = "green";
 const maxHistoryDepth = 100;
+const base64Chars= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 const gameDiv = document.getElementById("life");
 var controlsDiv;
@@ -31,6 +32,11 @@ setInterval(gameLoop, 1000/framesPerSecond);
 
 function init(){
 	console.log('Hello from init');
+	if (typeof(Storage) !== "undefined") {
+	  console.log("Local storage is available");
+	} else {
+	  console.log("No local storage");
+	}
 	running = false;
 	historyBuffer = new Array(maxHistoryDepth);
 	nextFreeHistorySlot = 0;
@@ -47,6 +53,8 @@ function init(){
 	makeButton("Clear", clear);
 	makeButton("Random", randomGrid);
 	topologyButton = makeButton("Doughnut", topology);
+	makeButton("Save", save);
+	makeButton("load", load);
 }
 
 function gameLoop(){
@@ -150,6 +158,42 @@ function topology(event){
 	stop(event);
 	doughnut = !doughnut;
 	topologyButton.textContent = doughnut? "Doughnut" : "Flat";
+}
+
+function save(event){
+	stop(event);
+	var base64Encoded = "";
+	// As well as stringifying the state, can we make a thumbnail graphic?
+	for (let y = 0; y < gridWidth; y++){
+		for (let chunk = 0; chunk < gridWidth/6; chunk++){
+			// Create a number from the next 6 booleans.
+			var bitField = 0;
+			for (let x = 0; x < 6; x++){
+				bitField = (2*bitField) + (currentGeneration[y][(6*chunk)+x]? 1 : 0);
+			}
+			base64Encoded += base64Chars[bitField];
+		}
+	}
+	localStorage.setItem("lifeIsLifeSavedState0", base64Encoded);
+}
+
+function load(event){
+	stop(event);
+	var base64Encoded = localStorage.lifeIsLifeSavedState0;
+	console.log(base64Encoded);
+	// As well as stringifying the state, can we make a thumbnail graphic?
+	for (let y = 0; y < gridWidth; y++){
+		lineChanges[y] = true;
+		for (let chunk = 0; chunk < gridWidth/6; chunk++){
+			var bitField = base64Chars.indexOf(base64Encoded.charAt(((gridWidth/6)*y)+chunk));
+			for (var x = 5; x >= 0; x--){
+				currentGeneration[y][(6*chunk)+x] = ((bitField%2) == 1)
+				bitField = Math.floor(bitField/2);
+			}
+		}
+	}
+	drawCurrentGeneration();
+	//localStorage.setItem("lifeIsLifeSavedState0", base64Encoded);
 }
 
 function squareClicked(x, y){
