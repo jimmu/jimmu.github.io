@@ -1,0 +1,24 @@
+body {
+	color: black;
+}
+
+h1 {
+}
+
+a {
+	text-decoration: none;
+	border: 2px solid;
+	padding:0px;
+	margin: 20px;
+}
+
+a:hover {
+	background-color: gray;
+}
+
+.sosmall {
+	font-size: 10%;
+}
+.sobig {
+	font-size: 500%
+}
