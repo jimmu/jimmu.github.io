@@ -30,11 +30,3 @@ svg {
 	float: left;
 	color: white;
 }
-
-#appleScores {
-	width: 15%;
-	float: right;
-	color: #9955aa;
-	border-style: solid;
-	border-color: red
-}

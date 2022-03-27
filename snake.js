@@ -1,6 +1,5 @@
 const gridWidth = 16;
 const gridHeight = 16;
-const framesPerSecond = 5;
 const chanceOfGoldenApple = 1/10;
 const minNewApplesAfterEatingPurple = 6;
 const maxNewApplesAfterEatingPurple = 10;
@@ -9,6 +8,9 @@ const normalAppleTimeToLive = (gridWidth + gridHeight)*2;
 const goldenAppleTimeToLive = Math.floor(gridWidth * 1.4);
 const purpleAppleTimeToLive = Math.floor(gridWidth * 1.2);
 const rottenAppleTimeToLive = gridWidth * gridHeight;
+const changeSpeedIntervalSeconds = 60;
+const initialSpeed = 5;
+const speedIncrement = 1;
 
 const snakeBodyColour = "green";
 const normalAppleColour = "red";
@@ -36,10 +38,12 @@ var ateTheApple;
 var score;
 var highScore;
 var apples;
+var framesPerSecond;
 
 var touchStartX;
 var touchStartY;
 
+var fpsInterval;
 init();
 
 function gameLoop(){
@@ -65,7 +69,25 @@ function init(){
 	highScore = 0;
 	redrawScore();
 	gameInProgress = false;
-	setInterval(gameLoop, 1000/framesPerSecond);
+	fpsInterval = setInterval(gameLoop, 1000/framesPerSecond);
+	//setInterval (changeSpeed, 1000*changeSpeedIntervalSeconds);
+}
+
+function changeSpeed(){
+	console.log("Going to increment speed");
+	framesPerSecond = framesPerSecond + speedIncrement;
+	setSpeed();
+}
+
+function setSpeed(){
+	if (fpsInterval){
+		console.log("Cleared fps timer")
+		clearInterval(fpsInterval);
+	}
+	fpsInterval = setInterval(gameLoop, 1000/framesPerSecond);
+	console.log("Set fps interval to "+framesPerSecond);
+	setTimeout(changeSpeed, 1000*changeSpeedIntervalSeconds);
+	console.log("Asked for a speed change in "+changeSpeedIntervalSeconds+" seconds");
 }
 
 function startNewGame(){
@@ -106,6 +128,8 @@ function startNewGame(){
 	apples = [];
 	addAnApple();
 	score = 0;
+	framesPerSecond = initialSpeed;
+	setSpeed();
 	gameInProgress = true;
 }
 
