@@ -8,9 +8,9 @@ const normalAppleTimeToLive = (gridWidth + gridHeight)*2;
 const goldenAppleTimeToLive = Math.floor(gridWidth * 1.4);
 const purpleAppleTimeToLive = Math.floor(gridWidth * 1.2);
 const rottenAppleTimeToLive = gridWidth * gridHeight;
-const changeSpeedIntervalSeconds = 60;
+const changeSpeedIntervalSeconds = 15;
 const initialSpeed = 5;
-const speedIncrement = 1;
+const speedIncrement = 0.25;
 
 const snakeBodyColour = "green";
 const normalAppleColour = "red";
