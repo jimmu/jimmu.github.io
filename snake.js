@@ -10,7 +10,7 @@ const purpleAppleTimeToLive = Math.floor(gridWidth * 1.2);
 const rottenAppleTimeToLive = gridWidth * gridHeight;
 const initialSpeed = 5;
 const speedIncrement = 0.125;
-const changeSpeedIntervalSeconds = 10;
+const changeSpeedIntervalSeconds = 15;
 
 const snakeBodyColour = "green";
 const normalAppleColour = "red";
