@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <title>Hello</title>
+    <style>
+      body {
+        background-image: url('water.png');
+        background-size: cover; #contain;
+      }
+    </style>
+    <script>
+      const fps=50;
+      const speedBoost=1;  // Increase this to decrease all the periods at the cost of resolution
+      const lineWidth=0.5;
+      const solidLines = false; // Dots or continuous lines.
+
+      var centreX;
+      var centreY;
+
+      var allTheThings=[];
+      var context;
+
+      function createEverything(){
+        setupGfx();
+
+	makeMe("x", 200, 7, false);
+	makeMe("y", 50, 5, false);
+	makeMe("z", 100, 3, false);
+	makeMe("@", 10, 2, true);
+
+/*
+        for (i=0; i<10; i++){
+          makeMe("o", 50-(i+(50-100*Math.random())), 4-(i/15), i>=0);
+        }	
+*/
+        
+	// Put everything on the screen
+	var container=document.getElementById("x");
+        for (thing of allTheThings){
+          container.appendChild(thing.element);
+        }
+
+        setInterval(moveEverything, 1000/fps);
+      }
+
+      function moveEverything(){
+        var xCoord = centreX;
+        var yCoord = centreY;
+
+        for (thing of allTheThings) {
+          // Draw from the previous position - 
+          // so only if there _was_ a previous position.
+          var spirograph = thing.trace && thing.x;
+          if (spirograph && solidLines) {
+            context.beginPath();
+            context.moveTo(thing.x, thing.y);
+          }
+          xCoord += Math.cos(thing.angle)*thing.radius;
+          yCoord += Math.sin(thing.angle)*thing.radius;
+          thing.angle = (thing.angle + thing.increment)%(2*Math.PI);
+          thing.x = xCoord;
+          thing.y = yCoord;
+          thing.element.style.left = xCoord;
+          thing.element.style.top = yCoord;
+
+          // Draw to the new position
+          if (spirograph) {
+            if (solidLines){
+              context.lineTo(xCoord, yCoord);
+              context.stroke();
+            }
+            else {
+              context.fillRect(xCoord, yCoord, 2*lineWidth, 2*lineWidth);
+            }
+          }
+        }
+
+      }	
+
+      function makeMe(text, radius, period, trace){
+	allTheThings.push({
+               element: newElement(text),
+               radius: radius,
+               period: period,
+               angle: 0,
+               increment: speedBoost*(2*Math.PI)/(fps*period),
+               trace: trace
+               });
+      }
+
+      function newElement(text){
+        var element=document.createElement("text");
+        element.style.position="absolute";
+        element.textContent=text;
+        return element;
+      }	
+
+      function setupGfx(){
+        centreX = window.innerWidth/2;
+        centreY = window.innerHeight/2;
+        var canvas=document.getElementById("c");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        context = canvas.getContext('2d');
+        context.lineWidth = lineWidth;
+        context.lineCap = "round";
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="x"></div>
+    <script>
+      createEverything();
+    </script>
+  </body>
+</html>
