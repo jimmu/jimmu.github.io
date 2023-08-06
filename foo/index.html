@@ -11,7 +11,7 @@
       const fps=50;
       const speedBoost=1;  // Increase this to decrease all the periods at the cost of resolution
       const lineWidth=0.5;
-      const solidLines = false; // Dots or continuous lines.
+      const solidLines = true; // Dots or continuous lines.
 
       var centreX;
       var centreY;
@@ -22,10 +22,26 @@
       function createEverything(){
         setupGfx();
 
+	makeMe(".", 150, 8);
+	makeMe("x", 150, -8);
+	makeMe("y", 60, 2, "blue");
+	makeMe("z", 50, -2);
+	makeMe("@", 90, 1, "orange");
+/*
+	makeMe("x", 150, 8);
+	makeMe("y", 150, -6, "red");
+	makeMe("z", 150, 8, "green");
+	makeMe("@", 100, -4, "black");
+	makeMe("o", 50, 2, "orange");
+*/
+
+
+/*
 	makeMe("x", 200, 7, false);
 	makeMe("y", 50, 5, false);
 	makeMe("z", 100, 3, false);
 	makeMe("@", 10, 2, true);
+*/
 
 /*
         for (i=0; i<10; i++){
@@ -65,6 +81,7 @@
           // Draw to the new position
           if (spirograph) {
             if (solidLines){
+              context.strokeStyle=thing.trace;
               context.lineTo(xCoord, yCoord);
               context.stroke();
             }
