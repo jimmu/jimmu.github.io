@@ -13,35 +13,52 @@
       const lineWidth=0.5;
       const solidLines = true; // Dots or continuous lines.
 
+      var container;
+      var running = false;
       var centreX;
       var centreY;
 
       var allTheThings=[];
       var context;
 
+      function newCogs(){
+        // Text is offset from the trace because the canvas is shifted down under the input box.
+        running = false;
+        cogs = JSON.parse(event.target.value);
+        console.log(JSON.stringify(cogs));
+        container.replaceChildren();
+        allTheThings = [];
+        setupGfx();
+        for (cog of cogs){
+          makeMeee(cog);
+        }
+        running = true;
+        return false;
+      }
+
       function createEverything(){
         setupGfx();
 
-/*
-	makeMe(".", 150, 8);
-	makeMe("x", 150, -8);
-	makeMe("y", 60, 2, "blue");
-	makeMe("z", 50, -2);
-	makeMe("@", 90, 1, "orange");
-*/
-	makeMe("x", 150, 8);
-	makeMe("y", 150, -6, "red");
-	makeMe("z", 150, 8, "green");
-	makeMe("@", 100, -4, "black");
-	makeMe("o", 50, 2, "orange");
+      /*
+      	makeMe(".", 150, 8);
+      	makeMe("x", 150, -8);
+      	makeMe("y", 60, 2, "blue");
+      	makeMe("z", 50, -2);
+      	makeMe("@", 90, 1, "orange");
+      */
+      	makeMe("x", 150, 8);
+      	makeMe("y", 150, -6, "red");
+      	makeMe("z", 150, 8, "green");
+      	makeMe("@", 100, -4, "black");
+      	makeMe("o", 50, 2, "orange");
 
 
-/*
-	makeMe("x", 200, 7, false);
-	makeMe("y", 50, 5, false);
-	makeMe("z", 100, 3, false);
-	makeMe("@", 10, 2, true);
-*/
+      /*
+      	makeMe("x", 200, 7, false);
+      	makeMe("y", 50, 5, false);
+      	makeMe("z", 100, 3, false);
+      	makeMe("@", 10, 2, true);
+      */
 
 /*
         for (i=0; i<10; i++){
@@ -49,59 +66,61 @@
         }	
 */
         
-	// Put everything on the screen
-	var container=document.getElementById("x");
-        for (thing of allTheThings){
-          container.appendChild(thing.element);
-        }
-
         setInterval(moveEverything, 1000/fps);
+        running = true;
       }
 
       function moveEverything(){
-        var xCoord = centreX;
-        var yCoord = centreY;
+        if (running){
+          var xCoord = centreX;
+          var yCoord = centreY;
 
-        for (thing of allTheThings) {
-          // Draw from the previous position - 
-          // so only if there _was_ a previous position.
-          var spirograph = thing.trace && thing.x;
-          if (spirograph && solidLines) {
-            context.beginPath();
-            context.moveTo(thing.x, thing.y);
-          }
-          xCoord += Math.cos(thing.angle)*thing.radius;
-          yCoord += Math.sin(thing.angle)*thing.radius;
-          thing.angle = (thing.angle + thing.increment)%(2*Math.PI);
-          thing.x = xCoord;
-          thing.y = yCoord;
-          thing.element.style.left = xCoord;
-          thing.element.style.top = yCoord;
-
-          // Draw to the new position
-          if (spirograph) {
-            if (solidLines){
-              context.strokeStyle=thing.trace;
-              context.lineTo(xCoord, yCoord);
-              context.stroke();
+          for (thing of allTheThings) {
+            // Draw from the previous position - 
+            // so only if there _was_ a previous position.
+            var spirograph = thing.trace && thing.x;
+            if (spirograph && solidLines) {
+              context.beginPath();
+              context.moveTo(thing.x, thing.y);
             }
-            else {
-              context.fillRect(xCoord, yCoord, 2*lineWidth, 2*lineWidth);
+            xCoord += Math.cos(thing.angle)*thing.radius;
+            yCoord += Math.sin(thing.angle)*thing.radius;
+            thing.angle = (thing.angle + thing.increment)%(2*Math.PI);
+            thing.x = xCoord;
+            thing.y = yCoord;
+            thing.element.style.left = xCoord;
+            thing.element.style.top = yCoord;
+
+            // Draw to the new position
+            if (spirograph) {
+              if (solidLines){
+                context.strokeStyle=thing.trace;
+                context.lineTo(xCoord, yCoord);
+                context.stroke();
+              }
+              else {
+                context.fillRect(xCoord, yCoord, 2*lineWidth, 2*lineWidth);
+              }
             }
           }
         }
-
       }	
 
+      function makeMeee(aThing){
+        makeMe("o", aThing.radius, aThing.period, aThing.trace);
+      }
+
       function makeMe(text, radius, period, trace){
-	allTheThings.push({
-               element: newElement(text),
+        var aNewElement = newElement(text);
+        allTheThings.push({
+               element: aNewElement,
                radius: radius,
                period: period,
                angle: 0,
                increment: speedBoost*(2*Math.PI)/(fps*period),
                trace: trace
                });
+         container.appendChild(aNewElement);
       }
 
       function newElement(text){
@@ -112,6 +131,7 @@
       }	
 
       function setupGfx(){
+        container=document.getElementById("x");
         centreX = window.innerWidth/2;
         centreY = window.innerHeight/2;
         var canvas=document.getElementById("c");
@@ -124,6 +144,9 @@
     </script>
   </head>
   <body>
+    <form>
+      <input id="z" size="100" onchange="newCogs()"> 
+    </form>
     <canvas id="c"></canvas>
     <div id="x"></div>
     <script>
