@@ -18,6 +18,10 @@
       var centreX;
       var centreY;
 
+      // Change the things in allTheThings to be trees.
+      // allTheThings is the array of things attached to the origin.
+      // each thing will then need to chain children on by having a new
+      // field called children.
       var allTheThings=[];
       var context;
 
@@ -30,61 +34,35 @@
         allTheThings = [];
         setupGfx();
         for (cog of cogs){
-          makeMeee(cog);
+          makeMeee(cog, allTheThings);
         }
         running = true;
+        console.log(allTheThings);
         return false;
       }
 
       function createEverything(){
-        setupGfx();
-
-      /*
-      	makeMe(".", 150, 8);
-      	makeMe("x", 150, -8);
-      	makeMe("y", 60, 2, "blue");
-      	makeMe("z", 50, -2);
-      	makeMe("@", 90, 1, "orange");
-      */
-      	makeMe("x", 150, 8);
-      	makeMe("y", 150, -6, "red");
-      	makeMe("z", 150, 8, "green");
-      	makeMe("@", 100, -4, "black");
-      	makeMe("o", 50, 2, "orange");
-
-
-      /*
-      	makeMe("x", 200, 7, false);
-      	makeMe("y", 50, 5, false);
-      	makeMe("z", 100, 3, false);
-      	makeMe("@", 10, 2, true);
-      */
-
-/*
-        for (i=0; i<10; i++){
-          makeMe("o", 50-(i+(50-100*Math.random())), 4-(i/15), i>=0);
-        }	
-*/
-        
+        setupGfx();        
         setInterval(moveEverything, 1000/fps);
         running = true;
       }
 
       function moveEverything(){
         if (running){
-          var xCoord = centreX;
-          var yCoord = centreY;
+          moveTheseAtThisOrigin(allTheThings, centreX, centreY);
+        }
+      }	
 
-          for (thing of allTheThings) {
-            // Draw from the previous position - 
-            // so only if there _was_ a previous position.
+      function moveTheseAtThisOrigin(things, originX, originY){
+          for (thing of things){
             var spirograph = thing.trace && thing.x;
             if (spirograph && solidLines) {
               context.beginPath();
               context.moveTo(thing.x, thing.y);
             }
-            xCoord += Math.cos(thing.angle)*thing.radius;
-            yCoord += Math.sin(thing.angle)*thing.radius;
+
+            var xCoord = originX + Math.cos(thing.angle)*thing.radius;
+            var yCoord = originY + Math.sin(thing.angle)*thing.radius;   
             thing.angle = (thing.angle + thing.increment)%(2*Math.PI);
             thing.x = xCoord;
             thing.y = yCoord;
@@ -102,25 +80,32 @@
                 context.fillRect(xCoord, yCoord, 2*lineWidth, 2*lineWidth);
               }
             }
-          }
-        }
-      }	
 
-      function makeMeee(aThing){
-        makeMe("o", aThing.radius, aThing.period, aThing.trace);
+            if (thing.children){
+              moveTheseAtThisOrigin(thing.children, thing.x, thing.y);
+            }
+          }
       }
 
-      function makeMe(text, radius, period, trace){
-        var aNewElement = newElement(text);
-        allTheThings.push({
+      function makeMeee(aThing, parent){
+        var aNewElement = newElement("o");
+        var thisThing = {
                element: aNewElement,
-               radius: radius,
-               period: period,
+               radius: aThing.radius,
+               period: aThing.period,
                angle: 0,
-               increment: speedBoost*(2*Math.PI)/(fps*period),
-               trace: trace
-               });
-         container.appendChild(aNewElement);
+               increment: speedBoost*(2*Math.PI)/(fps*aThing.period),
+               trace: aThing.trace,
+               children: []
+        }
+        parent.push(thisThing);
+        container.appendChild(aNewElement);        
+        if (aThing.children){
+          console.log("Creating children");
+          for (child of aThing.children){
+            makeMeee(child, thisThing.children);
+          }
+        }
       }
 
       function newElement(text){
