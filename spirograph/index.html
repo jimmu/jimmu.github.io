@@ -4,7 +4,24 @@
     <style>
       body {
         background-image: url('water.png');
-        background-size: cover; #contain;
+        background-size: cover;
+      }
+      #controls {
+        border: 1px solid;
+        border-color: gray;
+        position:  absolute;
+        top: 1em;
+        left: 1em;
+      }
+      #controls {
+        font-size: 6pt;
+      }
+      #controls input {
+        width: 6em;
+      }
+      #controls .headingspan {
+        display: inline-block;
+        width: 6em;
       }
     </style>
     <script>
@@ -13,6 +30,8 @@
       const lineWidth=0.5;
       const solidLines = true; // Dots or continuous lines.
 
+      var rootControl;
+      var controlsDiv;
       var container;
       var running = false;
       var centreX;
@@ -25,25 +44,23 @@
       var allTheThings=[];
       var context;
 
-      function newCogs(){
-        // Text is offset from the trace because the canvas is shifted down under the input box.
-        running = false;
-        cogs = JSON.parse(event.target.value);
+      function theseCogs(cogs){
         console.log(JSON.stringify(cogs));
         container.replaceChildren();
         allTheThings = [];
         setupGfx();
+        //for (cog of cogs){
         for (cog of cogs){
           makeMeee(cog, allTheThings);
         }
         running = true;
-        console.log(allTheThings);
-        return false;
       }
 
       function createEverything(){
         setupGfx();        
+        rootControl = makeRootControl(controlsDiv);
         setInterval(moveEverything, 1000/fps);
+        theseCogs([{"radius": 200, "period": 12, "trace": "black", "children": [{"radius": 20, "period": 2, "trace": "blue"}]},{"radius": 100, "period": 6, "trace": "red", "children": [{"radius": 10, "period": 1, "trace": "orange"},{"radius": 15, "period": 1.5, "trace": "green"}]}]);
         running = true;
       }
 
@@ -101,7 +118,6 @@
         parent.push(thisThing);
         container.appendChild(aNewElement);        
         if (aThing.children){
-          console.log("Creating children");
           for (child of aThing.children){
             makeMeee(child, thisThing.children);
           }
@@ -115,8 +131,114 @@
         return element;
       }	
 
+      function makeRootControl(containingDiv){
+        var children = [];
+
+        containingDiv.replaceChildren();
+        var addChildButton = document.createElement("button");
+        addChildButton.innerHTML = "+ Child";
+        containingDiv.appendChild(addChildButton);
+        var radiusHeading = document.createElement("span");
+        radiusHeading.setAttribute("class", "headingspan");
+        radiusHeading.textContent = "Radius";
+        containingDiv.appendChild(radiusHeading);
+        var periodHeading = document.createElement("span");
+        periodHeading.textContent = "Period";
+        periodHeading.setAttribute("class", "headingspan");
+        containingDiv.appendChild(periodHeading);
+        var traceHeading = document.createElement("span");
+        traceHeading.textContent = "Trace";
+        traceHeading.setAttribute("class", "headingspan");
+        containingDiv.appendChild(traceHeading);
+        var goButton = document.createElement("button");
+
+        var childContainingDiv = document.createElement("div");
+        containingDiv.appendChild(childContainingDiv);
+
+        goButton.innerHTML = "Draw";
+
+        goButton.onclick = function(){
+          running = false;
+          theseCogs(control.evaluate().children);
+        }
+
+        containingDiv.appendChild(document.createElement("br"));      
+        containingDiv.appendChild(goButton);
+        
+        var control = {
+          evaluate: function(){
+            var valuesFromThis = {
+              radius: 0,
+              period: 1,
+              trace: "",
+              children: []
+            };
+            for (childControl of children){
+              valuesFromThis.children.push(childControl.evaluate());
+            }
+            return valuesFromThis;
+          }  
+        } 
+
+        addChildButton.onclick = function() {
+          var childControlDiv = document.createElement("div");
+          childContainingDiv.appendChild(childControlDiv);
+          var nextChildControl = makeControls(childControlDiv, 0);
+          children.push(nextChildControl);
+          nextChildControl.render(0);
+        };
+
+        return control;
+      }
+
+      function makeControls(containingDiv, indent) {
+        var radiusInput = document.createElement("input");
+        var periodInput = document.createElement("input");
+        var traceInput = document.createElement("input");
+        var addChildButton = document.createElement("button");
+        addChildButton.innerHTML = "+ Child";
+        containingDiv.appendChild(addChildButton);
+        var children = [];
+
+
+        var control = {
+          render: function(){
+            var padding = document.createElement("span");
+            padding.textContent =  "-".repeat(2*indent);
+            containingDiv.appendChild(padding);
+            containingDiv.appendChild(addChildButton);
+            containingDiv.appendChild(radiusInput);
+            containingDiv.appendChild(periodInput);
+            containingDiv.appendChild(traceInput);
+          },
+          evaluate: function(){
+            var valuesFromThis = {
+              radius: radiusInput.value,
+              period: periodInput.value,
+              trace: traceInput.value,
+              children: []
+            };
+            for (childControl of children){
+              valuesFromThis.children.push(childControl.evaluate());
+            }
+            return valuesFromThis;
+          }  
+        };
+
+        addChildButton.onclick = function() {
+          var childControlDiv = document.createElement("div");
+          containingDiv.appendChild(childControlDiv);
+          var nextChildControl = makeControls(childControlDiv, indent+1);
+          children.push(nextChildControl);
+          nextChildControl.render();
+        };
+
+        return control;
+      }
+
       function setupGfx(){
-        container=document.getElementById("x");
+        container = document.getElementById("x");
+        controlsDiv =document.getElementById("controls");
         centreX = window.innerWidth/2;
         centreY = window.innerHeight/2;
         var canvas=document.getElementById("c");
@@ -129,11 +251,9 @@
     </script>
   </head>
   <body>
-    <form>
-      <input id="z" size="100" onchange="newCogs()"> 
-    </form>
     <canvas id="c"></canvas>
     <div id="x"></div>
+    <div id="controls"></div>
     <script>
       createEverything();
     </script>
