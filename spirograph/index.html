@@ -44,7 +44,7 @@
 
       function theseCogs(cogs){
         // Encode the control values in the url fragment so this becomes shareable.
-        window.location.hash = JSON.stringify(cogs);
+        toUrlFragment(cogs);
         container.replaceChildren();
         context.clearRect(0,0, centreX*2, centreY*2);
         allTheThings = [];
@@ -58,16 +58,12 @@
         setupGfx();        
         setInterval(moveEverything, 1000/fps);
         // Is there anything in the url parameter?
-        var urlParam = window.location.hash;
-        if (urlParam){
-          urlParam = urlParam.substr(1); // Remove leading #
-          makeRootControl(controlsDiv, JSON.parse(decodeURI(urlParam)));
-          theseCogs(JSON.parse(decodeURI(urlParam)));
+        var initialValues = fromUrlFragment();
+        if (! initialValues){
+          initialValues = [{"radius": 200, "period": 12, "trace": "black", "children": [{"radius": 20, "period": 2, "trace": "blue"}]},{"radius": 100, "period": 6, "trace": "red", "children": [{"radius": 10, "period": 1, "trace": "orange"},{"radius": 15, "period": 1.5, "trace": "green"}]}];
         }
-        else {
-          rootControl = makeRootControl(controlsDiv);
-          theseCogs([{"radius": 200, "period": 12, "trace": "black", "children": [{"radius": 20, "period": 2, "trace": "blue"}]},{"radius": 100, "period": 6, "trace": "red", "children": [{"radius": 10, "period": 1, "trace": "orange"},{"radius": 15, "period": 1.5, "trace": "green"}]}]);
-        }
+        rootControl = makeRootControl(controlsDiv, initialValues);
+        theseCogs(initialValues);        
       }
 
       function moveEverything(){
@@ -192,7 +188,6 @@
           childContainingDiv.appendChild(childControlDiv);
           var nextChildControl = makeControls(childControlDiv, 0);
           children.push(nextChildControl);
-          //nextChildControl.render();
         };
 
 
@@ -204,7 +199,6 @@
               childContainingDiv.appendChild(childControlDiv);
               var nextChildControl = makeControls(childControlDiv, 0, values);
               children.push(nextChildControl);
-              //nextChildControl.render();
             }
           }
         }
@@ -234,6 +228,10 @@
         containingDiv.appendChild(periodInput);
         containingDiv.appendChild(traceInput);
 
+        var deleteButton = document.createElement("button");
+        deleteButton.innerHTML = "x";
+        containingDiv.appendChild(deleteButton);
+
         var control = {
           evaluate: function(){
             var valuesFromThis = {
@@ -246,6 +244,21 @@
               valuesFromThis.children.push(childControl.evaluate());
             }
             return valuesFromThis;
+          },
+          remove: function(){
+            radiusInput.remove();
+            periodInput.remove();
+            traceInput.remove();
+            addChildButton.remove();
+            padding.remove();
+            deleteButton.remove();              
+            radiusInput.value = "";
+            periodInput.value = "";
+            traceInput.value = "";
+            for (child of children){
+              child.remove();
+            }
+            children = [];
           }  
         };
 
@@ -254,8 +267,11 @@
           containingDiv.appendChild(childControlDiv);
           var nextChildControl = makeControls(childControlDiv, indent+1);
           children.push(nextChildControl);
-          //nextChildControl.render();
         };
+
+        deleteButton.onclick = function() {
+           control.remove();
+        }
 
         if (values && values.children){
           for (childValue of values.children){
@@ -283,6 +299,20 @@
         context = canvas.getContext('2d');
         context.lineWidth = lineWidth;
         context.lineCap = "round";
+      }
+
+      function toUrlFragment(cogs){
+        window.location.hash = JSON.stringify(cogs);
+      }
+
+      function fromUrlFragment(){
+        var urlParam = window.location.hash;
+        var initialValues;
+        if (urlParam){
+          urlParam = urlParam.substr(1); // Remove leading #
+          initialValues = JSON.parse(decodeURI(urlParam));
+        }
+        return initialValues;
       }
     </script>
   </head>
