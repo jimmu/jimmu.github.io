@@ -259,6 +259,7 @@
               child.remove();
             }
             children = [];
+            // TODO. Remove this child from its parent rather than leaving an entry with blank values.
           }  
         };
 
@@ -279,7 +280,6 @@
             containingDiv.appendChild(childControlDiv);
             var nextChildControl = makeControls(childControlDiv, indent+1, childValue);
             children.push(nextChildControl);
-            //nextChildControl.render();            
           }
         }
         return control;
@@ -301,8 +301,14 @@
         context.lineCap = "round";
       }
 
+      // TODO. Remove empty children arrays -> ,!c!:[]
       function toUrlFragment(cogs){
-        window.location.hash = JSON.stringify(cogs);
+        window.location.hash = JSON.stringify(cogs)
+                                .replaceAll('"radius"', '"r"')
+                                .replaceAll('"period"', '"p"')
+                                .replaceAll('"trace"', '"t"')
+                                .replaceAll('"children"', '"c"')
+                                .replaceAll('"', '!');
       }
 
       function fromUrlFragment(){
@@ -310,7 +316,13 @@
         var initialValues;
         if (urlParam){
           urlParam = urlParam.substr(1); // Remove leading #
-          initialValues = JSON.parse(decodeURI(urlParam));
+          initialValues = JSON.parse(decodeURI(urlParam)
+            .replaceAll('!', '"')
+            .replaceAll('"r"', '"radius"')
+            .replaceAll('"p"', '"period"')
+            .replaceAll('"t"', '"trace"')
+            .replaceAll('"c"', '"children"')
+            );
         }
         return initialValues;
       }
