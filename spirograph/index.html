@@ -61,7 +61,7 @@
         // Is there anything in the url parameter?
         var initialValues = fromUrlFragment();
         if (! initialValues){
-          initialValues = [{"radius": 200, "period": 12, "trace": "black", "children": [{"radius": 20, "period": 2, "trace": "blue"}]},{"radius": 100, "period": 6, "trace": "red", "children": [{"radius": 10, "period": 1, "trace": "orange"},{"radius": 15, "period": 1.5, "trace": "green"}]}];
+          initialValues = [{"radius": 200, "period": 12, "trace": "#000000", "children": [{"radius": 20, "period": 2, "trace": "#0000ff"}]},{"radius": 100, "period": 6, "trace": "#ff0000", "children": [{"radius": 10, "period": 1, "trace": "#ff8000"},{"radius": 15, "period": 1.5, "trace": "#00ff00"}]}];
         }
         rootControl = makeRootControl(controlsDiv, initialValues);
         theseCogs(initialValues);        
@@ -211,8 +211,11 @@
 
       function makeControls(containingDiv, indent, values) {
         var radiusInput = document.createElement("input");
+        radiusInput.setAttribute("type", "number");
         var periodInput = document.createElement("input");
+        periodInput.setAttribute("type", "number");
         var traceInput = document.createElement("input");
+        traceInput.setAttribute("type", "color");
         if (values) {
           radiusInput.value = values.radius;
           periodInput.value = values.period;
@@ -305,11 +308,11 @@
 
       function toUrlFragment(cogs){
         window.location.hash = JSON.stringify(cogs)
-                                .replaceAll('"radius"', '"r"')
-                                .replaceAll('"period"', '"p"')
-                                .replaceAll('"trace"', '"t"')
-                                .replaceAll('"children"', '"c"')
-                                .replaceAll(',"c":[]', "")
+                                .replaceAll('"radius":', 'r:')
+                                .replaceAll('"period":', 'p:')
+                                .replaceAll('"trace":"#', 't:"')
+                                .replaceAll('"children":', 'c:')
+                                .replaceAll(',c:[]', "")
                                 .replaceAll('"', '!')
       }
 
@@ -317,14 +320,15 @@
         var urlParam = window.location.hash;
         var initialValues;
         if (urlParam){
+          console.log(urlParam);
           urlParam = urlParam.substr(1); // Remove leading #
-          initialValues = JSON.parse(decodeURI(urlParam)
+          var munged = decodeURI(urlParam)
             .replaceAll('!', '"')
-            .replaceAll('"r"', '"radius"')
-            .replaceAll('"p"', '"period"')
-            .replaceAll('"t"', '"trace"')
-            .replaceAll('"c"', '"children"')
-            );
+            .replaceAll('r:', '"radius":')
+            .replaceAll('p:', '"period":')
+            .replaceAll('t:"', '"trace":"#')
+            .replaceAll('c:', '"children":')
+          initialValues = JSON.parse(munged);
         }
         return initialValues;
       }
