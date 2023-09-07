@@ -43,14 +43,15 @@
       var context;
 
       function theseCogs(cogs){
-        // Encode the control values in the url fragment so this becomes shareable.
-        toUrlFragment(cogs);
+        cogs = cogs.filter((item) => item.radius);
         container.replaceChildren();
         context.clearRect(0,0, centreX*2, centreY*2);
         allTheThings = [];
         for (cog of cogs){
           makeMeee(cog, allTheThings);
         }
+        // Encode the control values in the url fragment so this becomes shareable.
+        toUrlFragment(cogs);
         running = true;
       }
 
@@ -107,21 +108,24 @@
       }
 
       function makeMeee(aThing, parent){
-        var aNewElement = newElement("O");
-        var thisThing = {
-               element: aNewElement,
-               radius: aThing.radius,
-               period: aThing.period,
-               angle: 0,
-               increment: speedBoost*(2*Math.PI)/(fps*aThing.period),
-               trace: aThing.trace,
-               children: []
-        }
-        parent.push(thisThing);
-        container.appendChild(aNewElement);        
-        if (aThing.children){
-          for (child of aThing.children){
-            makeMeee(child, thisThing.children);
+        if (aThing.radius){
+          var aNewElement = newElement("O");
+          var thisThing = {
+                 element: aNewElement,
+                 radius: aThing.radius,
+                 period: aThing.period,
+                 angle: 0,
+                 increment: speedBoost*(2*Math.PI)/(fps*aThing.period),
+                 trace: aThing.trace,
+                 children: []
+          }
+          parent.push(thisThing);
+          container.appendChild(aNewElement);        
+          if (aThing.children){
+            aThing.children = aThing.children.filter((item) => item.radius);
+            for (child of aThing.children){
+              makeMeee(child, thisThing.children);
+            }
           }
         }
       }
@@ -194,7 +198,6 @@
         if (initialValues) {
           for (values of initialValues) {
             if (values){
-              console.log("Should add a child control with values "+JSON.stringify(values));
               var childControlDiv = document.createElement("div");
               childContainingDiv.appendChild(childControlDiv);
               var nextChildControl = makeControls(childControlDiv, 0, values);
@@ -259,7 +262,6 @@
               child.remove();
             }
             children = [];
-            // TODO. Remove this child from its parent rather than leaving an entry with blank values.
           }  
         };
 
@@ -308,7 +310,8 @@
                                 .replaceAll('"period"', '"p"')
                                 .replaceAll('"trace"', '"t"')
                                 .replaceAll('"children"', '"c"')
-                                .replaceAll('"', '!');
+                                .replaceAll(',"c":[]', "")
+                                .replaceAll('"', '!')
       }
 
       function fromUrlFragment(){
