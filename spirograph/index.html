@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Hello</title>
+    <title>Spirograph</title>
     <style>
       body {
         background-image: url('water.png');
@@ -303,7 +303,6 @@
         context.lineCap = "round";
       }
 
-      // TODO. Remove empty children arrays -> ,!c!:[]
       function toUrlFragment(cogs){
         window.location.hash = JSON.stringify(cogs)
                                 .replaceAll('"radius"', '"r"')
