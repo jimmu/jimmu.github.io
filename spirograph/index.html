@@ -27,6 +27,7 @@
       const speedBoost=1;  // Increase this to decrease all the periods at the cost of resolution
       const lineWidth=0.5;
       const solidLines = true; // Dots or continuous lines.
+      const backgroundColour = "#ffffff"; // Don't draw lines of this colour
 
       var rootControl;
       var controlsDiv;
@@ -92,9 +93,11 @@
             // Draw to the new position
             if (spirograph) {
               if (solidLines){
-                context.strokeStyle=thing.trace;
-                context.lineTo(xCoord, yCoord);
-                context.stroke();
+                if (thing.trace != backgroundColour){
+                  context.strokeStyle=thing.trace;
+                  context.lineTo(xCoord, yCoord);
+                  context.stroke();
+                }
               }
               else {
                 context.fillRect(xCoord, yCoord, 2*lineWidth, 2*lineWidth);
@@ -320,7 +323,6 @@
         var urlParam = window.location.hash;
         var initialValues;
         if (urlParam){
-          console.log(urlParam);
           urlParam = urlParam.substr(1); // Remove leading #
           var munged = decodeURI(urlParam)
             .replaceAll('!', '"')
