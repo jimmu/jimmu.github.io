@@ -11,12 +11,14 @@ function(){
     var firstClick = true;
     var mineGrid = [];
     var buttons = [];
+    var flags = [];
 	var numImages = ["images/unclicked.png", "images/one.png", "images/two.png", "images/three.png", "images/four.png", "images/five.png", "images/six.png", "images/seven.png", "images/eight.png"];
     var gameOn = true;
     var digging = true;
 
     for (col=0; col<gridWidth; col++){
         buttons.push([]);
+        flags.push([]);
     }
     var table = document.createElement("table");
     document.body.appendChild(table);
@@ -54,7 +56,13 @@ function(){
     function clickedCell(clickedCol, clickedRow){
         var button = buttons[clickedCol][clickedRow];
         if (!button.disabled){
-            button.disabled = true;
+            if (digging){
+                if (flags[clickedCol][clickedRow]){
+                    //Nothing should happen if we click on a flag in digging mode
+                    exit;
+                }
+                button.disabled = true;
+            }
             if (gameOn) {
                 console.log("Clicked "+clickedCol+","+clickedRow);
                 if (firstClick){
@@ -78,7 +86,6 @@ function(){
                             }
                         }
                     }
-                    console.log(JSON.stringify(mineGrid))
                 }
                 if (digging){
                     var cellContent = mineGrid[clickedCol][clickedRow];
@@ -100,7 +107,14 @@ function(){
                     }
                 }
                 else {
-                    button.textContent="X";
+                    if (flags[clickedCol][clickedRow]){
+                        button.src="images/unclicked.png";
+                        flags[clickedCol][clickedRow]=false;
+                    }
+                    else {
+                        button.src="images/flag.png";
+                        flags[clickedCol][clickedRow]=true;
+                    }
                 }
             }
         }
