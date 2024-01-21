@@ -7,8 +7,11 @@ function(){
 	const gridHeight = 16;
     const numberOfMines = Math.floor((gridWidth*gridHeight)/5);
     var unexposedNonMineTiles = (gridWidth*gridHeight)-numberOfMines;
+    var flaggedTiles = 0;
     const IS_A_MINE = 9;
 
+    // TODO. In the mineGrid, instead of just integers, we could have objects
+    // which hold the buttons and flag statuses, so we don't have multiple 2d arrays.
     var firstClick = true;
     var mineGrid = [];
     var buttons = [];
@@ -38,6 +41,11 @@ function(){
     }
     document.body.appendChild(newLargeGameButton);
 
+    // TODO. Don't let a game be started in flagging mode.
+
+    // TODO. Show something when the game is won.
+
+    // TODO. Make the New Game buttons do something.
     for (col=0; col<gridWidth; col++){
         buttons.push([]);
         flags.push([]);
@@ -117,8 +125,9 @@ function(){
                         button.src=numImages[cellContent];
                         unexposedNonMineTiles--;
                         console.log("Unexposed non-mines: "+unexposedNonMineTiles);
-                        if (unexposedNonMineTiles == 0){
-                            console.log("We may just have won. But need to check that enough flags have been placed too");
+                        if (unexposedNonMineTiles == 0 && flaggedTiles == numberOfMines){
+                            console.log("WIN! We should indicate that on the page.");
+                            gameOn = false;
                         }
                         if (cellContent == 0){
                             // Nothing. But do the collapsing-zeroes magic.
@@ -134,10 +143,12 @@ function(){
                     if (flags[clickedCol][clickedRow]){
                         button.src="images/unclicked.png";
                         flags[clickedCol][clickedRow]=false;
+                        flaggedTiles--;
                     }
                     else {
                         button.src="images/flag.png";
                         flags[clickedCol][clickedRow]=true;
+                        flaggedTiles++;
                     }
                 }
             }
