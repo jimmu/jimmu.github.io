@@ -12,9 +12,30 @@ function(){
     var mineGrid = [];
     var buttons = [];
     var flags = [];
-	var numImages = ["images/unclicked.png", "images/one.png", "images/two.png", "images/three.png", "images/four.png", "images/five.png", "images/six.png", "images/seven.png", "images/eight.png"];
+	var numImages = ["images/zero.png", "images/one.png", "images/two.png", "images/three.png", "images/four.png", "images/five.png", "images/six.png", "images/seven.png", "images/eight.png"];
     var gameOn = true;
     var digging = true;
+
+    var newSmallGameButton = document.createElement("button");
+    newSmallGameButton.textContent = "New Game. Small";
+    newSmallGameButton.onclick=function(){
+        console.log("Start a small game");
+    }
+    document.body.appendChild(newSmallGameButton);
+
+    var newMediumGameButton = document.createElement("button");
+    newMediumGameButton.textContent = "New Game. Medium";
+    newMediumGameButton.onclick=function(){
+        console.log("Start a medium game");
+    }
+    document.body.appendChild(newMediumGameButton);
+
+    var newLargeGameButton = document.createElement("button");
+    newLargeGameButton.textContent = "New Game. Large";
+    newLargeGameButton.onclick=function(){
+        console.log("Start a large game");
+    }
+    document.body.appendChild(newLargeGameButton);
 
     for (col=0; col<gridWidth; col++){
         buttons.push([]);
@@ -94,7 +115,7 @@ function(){
                         gameOn = false;
                     }
                     else if (cellContent == 0){
-                        button.textContent = ""
+                        button.src=numImages[cellContent];
                         // Nothing. But do the collapsing-zeroes magic.
                         for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridWidth); col++){
                             for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridHeight); row++){
