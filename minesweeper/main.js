@@ -11,6 +11,7 @@ function(){
     var firstClick = true;
     var mineGrid = [];
     var buttons = [];
+	var numImages = ["images/unclicked.png", "images/one.png", "images/two.png", "images/three.png", "images/four.png", "images/five.png", "images/six.png", "images/seven.png", "images/eight.png"];
     var gameOn = true;
     var digging = true;
 
@@ -25,7 +26,8 @@ function(){
         for(var col=0; col<gridWidth; col++){
             var cell = document.createElement("td");
             thisRow.appendChild(cell);
-            var thisButton = document.createElement("button");
+            var thisButton = document.createElement("img");
+			thisButton.src="images/unclicked.png"
             buttons[col][row]=thisButton;
             cell.appendChild(thisButton);
             thisButton.onclick = (function(c, r, button){
@@ -81,7 +83,7 @@ function(){
                 if (digging){
                     var cellContent = mineGrid[clickedCol][clickedRow];
                     if (cellContent == IS_A_MINE){
-                        button.textContent = "BOOM!"
+                        button.src="images/mine.png"
                         gameOn = false;
                     }
                     else if (cellContent == 0){
@@ -94,7 +96,7 @@ function(){
                         }
                     }
                     else {
-                        button.textContent=cellContent;
+                        button.src=numImages[cellContent];
                     }
                 }
                 else {
