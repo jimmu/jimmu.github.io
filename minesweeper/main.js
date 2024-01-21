@@ -3,8 +3,9 @@ require([],
 function(){
     console.log("Hello.");
     // Generate a grid. Put a button in each cell.
-    const gridSize = 10;
-    const numberOfMines = (gridSize*gridSize)/5;
+    const gridWidth = 13;
+	const gridHeight = 16;
+    const numberOfMines = (gridWidth*gridHeight)/5;
     const IS_A_MINE = 9;
 
     var firstClick = true;
@@ -13,15 +14,15 @@ function(){
     var gameOn = true;
     var digging = true;
 
-    for (col=0; col<gridSize; col++){
+    for (col=0; col<gridWidth; col++){
         buttons.push([]);
     }
     var table = document.createElement("table");
     document.body.appendChild(table);
-    for (var row=0; row<gridSize; row++){
+    for (var row=0; row<gridHeight; row++){
         var thisRow = document.createElement("tr");
         table.appendChild(thisRow);
-        for(var col=0; col<gridSize; col++){
+        for(var col=0; col<gridWidth; col++){
             var cell = document.createElement("td");
             thisRow.appendChild(cell);
             var thisButton = document.createElement("button");
@@ -59,8 +60,8 @@ function(){
                     firstClick = false;
                     layMines(clickedCol, clickedRow);
                     // Now fill in the counts;
-                    for (var col=0; col<gridSize; col++){
-                        for (var row=0; row<gridSize; row++){
+                    for (var col=0; col<gridWidth; col++){
+                        for (var row=0; row<gridHeight; row++){
                             if (mineGrid[col][row] != IS_A_MINE){
                                 // Count the neighbouring mines.
                                 var adjacentMines = mineAtCoord(col-1, row-1) +
@@ -86,8 +87,8 @@ function(){
                     else if (cellContent == 0){
                         button.textContent = ""
                         // Nothing. But do the collapsing-zeroes magic.
-                        for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridSize); col++){
-                            for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridSize); row++){
+                        for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridWidth); col++){
+                            for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridHeight); row++){
                                 clickedCell(col, row);
                             }
                         }
@@ -104,8 +105,8 @@ function(){
     }
 
     function layMines(firstClickCol, firstClickRow){
-        for (var col=0; col<gridSize; col++){
-            var thisCol = Array(gridSize).fill(0);
+        for (var col=0; col<gridWidth; col++){
+            var thisCol = Array(gridWidth).fill(0);
             mineGrid.push(thisCol);
         }
         // We have a 2d array which we can access with [x][y]
@@ -128,8 +129,8 @@ function(){
     }
 
     function randomCell(){
-        var col=Math.floor(Math.random() * gridSize);
-        var row=Math.floor(Math.random() * gridSize);
+        var col=Math.floor(Math.random() * gridWidth);
+        var row=Math.floor(Math.random() * gridHeight);
         return {col, row};
     }
 
@@ -142,7 +143,7 @@ function(){
     }
 
     function valueAtCoord(col, row){
-        if (col<0 || col>=gridSize || row<0 || row>=gridSize){
+        if (col<0 || col>=gridWidth || row<0 || row>=gridHeight){
             return 0;
         }
         var value = mineGrid[col][row];
