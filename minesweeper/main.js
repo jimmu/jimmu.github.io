@@ -5,7 +5,8 @@ function(){
     // Generate a grid. Put a button in each cell.
     const gridWidth = 13;
 	const gridHeight = 16;
-    const numberOfMines = (gridWidth*gridHeight)/5;
+    const numberOfMines = Math.floor((gridWidth*gridHeight)/5);
+    var unexposedNonMineTiles = (gridWidth*gridHeight)-numberOfMines;
     const IS_A_MINE = 9;
 
     var firstClick = true;
@@ -85,9 +86,7 @@ function(){
                 button.disabled = true;
             }
             if (gameOn) {
-                console.log("Clicked "+clickedCol+","+clickedRow);
                 if (firstClick){
-                    console.log("First click. Need to generate the mines");
                     firstClick = false;
                     layMines(clickedCol, clickedRow);
                     // Now fill in the counts;
@@ -114,17 +113,21 @@ function(){
                         button.src="images/mine.png"
                         gameOn = false;
                     }
-                    else if (cellContent == 0){
-                        button.src=numImages[cellContent];
-                        // Nothing. But do the collapsing-zeroes magic.
-                        for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridWidth); col++){
-                            for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridHeight); row++){
-                                clickedCell(col, row);
-                            }
-                        }
-                    }
                     else {
                         button.src=numImages[cellContent];
+                        unexposedNonMineTiles--;
+                        console.log("Unexposed non-mines: "+unexposedNonMineTiles);
+                        if (unexposedNonMineTiles == 0){
+                            console.log("We may just have won. But need to check that enough flags have been placed too");
+                        }
+                        if (cellContent == 0){
+                            // Nothing. But do the collapsing-zeroes magic.
+                            for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridWidth); col++){
+                                for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridHeight); row++){
+                                    clickedCell(col, row);
+                                }
+                            }
+                        }
                     }
                 }
                 else {
