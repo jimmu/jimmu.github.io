@@ -10,6 +10,7 @@ function(){
     var numberOfMines;
     var unexposedNonMineTiles;
     var flaggedTiles;
+    var flagCount;
     const IS_A_MINE = 9;
 
     var firstClick;
@@ -25,19 +26,17 @@ function(){
     makeButton(gameDiv, function(){startGame(16, 12)}, "New Game. Large");
     var table = document.createElement("table");
     gameDiv.appendChild(table);
+    var flagCountLabel = document.createElement("span");
+    flagCountLabel.textContent = "Remaining flags";
+    flagCount = document.createElement("span");
+    gameDiv.appendChild(flagCountLabel);
+    gameDiv.appendChild(flagCount);
 
     var flaggingOrDiggingButton = makeButton(gameDiv,
         function(){
-                if (digging){
-                    flaggingOrDiggingButton.textContent = "Flagging";
-                    digging = false;
-                }
-                else {
-                    flaggingOrDiggingButton.textContent = "Digging";
-                    digging = true;
-                }
-            },
-        "Digging");
+            digging = !digging;
+            setDiggingLabel();
+        });
 
     function startGame(width, height){
         gridWidth = width;
@@ -54,85 +53,78 @@ function(){
             mineGrid.push([]);
         }
         fillGridWithButtons();
-        flaggingOrDiggingButton.textContent = "Digging";
         digging = true;
+        setDiggingLabel();
+        flagCount.textContent = numberOfMines;
     }
-
-    // TODO. Don't let a game be started in flagging mode.
 
     // TODO. Show something when the game is won.
 
-    // TODO. Make the New Game buttons do something.
-
     function clickedCell(clickedCol, clickedRow){
         var button = mineGrid[clickedCol][clickedRow].button;
-        if (!button.disabled){
+        if (gameOn && !button.disabled){
             if (digging){
-                if (mineGrid[clickedCol][clickedRow].isFlagged){
-                    //Nothing should happen if we click on a flag in digging mode
-                    exit;
-                }
+                // Disable the button before anything else, so that this space won't be clicked again
+                // by the automatic zero thing, getting us into an infinite recursion.
                 button.disabled = true;
-            }
-            if (gameOn) {
                 if (firstClick){
                     firstClick = false;
                     layMines(clickedCol, clickedRow);
-                    // Now fill in the counts;
-                    for (var col=0; col<gridWidth; col++){
-                        for (var row=0; row<gridHeight; row++){
-                            if (mineGrid[col][row].mineNumber != IS_A_MINE){
-                                // Count the neighbouring mines.
-                                var adjacentMines = mineAtCoord(col-1, row-1) +
-                                                    mineAtCoord(col, row-1) +
-                                                    mineAtCoord(col+1, row-1) +
-                                                    mineAtCoord(col-1, row) +
-                                                    mineAtCoord(col+1, row) +
-                                                    mineAtCoord(col-1, row+1) +
-                                                    mineAtCoord(col, row+1) +
-                                                    mineAtCoord(col+1, row+1);
-                                mineGrid[col][row].mineNumber = adjacentMines;
-                            }
-                        }
-                    }
+                    countNeighbouringMines();
                 }
-                if (digging){
-                    var cellContent = mineGrid[clickedCol][clickedRow].mineNumber;
-                    if (cellContent == IS_A_MINE){
-                        button.src="images/mine.png"
-                        gameOn = false;
-                        console.log("Oh that's bad news.");
-                    }
-                    else {
-                        button.src=numImages[cellContent];
-                        unexposedNonMineTiles--;
-                        if (unexposedNonMineTiles == 0 && flaggedTiles == numberOfMines){
-                            console.log("WIN! We should indicate that on the page.");
-                            gameOn = false;
-                        }
-                        if (cellContent == 0){
-                            // Nothing. But do the collapsing-zeroes magic.
-                            for (col=Math.max(clickedCol-1, 0); col<Math.min(clickedCol+2, gridWidth); col++){
-                                for (row=Math.max(clickedRow-1, 0); row<Math.min(clickedRow+2, gridHeight); row++){
-                                    clickedCell(col, row);
-                                }
-                            }
-                        }
-                    }
+                if (!mineGrid[clickedCol][clickedRow].isFlagged){
+                    //Nothing should happen if we click on a flag in digging mode
+                    digAtCoord(clickedCol, clickedRow);
                 }
-                else {
-                    if (mineGrid[clickedCol][clickedRow].isFlagged){
-                        button.src="images/unclicked.png";
-                        mineGrid[clickedCol][clickedRow].isFlagged=false;
-                        flaggedTiles--;
-                    }
-                    else {
-                        button.src="images/flag.png";
-                        mineGrid[clickedCol][clickedRow].isFlagged=true;
-                        flaggedTiles++;
+            }
+            else if (!firstClick){
+                flagAtCoord(clickedCol, clickedRow);
+            }
+        }
+    }
+
+    function digAtCoord(col, row){
+        var cellContent = mineGrid[col][row].mineNumber;
+        if (cellContent == IS_A_MINE){
+            mineGrid[col][row].button.src="images/mine.png"
+            gameOn = false;
+            console.log("Oh that's bad news.");
+        }
+        else {
+            mineGrid[col][row].button.src=numImages[cellContent];
+            unexposedNonMineTiles--;
+            if (cellContent == 0){
+                // Nothing. But do the collapsing-zeroes magic.
+                for (var c=Math.max(col-1, 0); c<Math.min(col+2, gridWidth); c++){
+                    for (var r=Math.max(row-1, 0); r<Math.min(row+2, gridHeight); r++){
+                        clickedCell(c, r);
                     }
                 }
             }
+            checkForWin();
+        }
+        mineGrid[col][row].button.disabled = true;
+    }
+
+    function flagAtCoord(col, row){
+        if (mineGrid[col][row].isFlagged){
+            mineGrid[col][row].button.src="images/unclicked.png";
+            mineGrid[col][row].isFlagged=false;
+            flaggedTiles--;
+        }
+        else {
+            mineGrid[col][row].button.src="images/flag.png";
+            mineGrid[col][row].isFlagged=true;
+            flaggedTiles++;
+        }
+        flagCount.textContent = (numberOfMines - flaggedTiles)
+        checkForWin();
+    }
+
+    function checkForWin(){
+        if (unexposedNonMineTiles == 0 && flaggedTiles == numberOfMines){
+            console.log("WIN! We should indicate that on the page.");
+            gameOn = false;
         }
     }
 
@@ -160,6 +152,15 @@ function(){
         }
     }
 
+    function setDiggingLabel(){
+        if (digging){
+            flaggingOrDiggingButton.textContent = "Digging";
+        }
+        else {
+            flaggingOrDiggingButton.textContent = "Flagging";
+        }
+    }
+
     function layMines(firstClickCol, firstClickRow){
         for (var mineNumber=0; mineNumber<numberOfMines; mineNumber++){
             var coords;
@@ -176,6 +177,25 @@ function(){
                 );
             }
             mineGrid[coords.col][coords.row].mineNumber = IS_A_MINE;
+        }
+    }
+
+    function countNeighbouringMines(){
+        for (var col=0; col<gridWidth; col++){
+            for (var row=0; row<gridHeight; row++){
+                if (mineGrid[col][row].mineNumber != IS_A_MINE){
+                    // Count the neighbouring mines.
+                    var adjacentMines = mineAtCoord(col-1, row-1) +
+                                        mineAtCoord(col, row-1) +
+                                        mineAtCoord(col+1, row-1) +
+                                        mineAtCoord(col-1, row) +
+                                        mineAtCoord(col+1, row) +
+                                        mineAtCoord(col-1, row+1) +
+                                        mineAtCoord(col, row+1) +
+                                        mineAtCoord(col+1, row+1);
+                    mineGrid[col][row].mineNumber = adjacentMines;
+                }
+            }
         }
     }
 
