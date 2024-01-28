@@ -1,8 +1,10 @@
 "use strict";
 require([],
 function(){
+    // TODO. A flags-still-to-place counter.
     console.log("Hello.");
     // Generate a grid. Put a button in each cell.
+    var gameDiv;
     var gridWidth;
 	var gridHeight;
     var numberOfMines;
@@ -16,22 +18,26 @@ function(){
     var gameOn;
     var digging;
 
+    gameDiv = document.createElement("div");
+    document.body.appendChild(gameDiv);
+    makeButton(gameDiv, function(){startGame(8, 8)}, "New Game. Small");
+    makeButton(gameDiv, function(){startGame(10, 10)}, "New Game. Medium");
+    makeButton(gameDiv, function(){startGame(16, 12)}, "New Game. Large");
     var table = document.createElement("table");
-    document.body.appendChild(table);
+    gameDiv.appendChild(table);
 
-    var flaggingOrDiggingButton = document.createElement("button");
-    flaggingOrDiggingButton.textContent = "Digging";
-    flaggingOrDiggingButton.onclick=function(){
-        if (digging){
-            flaggingOrDiggingButton.textContent = "Flagging";
-            digging = false;
-        }
-        else {
-            flaggingOrDiggingButton.textContent = "Digging";
-            digging = true;
-        }
-    }
-    document.body.appendChild(flaggingOrDiggingButton);
+    var flaggingOrDiggingButton = makeButton(gameDiv,
+        function(){
+                if (digging){
+                    flaggingOrDiggingButton.textContent = "Flagging";
+                    digging = false;
+                }
+                else {
+                    flaggingOrDiggingButton.textContent = "Digging";
+                    digging = true;
+                }
+            },
+        "Digging");
 
     function startGame(width, height){
         gridWidth = width;
@@ -41,57 +47,16 @@ function(){
         flaggedTiles = 0;
         gameOn = true;
         firstClick = true;
+//        mineGrid = Array(width).fill([]);
+//        console.log(mineGrid);
         mineGrid = [];
-        for (col=0; col<width; col++){
+        for (var col=0; col<width; col++){
             mineGrid.push([]);
         }
-
-        // Clear any previous table content
-        table.innerHTML = '';
-        // And fill the table with new buttons
-        for (var row=0; row<gridHeight; row++){
-            var thisRow = document.createElement("tr");
-            table.appendChild(thisRow);
-            for(var col=0; col<gridWidth; col++){
-                mineGrid[col][row] = {mineNumber:0, button: null, isFlagged: false};
-                var cell = document.createElement("td");
-                thisRow.appendChild(cell);
-                var thisButton = document.createElement("img");
-                thisButton.src="images/unclicked.png"
-                mineGrid[col][row].button=thisButton;
-                cell.appendChild(thisButton);
-                thisButton.onclick = (function(c, r, button){
-                    return function(){
-                        clickedCell(c, r, button);
-                    }
-                })(col, row);
-            }
-        }
-
+        fillGridWithButtons();
         flaggingOrDiggingButton.textContent = "Digging";
         digging = true;
     }
-
-    var newSmallGameButton = document.createElement("button");
-    newSmallGameButton.textContent = "New Game. Small";
-    newSmallGameButton.onclick=function(){
-        startGame(8, 8);
-    }
-    document.body.appendChild(newSmallGameButton);
-
-    var newMediumGameButton = document.createElement("button");
-    newMediumGameButton.textContent = "New Game. Medium";
-    newMediumGameButton.onclick=function(){
-        startGame(10, 10)
-    }
-    document.body.appendChild(newMediumGameButton);
-
-    var newLargeGameButton = document.createElement("button");
-    newLargeGameButton.textContent = "New Game. Large";
-    newLargeGameButton.onclick=function(){
-        startGame(16, 12);
-    }
-    document.body.appendChild(newLargeGameButton);
 
     // TODO. Don't let a game be started in flagging mode.
 
@@ -171,6 +136,30 @@ function(){
         }
     }
 
+    function fillGridWithButtons(){
+        // Clear any previous table content
+        table.innerHTML = '';
+        // And fill the table with new buttons
+        for (var row=0; row<gridHeight; row++){
+            var thisRow = document.createElement("tr");
+            table.appendChild(thisRow);
+            for(var col=0; col<gridWidth; col++){
+                mineGrid[col][row] = {mineNumber:0, button: null, isFlagged: false};
+                var cell = document.createElement("td");
+                thisRow.appendChild(cell);
+                var thisButton = makeClickable("img", cell, (function(c, r, button){
+                                                                return function(){
+                                                                    clickedCell(c, r, button);
+                                                                }
+                                                            })(col, row));
+                thisButton.src="images/unclicked.png"
+                thisButton.style.width="32px";  // TODO. Work this out as a fraction of the available screen width or height.
+                thisButton.style.height="32px"; // TODO. And vary it based on the grid size.
+                mineGrid[col][row].button=thisButton;
+            }
+        }
+    }
+
     function layMines(firstClickCol, firstClickRow){
         for (var mineNumber=0; mineNumber<numberOfMines; mineNumber++){
             var coords;
@@ -209,5 +198,19 @@ function(){
             return 0;
         }
         return mineGrid[col][row].mineNumber;
+    }
+
+    function makeClickable(elementType, container, onclick, label){
+        var button = document.createElement(elementType);
+        if (label){
+            button.textContent = label;
+        }
+        button.onclick=onclick
+        container.appendChild(button);
+        return button;
+    }
+
+    function makeButton(container, onclick, label){
+        return makeClickable("button", container, onclick, label);
     }
 });
