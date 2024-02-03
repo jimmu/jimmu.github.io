@@ -1,7 +1,6 @@
 "use strict";
 require([],
 function(){
-    // TODO. A flags-still-to-place counter.
     console.log("Hello.");
     // Generate a grid. Put a button in each cell.
     var gameDiv;
@@ -11,6 +10,8 @@ function(){
     var unexposedNonMineTiles;
     var flaggedTiles;
     var flagCount;
+    var winDiv;
+    var loseDiv;
     const IS_A_MINE = 9;
 
     var firstClick;
@@ -19,11 +20,29 @@ function(){
     var gameOn;
     var digging;
 
+    var buttonsDiv = document.createElement("div");
+    buttonsDiv.setAttribute("class", "buttonsDiv");
+    document.body.appendChild(buttonsDiv);
     gameDiv = document.createElement("div");
+    gameDiv.setAttribute("class", "gameDiv");
     document.body.appendChild(gameDiv);
-    makeButton(gameDiv, function(){startGame(8, 8)}, "New Game. Small");
-    makeButton(gameDiv, function(){startGame(10, 10)}, "New Game. Medium");
-    makeButton(gameDiv, function(){startGame(16, 12)}, "New Game. Large");
+    winDiv = document.createElement("div");
+    winDiv.setAttribute("class", "winOrLoseDiv");
+    winDiv.setAttribute("hidden", true);
+    var winMessage = document.createElement("span");
+    winMessage.textContent = "Good";
+    winDiv.appendChild(winMessage);
+    document.body.appendChild(winDiv);
+    loseDiv = document.createElement("div");
+    loseDiv.setAttribute("class", "winOrLoseDiv");
+    loseDiv.setAttribute("hidden", true);
+    var loseMessage = document.createElement("span");
+    loseMessage.textContent = "Ouch";
+    loseDiv.appendChild(loseMessage);
+    document.body.appendChild(loseDiv);
+    makeButton(buttonsDiv, function(){startGame(8, 8)}, "New Game. Small");
+    makeButton(buttonsDiv, function(){startGame(10, 10)}, "New Game. Medium");
+    makeButton(buttonsDiv, function(){startGame(16, 12)}, "New Game. Large");
     var table = document.createElement("table");
     gameDiv.appendChild(table);
     var flagCountLabel = document.createElement("span");
@@ -39,6 +58,8 @@ function(){
         });
 
     function startGame(width, height){
+        winDiv.setAttribute("hidden", true);
+        loseDiv.setAttribute("hidden", true);
         gridWidth = width;
         gridHeight = height;
         numberOfMines = Math.floor((width*height)/5)
@@ -89,6 +110,7 @@ function(){
             mineGrid[col][row].button.src="images/mine.png"
             gameOn = false;
             console.log("Oh that's bad news.");
+            loseDiv.removeAttribute("hidden");
         }
         else {
             mineGrid[col][row].button.src=numImages[cellContent];
@@ -125,6 +147,7 @@ function(){
         if (unexposedNonMineTiles == 0 && flaggedTiles == numberOfMines){
             console.log("WIN! We should indicate that on the page.");
             gameOn = false;
+            winDiv.removeAttribute("hidden");
         }
     }
 
