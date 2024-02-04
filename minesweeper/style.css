@@ -8,6 +8,7 @@ body {
     top: 50%;
     left: 50%;
     height: 90%;
+    text-align: center;
 }
 
 .buttonsDiv > button {
@@ -19,6 +20,10 @@ body {
     transform: translate(-50%, 0);
     top: 0;
     left: 50%;
+}
+
+.flagCount(){
+    margin: 1em;
 }
 
 .winOrLoseDiv {

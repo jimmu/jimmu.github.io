@@ -2,6 +2,8 @@
 require([],
 function(){
     console.log("Hello.");
+    const loseImageLocation = "images/loseExplosion.gif";
+    const winImageLocation = "images/winPoppers.gif";
     // Generate a grid. Put a button in each cell.
     var gameDiv;
     var gridWidth;
@@ -13,7 +15,11 @@ function(){
     var winDiv;
     var loseDiv;
 	var loseImage = new Image();
-	loseImage.src = "images/loseExplosion.gif"
+	loseImage.src = loseImageLocation
+	loseImage.setAttribute("class", "winOrLoseImage")
+	var winImage = new Image();
+	winImage.src = winImageLocation
+	winImage.setAttribute("class", "winOrLoseImage")
     const IS_A_MINE = 9;
 
     var firstClick;
@@ -30,30 +36,26 @@ function(){
     document.body.appendChild(gameDiv);
     winDiv = document.createElement("div");
     winDiv.setAttribute("class", "winOrLoseDiv");
+	winDiv.appendChild(winImage);
     winDiv.setAttribute("hidden", true);
-    var winMessage = document.createElement("img");
-    winMessage.src="images/winPoppers.gif";
-	winMessage.setAttribute("class", "winOrLoseImage")
-    winDiv.appendChild(winMessage);
     document.body.appendChild(winDiv);
     loseDiv = document.createElement("div");
     loseDiv.setAttribute("class", "winOrLoseDiv");
+	loseDiv.appendChild(loseImage);
     loseDiv.setAttribute("hidden", true);
-    //var loseMessage = document.createElement("img");
-    //loseMessage.src="images/loseExplosion.gif";
-	//loseMessage.setAttribute("class", "winOrLoseImage")
-    //loseDiv.appendChild(loseImage);
     document.body.appendChild(loseDiv);
     makeButton(buttonsDiv, function(){startGame(8, 8)}, "New Game. Small");
     makeButton(buttonsDiv, function(){startGame(10, 10)}, "New Game. Medium");
     makeButton(buttonsDiv, function(){startGame(16, 12)}, "New Game. Large");
-    var table = document.createElement("table");
-    gameDiv.appendChild(table);
     var flagCountLabel = document.createElement("span");
-    flagCountLabel.textContent = "Remaining flags";
+    flagCountLabel.textContent = "Remaining flags: ";
+    flagCountLabel.setAttribute("class", "flagCount");
     flagCount = document.createElement("span");
+    flagCount.setAttribute("class", "flagCount");
     gameDiv.appendChild(flagCountLabel);
     gameDiv.appendChild(flagCount);
+    var table = document.createElement("table");
+    gameDiv.appendChild(table);
 
     var flaggingOrDiggingButton = makeButton(gameDiv,
         function(){
@@ -71,8 +73,6 @@ function(){
         flaggedTiles = 0;
         gameOn = true;
         firstClick = true;
-//        mineGrid = Array(width).fill([]);
-//        console.log(mineGrid);
         mineGrid = [];
         for (var col=0; col<width; col++){
             mineGrid.push([]);
@@ -115,8 +115,8 @@ function(){
             gameOn = false;
             console.log("Oh that's bad news.");
             loseDiv.removeAttribute("hidden");
-			loseDiv.innerHTML=""
-			loseDiv.appendChild(loseImage);
+            loseImage.src = ""
+            loseImage.src = loseImageLocation;
         }
         else {
             mineGrid[col][row].button.src=numImages[cellContent];
@@ -154,6 +154,8 @@ function(){
             console.log("WIN! We should indicate that on the page.");
             gameOn = false;
             winDiv.removeAttribute("hidden");
+            winImage.src = ""
+            winImage.src = winImageLocation;
         }
     }
 
