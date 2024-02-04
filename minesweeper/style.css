@@ -29,3 +29,7 @@ body {
     left: 50%;
     font-size: 30pt;
 }
+.winOrLoseImage {
+	width: 256px;
+	height: 256px;
+}

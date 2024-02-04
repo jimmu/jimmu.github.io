@@ -12,6 +12,8 @@ function(){
     var flagCount;
     var winDiv;
     var loseDiv;
+	var loseImage = new Image();
+	loseImage.src = "images/loseExplosion.gif"
     const IS_A_MINE = 9;
 
     var firstClick;
@@ -29,16 +31,18 @@ function(){
     winDiv = document.createElement("div");
     winDiv.setAttribute("class", "winOrLoseDiv");
     winDiv.setAttribute("hidden", true);
-    var winMessage = document.createElement("span");
-    winMessage.textContent = "Good";
+    var winMessage = document.createElement("img");
+    winMessage.src="images/winPoppers.gif";
+	winMessage.setAttribute("class", "winOrLoseImage")
     winDiv.appendChild(winMessage);
     document.body.appendChild(winDiv);
     loseDiv = document.createElement("div");
     loseDiv.setAttribute("class", "winOrLoseDiv");
     loseDiv.setAttribute("hidden", true);
-    var loseMessage = document.createElement("span");
-    loseMessage.textContent = "Ouch";
-    loseDiv.appendChild(loseMessage);
+    //var loseMessage = document.createElement("img");
+    //loseMessage.src="images/loseExplosion.gif";
+	//loseMessage.setAttribute("class", "winOrLoseImage")
+    //loseDiv.appendChild(loseImage);
     document.body.appendChild(loseDiv);
     makeButton(buttonsDiv, function(){startGame(8, 8)}, "New Game. Small");
     makeButton(buttonsDiv, function(){startGame(10, 10)}, "New Game. Medium");
@@ -111,6 +115,8 @@ function(){
             gameOn = false;
             console.log("Oh that's bad news.");
             loseDiv.removeAttribute("hidden");
+			loseDiv.innerHTML=""
+			loseDiv.appendChild(loseImage);
         }
         else {
             mineGrid[col][row].button.src=numImages[cellContent];
