@@ -1,0 +1,145 @@
+body {
+	font-family: sans-serif;
+	background-color: #333333;
+	font-size: 12pt;
+}
+
+button {
+    margin: 0.25em;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 10px 0;
+}
+
+input {
+    width: 30em;
+}
+
+tr {
+    height: 2em;
+}
+
+td {
+    width: 2em;
+    height: 2em;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+
+.top {
+    border-top: 1px solid;
+    border-top-left-radius: 0.75em;
+    border-top-right-radius: 0.75em;
+}
+
+.bottom {
+    border-bottom: 1px solid;
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+}
+
+.top.movedFrom {
+}
+
+.middle {
+}
+
+.movedFrom {
+    border-color: red;
+}
+
+.movedTo {
+    border-color: green;
+}
+
+.bla, .black {
+    background-color: black;
+}
+
+.w, .wh, .white {
+    background-color: white;
+}
+
+.r, .red {
+    background-color: red;
+}
+
+.lr, .lightRed {
+    background-color: indianRed;
+}
+
+.lo, .lightOrange {
+    background-color: orange;
+}
+
+.do, .o, .or, .orange, .darkOrange {
+    background-color: darkOrange;
+}
+
+.y, .ye, .yellow {
+    background-color: yellow;
+}
+
+.ly, .lightYellow {
+    background-color: gold;
+}
+
+.lg, .lgr, .lightGreen {
+    background-color: paleGreen;
+}
+
+.dg, .g, .gr, .darkGreen, .green {
+    background-color: green;
+}
+
+.c, .cyan {
+    background-color: aqua;
+}
+
+.lb, .lightBlue {
+    background-color: lightSkyBlue;
+}
+
+.db, .b, .darkBlue, .blue {
+    background-color: blue;
+}
+
+.pi, .pink {
+    background-color: pink;
+}
+
+.i, .in, .indigo {
+    background-color: indigo;
+}
+
+.li, .lin, .lightIndigo {
+    background-color: mediumBlue;
+}
+
+.v, .vi, .violet {
+    background-color: darkViolet;
+}
+
+.lv, .lvi, .lightViolet {
+    background-color: violet;
+}
+
+.pu, .purple {
+    background-color: purple;
+}
+
+.br, .brown {
+    background-color: saddleBrown;
+}
+
+.lbr, .lightBrown {
+    background-color: tan;
+}
