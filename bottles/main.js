@@ -413,14 +413,16 @@ function(){
     function problemTextToObject(){
         let asText = problemInputField.value
         let bottles = []
-        for (let bottleString of asText.split(",")){
-            if (bottleString.trim() == "-"){
-                bottles.push([])
-            }
-            else {
-                // Reversed because the code was written to expect bottom-to-top ordering.
-                let thisBottle = bottleString.trim().split(/\s+/).reverse()
-                bottles.push(thisBottle)
+        if (asText){
+            for (let bottleString of asText.toLowerCase().split(",")){
+                if (bottleString.trim() == "-"){
+                    bottles.push([])
+                }
+                else {
+                    // Reversed because the code was written to expect bottom-to-top ordering.
+                    let thisBottle = bottleString.trim().split(/\s+/).reverse()
+                    bottles.push(thisBottle)
+                }
             }
         }
         console.log("Parsed from the input field: "+JSON.stringify(bottles))
