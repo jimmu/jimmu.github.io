@@ -7,6 +7,75 @@ function(){
     // So this is 12 bottles (and 12 colours) plus 2 empties.
     // The must be n of each colour, where n is the largest number of colours in any bottle.
     const sampleProblem = "w lo br lg, do lb lg y, br do y lo, dg y pu pu, do lb dg lo, db r db lo, pi pu w r, lg pi pu r, dg db db lb, r pi pi w, dg lb do br, br lg y w,-,-"
+
+    const colourTerms = new Map([
+      ["bla", "black"],
+      ["blk", "black"],
+      ["w", "white"],
+      ["wh", "white"],
+      ["wht", "white"],
+      ["lr", "light red"],
+      ["r", "red"],
+      ["dr", "dark red"],
+      ["lm", "light magenta"],
+      ["lma", "light magenta"],
+      ["ma", "magenta"],
+      ["ma", "magenta"],
+      ["dma", "dark magenta"],
+      ["dma", "dark magenta"],
+      ["lo", "light orange"],
+      ["o", "orange"],
+      ["or", "orange"],
+      ["do", "dark orange"],
+      ["dor", "dark orange"],
+      ["y", "yellow"],
+      ["ye", "yellow"],
+      ["ly", "light yellow"],
+      ["lye", "light yellow"],
+      ["dy", "dark yellow"],
+      ["dye", "dark yellow"],
+      ["lg", "light green"],
+      ["lgr", "light green"],
+      ["g", "green"],
+      ["gr", "green"],
+      ["dg", "dark green"],
+      ["dgr", "dark green"],
+      ["c", "cyan"],
+      ["cy", "cyan"],
+      ["lb", "light blue"],
+      ["lbl", "light blue"],
+      ["b", "blue"],
+      ["bl", "blue"],
+      ["db", "dark blue"],
+      ["dbl", "dark blue"],
+      ["lp", "light pink"],
+      ["lpi", "light pink"],
+      ["p", "pink"],
+      ["pi", "pink"],
+      ["dp", "dark pink"],
+      ["dpi", "dark pink"],
+      ["li", "light indigo"],
+      ["lin", "light indigo"],
+      ["i", "indigo"],
+      ["in", "indigo"],
+      ["di", "dark indigo"],
+      ["din", "dark indigo"],
+      ["v", "light violet"],
+      ["vi", "light violet"],
+      ["lv", "violet"],
+      ["lvi", "violet"],
+      ["dv", "dark violet"],
+      ["dvi", "dark violet"],
+      ["lpu", "light purple"],
+      ["pu", "purple"],
+      ["pur", "purple"],
+      ["dpu", "dark purple"],
+      ["lbr", "light brown"],
+      ["br", "brown"],
+      ["dbr", "dark brown"]
+    ])
+    const colourNames = new Set(colourTerms.values())
+
     const maxSecondsToSpend = 30
     let startTime = performance.now()
 
@@ -282,6 +351,9 @@ function(){
         assert(moves[0], {from: 0, to: 1, layers: 1}, "Possible moves check 2")
         assert(moves[1], {from: 2, to: 3, layers: 1}, "Possible moves check 3")
         assert(moves[2], {from: 3, to: 2, layers: 1}, "Possible moves check 4")
+        assert(expandColourName("bl"), "blue", "Colour name check 1")
+        assert(expandColourName("bla"), "black", "Colour name check 2")
+        assert(expandColourName("dgr"), "dark green", "Colour name check 3")
 
         console.log("Self checks passed")
     }
@@ -421,7 +493,8 @@ function(){
                 else {
                     // Reversed because the code was written to expect bottom-to-top ordering.
                     let thisBottle = bottleString.trim().split(/\s+/).reverse()
-                    bottles.push(thisBottle)
+                    // Now expand any abbreviations to full colour names
+                    bottles.push(thisBottle.map((c)=>{return expandColourName(c)}))
                 }
             }
         }
@@ -431,5 +504,17 @@ function(){
 
     function biggestBottle(bottles){
         return Math.max.apply(0, bottles.map((arr)=>{return arr.length}))
+    }
+
+    // Take an abbreviation and turn it into the full word that it represents.
+    // e.g "b"->"blue"
+    function expandColourName(colour){
+        // We might be given the whole word.
+        if (colourNames.has(colour)){
+            return colour
+        }
+        if (colourTerms.has(colour)){
+            return colourTerms.get(colour)
+        }
     }
 })

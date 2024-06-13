@@ -2,6 +2,7 @@ body {
 	font-family: sans-serif;
 	background-color: #333333;
 	font-size: 12pt;
+	color: ivory;
 }
 
 button {
@@ -32,6 +33,7 @@ td {
     margin-bottom: 0;
     margin-left: 0.25em;
     margin-right: 0.25em;
+    filter: brightness(90%);
 }
 
 .top {
@@ -60,86 +62,66 @@ td {
     border-color: green;
 }
 
-.bla, .black {
+.light {
+    filter: brightness(100%);
+}
+
+.dark {
+    filter: brightness(75%);
+}
+
+.black {
     background-color: black;
 }
 
-.w, .wh, .white {
+.white {
     background-color: white;
 }
 
-.r, .red {
-    background-color: red;
+.red {
+    background-color: crimson;
 }
 
-.lr, .lightRed {
-    background-color: indianRed;
+.magenta{
+    background-color: magenta;
 }
 
-.lo, .lightOrange {
+.orange {
     background-color: orange;
 }
 
-.do, .o, .or, .orange, .darkOrange {
-    background-color: darkOrange;
-}
-
-.y, .ye, .yellow {
+.yellow {
     background-color: yellow;
 }
 
-.ly, .lightYellow {
-    background-color: gold;
-}
-
-.lg, .lgr, .lightGreen {
-    background-color: paleGreen;
-}
-
-.dg, .g, .gr, .darkGreen, .green {
+.green {
     background-color: green;
 }
 
-.c, .cyan {
+.cyan {
     background-color: aqua;
 }
 
-.lb, .lightBlue {
-    background-color: lightSkyBlue;
-}
-
-.db, .b, .darkBlue, .blue {
+.blue {
     background-color: blue;
 }
 
-.pi, .pink {
+.pink {
     background-color: pink;
 }
 
-.i, .in, .indigo {
+.indigo {
     background-color: indigo;
 }
 
-.li, .lin, .lightIndigo {
-    background-color: mediumBlue;
-}
-
-.v, .vi, .violet {
+.violet {
     background-color: darkViolet;
 }
 
-.lv, .lvi, .lightViolet {
-    background-color: violet;
-}
-
-.pu, .purple {
+.purple {
     background-color: purple;
 }
 
-.br, .brown {
+.brown {
     background-color: saddleBrown;
-}
-
-.lbr, .lightBrown {
-    background-color: tan;
 }
