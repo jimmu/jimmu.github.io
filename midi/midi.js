@@ -17,6 +17,13 @@ function(){
                 controllerListeners.set(controlNumber, allListeners)
             }
             allListeners.add(callback)
+        },
+        getControlValue: function(controlNumber){
+            let value = controllerValues.get(controlNumber)
+            if (value) {
+                return value
+            }
+            return 0
         }
     }
 
@@ -24,7 +31,6 @@ function(){
       console.log("MIDI ready!");
       midi = midiAccess; // store in the global (in real usage, would probably keep in an object instance)
       listInputsAndOutputs(midiAccess)
-      //midiDisplay(midiAccess, document.body)
       listenForMIDIInput(midiAccess)
     }
 

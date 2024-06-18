@@ -9,58 +9,24 @@ function(d3, midi){
     let blue = 0
 
     return function(parentObject){
-        midiValueContainer = parentObject
-        midi.subscribe(0, (eventData)=>{
-            red = eventData.controlValue
-            display()
-        })
-        midi.subscribe(1, (eventData)=>{
-            green = eventData.controlValue
-            display()
-        })
-        midi.subscribe(2, (eventData)=>{
-            blue = eventData.controlValue
-            display()
-        })
+        midiValueContainer = document.createElement("div")
+        parentObject.appendChild(midiValueContainer)
+//        midi.subscribe(0, (eventData)=>{
+//            red = eventData.controlValue
+//            display()
+//        })
+//        midi.subscribe(1, (eventData)=>{
+//            green = eventData.controlValue
+//            display()
+//        })
+//        midi.subscribe(2, (eventData)=>{
+//            blue = eventData.controlValue
+//            display()
+//        })
         midi.subscribe(-1, (eventData)=>{
             console.log(eventData)
         })
         midi.start()
-
-        let foo = document.createElement("button")
-        foo.textContent = "Start noise"
-        foo.onclick = music
-        parentObject.appendChild(foo)
-    }
-
-    // TODO. Now I know this makes sound, move it to its own module.
-    function music(){
-        let ctx = new AudioContext || webkitAudioContext();
-        let out = ctx.destination
-        // Instantiating
-        let modOsc = ctx.createOscillator() // Modulator
-        let carOsc = ctx.createOscillator() // Carrier
-        modOsc.frequency.value = 440
-        carOsc.frequency.value = 440
-        // Modulation depth
-        let modOsc_gain = ctx.createGain()
-        modOsc_gain.gain.value = 3000
-        // Wiring everything up
-        modOsc.connect(modOsc_gain)
-        modOsc_gain.connect(carOsc.frequency)
-        carOsc.connect(out)
-        modOsc.start()
-        carOsc.start()
-
-        // TODO. Make these logarithmic
-        midi.subscribe(3, (eventData)=>{
-            carOsc.frequency.value = 440 + eventData.controlValue
-        })
-        midi.subscribe(4, (eventData)=>{
-            modOsc.frequency.value = 440 + eventData.controlValue
-        })
-
-
     }
 
     function display(){
