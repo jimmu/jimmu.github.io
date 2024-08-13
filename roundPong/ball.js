@@ -14,10 +14,7 @@ function(constants, angleTools){
     return {
         init: function(ctx){
             selfTest()
-            x = constants.centre.x
-            y = constants.centre.y
-            direction = Math.PI/10 // Radians
-            ballSpeed = constants.ballInitialSpeed
+            reset()
         },
         update: function(ctx, deltaSeconds){
             ctx.save()
@@ -33,14 +30,7 @@ function(constants, angleTools){
         },
         bounce,
         colour,
-        reset: function(){
-            ballSpeed = constants.ballInitialSpeed
-            x = constants.centre.x
-            y = constants.centre.y
-            direction = Math.random() * TAU
-            ballColour = "black"
-            lastBatToHit = null
-        },
+        reset,
         getPosition: function(){
             return {x, y}
         },
@@ -56,6 +46,15 @@ function(constants, angleTools){
             }
             return lastBatToHit
         }
+    }
+
+    function reset(){
+        ballSpeed = constants.ballInitialSpeed
+        x = constants.centre.x + ((Math.random()-0.5) * (constants.radius/2))
+        y = constants.centre.y + ((Math.random()-0.5) * (constants.radius/2))
+        direction = Math.random() * TAU
+        ballColour = "black"
+        lastBatToHit = null
     }
 
     function colour(theColour){    // getter/setter
