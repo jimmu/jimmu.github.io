@@ -18,14 +18,14 @@ function(constants, angleTools){
             init: function(ctx){
                 speed = constants.batInitialSpeed
             },
-            update: function(ctx){
+            update: function(ctx, deltaSeconds){
                 ctx.save()
                 // Update bat position
                 if (goingCW){
-                    moveCw(speed)
+                    moveCw(deltaSeconds)
                 }
                 else if (goingCCW){
-                    moveCw(-speed)
+                    moveCw(-deltaSeconds)
                 }
                 // Draw the bat
                 ctx.beginPath()
@@ -96,8 +96,8 @@ function(constants, angleTools){
             }
         }
 
-        function moveCw(amount){
-            batPosition = angleTools.limitRange(batPosition + amount)
+        function moveCw(deltaSeconds){
+            batPosition = angleTools.limitRange(batPosition + (speed * deltaSeconds))
         }
     }
 

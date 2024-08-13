@@ -8,7 +8,7 @@ function(constants, ball){
         return {
             init: function(ctx){
             },
-            update: function(ctx){
+            update: function(ctx, deltaSeconds){
                 if (!ball.lastBat() || ball.lastBat() != bat){
                     // Get the bat and ball positions.
                     // Are they colliding?
@@ -22,7 +22,7 @@ function(constants, ball){
                     let yFromCentre = ballPos.y - constants.centre.y
                     let distFromCentre = Math.sqrt((xFromCentre * xFromCentre) + (yFromCentre * yFromCentre))
                     let minBounceRadius = constants.radius - constants.ballRadius - (constants.batThickness/2)
-                    let maxBounceRadius = minBounceRadius + ball.speed()
+                    let maxBounceRadius = minBounceRadius + (ball.speed() * deltaSeconds)
                     if (distFromCentre >= minBounceRadius && distFromCentre < maxBounceRadius){
                         // Only make it bounce if it has hit the bat
                         if (bat.areCoordsWithinBatSector(ballPos.x, ballPos.y)){

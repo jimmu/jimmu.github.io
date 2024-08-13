@@ -7,6 +7,7 @@ function(constants){
     let gameElements = []
     let running = false
     let timer
+    let prevTime
 
     return {
         init: (elements)=>{
@@ -32,7 +33,8 @@ function(constants){
         start: ()=>{
             if (!running){
                 running = true
-                timer = setInterval(update, 1000/50)
+                prevTime = Date.now()
+                timer = setInterval(update, 1000/constants.framesPerSecond)
             }
         },
         stop: ()=>{
@@ -48,8 +50,11 @@ function(constants){
             // Clear the canvas
             ctx.clearRect(0, 0, constants.width, constants.height)
             // Call update on every game element.
+            let currentTime = Date.now()
+            let timeDelta = (currentTime - prevTime)/1000   // seconds since previous invocation of update()
+            prevTime = currentTime
             for (let gameElement of gameElements){
-                gameElement.update(ctx)
+                gameElement.update(ctx, timeDelta)
             }
         }
     }

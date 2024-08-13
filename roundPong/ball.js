@@ -9,6 +9,7 @@ function(constants, angleTools){
     let direction
     let ballColour = "black"
     let lastBatToHit = null
+    let allowedToBounce = true
 
     return {
         init: function(ctx){
@@ -18,10 +19,10 @@ function(constants, angleTools){
             direction = Math.PI/10 // Radians
             ballSpeed = constants.ballInitialSpeed
         },
-        update: function(ctx){
+        update: function(ctx, deltaSeconds){
             ctx.save()
             // Update the ball position.
-            moveIncrement()
+            moveIncrement(deltaSeconds)
             // Draw the ball.
             ctx.beginPath()
             ctx.stokeStyle = ballColour
@@ -72,6 +73,7 @@ function(constants, angleTools){
     }
 
     function bounce(batMovement){
+        if (allowedToBounce){
             // Work out the angle of the normal (radius to this point).
             // Then the angle of the bounce.
             // Which should be twice the angle of the normal minus the angle of the ball.
@@ -85,13 +87,15 @@ function(constants, angleTools){
             newDirection -= constants.speedBasedBounceAngle * batMovement
             direction = newDirection
             ballSpeed = ballSpeed * constants.bounceSpeedIncrement
-            moveIncrement() // Move away from the bounce place. Or we could flag no more bounces to happen before the next move
+            allowedToBounce = false // Don't bounce again until the ball has moved
+        }
     }
 
-    function moveIncrement(){
+    function moveIncrement(deltaSeconds){
         // Update the ball position.
-        x += ballSpeed * Math.cos(direction)
-        y += ballSpeed * Math.sin(direction)
+        x += deltaSeconds * ballSpeed * Math.cos(direction)
+        y += deltaSeconds * ballSpeed * Math.sin(direction)
+        allowedToBounce = true
     }
 
     function selfTest(){
