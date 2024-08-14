@@ -49,10 +49,7 @@ function(constants){
         if (angle < 0){
             return angle + TAU
         }
-        if (angle >= TAU){
-            return angle - TAU
-        }
-        return angle
+        return angle%TAU
     }
 
 })
