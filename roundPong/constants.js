@@ -10,7 +10,6 @@ function(){
         width,
         height,
         windowCentre,
-        centre: {x: width/2, y: height/2},
         batSize: 20 * (Math.PI/180),
         batThickness,
         radius: (width - batThickness)/2,

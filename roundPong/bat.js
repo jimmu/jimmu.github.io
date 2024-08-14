@@ -7,7 +7,7 @@ function(constants, angleTools){
         let batPosition = initialPosition   // Radians
         let leftKey = left.toUpperCase()
         let rightKey = right.toUpperCase()
-        const angleSubtendedByBallRadius = angleTools.angleFromCoords(constants.centre.x + constants.radius, constants.centre.y + constants.ballRadius)
+        const angleSubtendedByBallRadius = angleTools.angleFromCoords(constants.radius, constants.ballRadius)
 
         let goingCW = false
         let goingCCW = false
@@ -32,7 +32,7 @@ function(constants, angleTools){
                 ctx.strokeStyle = colour
                 ctx.lineWidth = constants.batThickness
                 ctx.lineCap = "round"
-                ctx.arc(constants.centre.x, constants.centre.y,
+                ctx.arc(0, 0,
                         constants.radius,
                         batPosition + (constants.batSize/2),
                         batPosition - (constants.batSize/2),

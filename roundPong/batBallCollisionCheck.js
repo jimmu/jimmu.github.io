@@ -18,9 +18,7 @@ function(constants, ball){
                     let batSize = bat.getSize()         // Arc angle in radians
 
                     // Has the ball reached the bat radius boundary?
-                    let xFromCentre = ballPos.x - constants.centre.x
-                    let yFromCentre = ballPos.y - constants.centre.y
-                    let distFromCentre = Math.sqrt((xFromCentre * xFromCentre) + (yFromCentre * yFromCentre))
+                    let distFromCentre = Math.sqrt((ballPos.x * ballPos.x) + (ballPos.y * ballPos.y))
                     let minBounceRadius = constants.radius - constants.ballRadius - (constants.batThickness/2)
                     let maxBounceRadius = minBounceRadius + (ball.speed() * deltaSeconds)
                     if (distFromCentre >= minBounceRadius && distFromCentre < maxBounceRadius){

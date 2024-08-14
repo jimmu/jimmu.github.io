@@ -9,12 +9,12 @@ function(constants, ball){
             // Has it gone too far?
             let ballPos = ball.getPosition()    // x,y coords
 
-            // Wait for the ball to drift right out of the box. Even at the corner.
-            let xFromCentre = ballPos.x - constants.centre.x
-            let yFromCentre = ballPos.y - constants.centre.y
+            // Wait for the ball to drift out of the box.
             let oneFrameOfMovement = ball.speed() * deltaSeconds
-            if (ballPos.x < -oneFrameOfMovement || ballPos.x > (constants.width + oneFrameOfMovement) ||
-                ballPos.y < -oneFrameOfMovement || ballPos.y > (constants.height + oneFrameOfMovement)) {
+            let tooFarX = constants.width/2 + oneFrameOfMovement
+            let tooFarY = constants.height/2 + oneFrameOfMovement
+            if (ballPos.x < -tooFarX || ballPos.x > tooFarX ||
+                ballPos.y < -tooFarY || ballPos.y > tooFarY) {
                 if (ball.lastBat()){
                     ball.lastBat().points++
                 }

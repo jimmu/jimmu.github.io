@@ -50,8 +50,8 @@ function(constants, angleTools){
 
     function reset(){
         ballSpeed = constants.ballInitialSpeed
-        x = constants.centre.x + ((Math.random()-0.5) * (constants.radius/2))
-        y = constants.centre.y + ((Math.random()-0.5) * (constants.radius/2))
+        x = (Math.random()-0.5) * (constants.radius/2)
+        y = (Math.random()-0.5) * (constants.radius/2)
         direction = Math.random() * TAU
         ballColour = "black"
         lastBatToHit = null
@@ -101,9 +101,9 @@ function(constants, angleTools){
         console.assert(angleTools.limitRange(0) == 0, "limitRange 1")
         console.assert(angleTools.limitRange(-1) == TAU-1, "limitRange 2")
         console.assert(angleTools.limitRange(8) == 8 - TAU, "limitRange 3")
-        console.assert(angleTools.angleFromCoords(constants.centre.x, constants.height) - Math.PI/2 < 0.001, "angleFromCoords1")
-        console.assert(angleTools.angleFromCoords(constants.centre.x + 100, constants.centre.y + 100) - Math.PI/4 < 0.001, "angleFromCoords2")
-        console.assert(angleTools.angleFromCoords(0, constants.centre.y) - Math.PI < 0.001, "angleFromCoords3")
+        console.assert(angleTools.angleFromCoords(0, constants.radius) - Math.PI/2 < 0.001, "angleFromCoords1")
+        console.assert(angleTools.angleFromCoords(100, 100) - Math.PI/4 < 0.001, "angleFromCoords2")
+        console.assert(angleTools.angleFromCoords(0, 0) - Math.PI < 0.001, "angleFromCoords3")
         console.log("Ball self test complete")
     }
 })

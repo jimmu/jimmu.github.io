@@ -17,8 +17,8 @@ function(constants){
                 ctx.save()
                 ctx.font = "16px Arial"
                 // Draw the scores on the screen
-                let baseLine = 20
-                let margin = 5
+                let baseLine = -constants.height/2 + 20
+                let margin = -constants.width/2 + 5
                 ctx.fillText("Scores:", margin, baseLine)
                 for (let bat of bats){
                     baseLine += 20

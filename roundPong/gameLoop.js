@@ -19,9 +19,11 @@ function(constants){
             canvas.style.left = constants.windowCentre - (constants.width)/2
             document.body.appendChild(canvas)
             ctx = canvas.getContext("2d")
-            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            ctx.strokeStyle = 'rgb(0, 0, 0)'
             canvas.width  = constants.width
             canvas.height = constants.height
+            // Move the origin to the middle instead of top left
+            ctx.translate(constants.width/2, constants.height/2)
 
             for (let gameElement of elements){
                 gameElement.init(ctx)
@@ -48,7 +50,7 @@ function(constants){
     function update(){
         if (running){
             // Clear the canvas
-            ctx.clearRect(0, 0, constants.width, constants.height)
+            ctx.clearRect(-constants.width/2, -constants.height/2, constants.width, constants.height)
             // Call update on every game element.
             let currentTime = Date.now()
             let timeDelta = (currentTime - prevTime)/1000   // seconds since previous invocation of update()
