@@ -6,15 +6,12 @@ function(constants){
         let bats = theBats
 
         // We are given an array of all the bats (players)
-        for (let bat of bats){
-            bat.points = 0
-        }
+        bats.forEach((bat)=>{bat.points = 0})
 
         return {
             init: function(ctx){
             },
             update: function(ctx){
-                ctx.save()
                 ctx.font = "16px Arial"
                 // Draw the scores on the screen
                 let baseLine = -constants.height/2 + 20
@@ -25,7 +22,6 @@ function(constants){
                     ctx.fillStyle = bat.colour()
                     ctx.fillText(bat.points, margin, baseLine)
                 }
-                ctx.restore()
             }
         }
     }

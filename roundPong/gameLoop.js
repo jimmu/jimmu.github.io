@@ -19,15 +19,16 @@ function(constants){
             canvas.style.left = constants.windowCentre - (constants.width)/2
             document.body.appendChild(canvas)
             ctx = canvas.getContext("2d")
-            ctx.strokeStyle = 'rgb(0, 0, 0)'
             canvas.width  = constants.width
             canvas.height = constants.height
             // Move the origin to the middle instead of top left
             ctx.translate(constants.width/2, constants.height/2)
 
-            for (let gameElement of elements){
-                gameElement.init(ctx)
-            }
+            gameElements.forEach((x)=>{
+                ctx.save()
+                x.init?.(ctx)
+                ctx.restore()
+            })
 
             document.addEventListener("keydown", keyDown)
             document.addEventListener("keyup", keyUp)
@@ -55,28 +56,22 @@ function(constants){
             let currentTime = Date.now()
             let timeDelta = (currentTime - prevTime)/1000   // seconds since previous invocation of update()
             prevTime = currentTime
-            for (let gameElement of gameElements){
-                gameElement.update(ctx, timeDelta)
-            }
+            gameElements.forEach((x)=>{
+                ctx.save()
+                x.update?.(ctx, timeDelta)
+                ctx.restore()}
+            )
         }
     }
 
     function keyDown(e){
         if (running){
-            for (let gameElement of gameElements){
-                if (gameElement.keyDown){
-                    gameElement.keyDown(e.key)
-                }
-            }
+            gameElements.forEach((x)=>{x.keyDown?.(e.key)})
         }
     }
     function keyUp(e){
         if (running){
-            for (let gameElement of gameElements){
-                if (gameElement.keyUp){
-                    gameElement.keyUp(e.key)
-                }
-            }
+            gameElements.forEach((x)=>{x.keyUp?.(e.key)})
         }
     }
 })

@@ -19,7 +19,6 @@ function(constants, angleTools){
                 speed = constants.batInitialSpeed
             },
             update: function(ctx, deltaSeconds){
-                ctx.save()
                 // Update bat position
                 if (goingCW){
                     moveCw(deltaSeconds)
@@ -38,7 +37,6 @@ function(constants, angleTools){
                         batPosition - (constants.batSize/2),
                         true)
                 ctx.stroke()
-                ctx.restore()
             },
             keyDown: function(key){
                 if (key.toUpperCase() == leftKey){

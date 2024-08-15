@@ -17,7 +17,6 @@ function(constants, angleTools){
             reset()
         },
         update: function(ctx, deltaSeconds){
-            ctx.save()
             // Update the ball position.
             moveIncrement(deltaSeconds)
             // Draw the ball.
@@ -26,7 +25,6 @@ function(constants, angleTools){
             ctx.fillStyle = ballColour
             ctx.arc(x, y, constants.ballRadius, 0, TAU)
             ctx.fill()
-            ctx.restore()
         },
         bounce,
         colour,
