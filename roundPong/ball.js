@@ -7,10 +7,13 @@ function(constants, angleTools){
     let y
     let ballSpeed
     let direction
-    let ballColour = "black"
+    let ballColour
     let lastBatToHit = null
-    let allowedToBounce = true
-
+    let allowedToBounce
+    let isInsideBatRadius
+    let isBeyondBat
+    const minBounceRadiusSquared = Math.pow(constants.radius - constants.ballRadius - (constants.batThickness/2), 2)
+    const maxBounceRadiusSquared = constants.radius * constants.radius
     return {
         init: function(ctx){
             selfTest()
@@ -43,16 +46,25 @@ function(constants, angleTools){
                 bounce(bat.getDirection())
             }
             return lastBatToHit
+        },
+        insideBatRadius: function(){
+            return isInsideBatRadius
+        },
+        beyondBat: function(){
+            return isBeyondBat
         }
     }
 
     function reset(){
         ballSpeed = constants.ballInitialSpeed
-        x = (Math.random()-0.5) * (constants.radius/2)
-        y = (Math.random()-0.5) * (constants.radius/2)
+        x = (Math.random()-0.5) * (constants.radius/1.5)
+        y = (Math.random()-0.5) * (constants.radius/1.5)
         direction = Math.random() * TAU
-        ballColour = "black"
+        ballColour = constants.ballColour
         lastBatToHit = null
+        allowedToBounce = true
+        isInsideBatRadius = true
+        isBeyondBat = false
     }
 
     function colour(theColour){    // getter/setter
@@ -84,7 +96,7 @@ function(constants, angleTools){
             newDirection -= constants.speedBasedBounceAngle * batMovement
             direction = newDirection
             ballSpeed = ballSpeed * constants.bounceSpeedIncrement
-            allowedToBounce = false // Don't bounce again until the ball has moved
+            allowedToBounce = false // Don't bounce again until the ball has moved back inside the radius
         }
     }
 
@@ -92,7 +104,12 @@ function(constants, angleTools){
         // Update the ball position.
         x += deltaSeconds * ballSpeed * Math.cos(direction)
         y += deltaSeconds * ballSpeed * Math.sin(direction)
-        allowedToBounce = true
+        let distFromCentreSquared = (x * x) + (y * y)
+        isInsideBatRadius = distFromCentreSquared < minBounceRadiusSquared
+        isBeyondBat = distFromCentreSquared > maxBounceRadiusSquared
+        if (isInsideBatRadius){
+            allowedToBounce = true
+        }
     }
 
     function selfTest(){

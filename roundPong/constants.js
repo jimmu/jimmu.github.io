@@ -16,10 +16,13 @@ function(){
         radius: (width - batThickness)/2,
         ballRadius: 10,
         ballInitialSpeed: 200,    // pixels per second
-        batInitialSpeed: 3.0,     // radians per second
+        batInitialSpeed: 2.5,     // radians per second
+        ballColour: "black",
         bounceMaxRandomAngle: 6 * degree,
         speedBasedBounceAngle: 15 * degree,
-        bounceSpeedIncrement: 1.05
+        bounceSpeedIncrement: 1.05,
+        scoreFontSizePixels: 24,
+        scoreFont: "Arial"
     }
 
 })
