@@ -16,7 +16,8 @@ function(){
         radius: (width - batThickness)/2,
         ballRadius: 10,
         ballInitialSpeed: 200,    // pixels per second
-        batInitialSpeed: 2.5,     // radians per second
+        batTopSpeed: 2.5,     // radians per second
+        batAcceleration: 15,       // radians per second^2
         ballColour: "black",
         bounceMaxRandomAngle: 6 * degree,
         speedBasedBounceAngle: 15 * degree,

@@ -11,12 +11,16 @@ function(constants, angleTools){
 
         let goingCW = false
         let goingCCW = false
+        let acceleration = 0
+        let topSpeed = 0
         let speed = 0
         let points = 0
 
         return {
             init: function(ctx){
-                speed = constants.batInitialSpeed
+                topSpeed = constants.batTopSpeed
+                speed = 0
+                acceleration = constants.batAcceleration
             },
             update: function(ctx, deltaSeconds){
                 // Update bat position
@@ -40,10 +44,18 @@ function(constants, angleTools){
             },
             keyDown: function(key){
                 if (key.toUpperCase() == leftKey){
+                    if (goingCW){
+                        // We're changing direction
+                        speed = 0
+                    }
                     goingCCW = true
                     goingCW = false
                 }
                 if (key.toUpperCase() == rightKey){
+                    if (goingCCW){
+                        // Change of direction
+                        speed = 0
+                    }
                     goingCCW = false
                     goingCW = true
                 }
@@ -54,6 +66,9 @@ function(constants, angleTools){
                 }
                 if (key.toUpperCase() == rightKey){
                     goingCW = false
+                }
+                if (!(goingCW || goingCCW)){
+                    speed = 0
                 }
             },
             getPosition: function(){
@@ -95,6 +110,7 @@ function(constants, angleTools){
         }
 
         function moveCw(deltaSeconds){
+            speed = Math.min(speed + acceleration * Math.abs(deltaSeconds), topSpeed)
             batPosition = angleTools.limitRange(batPosition + (speed * deltaSeconds))
         }
     }
