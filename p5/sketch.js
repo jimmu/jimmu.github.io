@@ -1,31 +1,34 @@
-let numBoxes = 600
+let numBoxes = 400
 
-let positions = []
-let rotations = []
-let scales = []
-let colours = []
+let boxes = []
 
-let boxSize = 20
-let zPeriod = 10000 // seconds?
-let xPeriod = 9000
-let yPeriod = 10000
+let minSize = 20
+let maxSize = 80
+let zPeriod = 25 // seconds
+let xPeriod = 30
+let yPeriod = 40
+let maxSpinSpeed = Math.PI/3 // Radians per second
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   //debugMode();
+  let biggerSize = Math.max(width, height)/1.5
     for (let i = 0; i < numBoxes; i++) {
-      positions.push(createVector(
-        random(-width / 2, width / 2),
-        random(-height / 2, height / 2),
-        random(-width / 2, width / 2)
-      ));
-      rotations.push(createVector(
-        random(TWO_PI),
-        random(TWO_PI),
-        random(TWO_PI)
-      ));
-      scales.push(random(0.5, 2));
-      colours.push({red: random(255), green: random(255), blue: random(255)})
+      boxes.push({position: p5.Vector.random3D().mult(random(biggerSize/3, biggerSize)),
+                  rotation: createVector(   // Spin rate, not position
+                                    random(-maxSpinSpeed, maxSpinSpeed),
+                                    random(-maxSpinSpeed, maxSpinSpeed),
+                                    random(-maxSpinSpeed, maxSpinSpeed)
+                                  ),
+                  size: {width: random(minSize, maxSize),
+                         height: random(minSize, maxSize),
+                         depth: random(minSize, maxSize)},
+                  colour: {red: random(255),
+                           green: random(255),
+                           blue: random(255)
+                          }
+                 }
+                )
     }
 }
 
@@ -35,26 +38,22 @@ function draw() {
   noStroke();
   lights();
 
-  for (let i = 0; i < numBoxes; i += 1) {
-    // Before the push()
-    rotateX(TWO_PI * (millis()/(1000 * xPeriod)))
-    rotateY(TWO_PI * (millis()/(1000 * yPeriod)))
-    rotateZ(TWO_PI * (millis()/(1000 * zPeriod)))
+  rotateX(TWO_PI * (millis()/(1000 * xPeriod)))
+  rotateY(TWO_PI * (millis()/(1000 * yPeriod)))
+  rotateZ(TWO_PI * (millis()/(1000 * zPeriod)))
 
-    push();
-    translate(
-      positions[i].x,
-      positions[i].y,
-      positions[i].z
-    );
-    rotateX(rotations[i].x + millis()/1000);
-    rotateY(rotations[i].y);
-    rotateZ(rotations[i].z);
-    scale(scales[i]);
-    fill(colours[i].red, colours[i].green, colours[i].blue);
-    box(boxSize);
-    pop();
+  let elapsedSeconds = millis()/1000
+  for (let bx of boxes){
+    push()
+    translate(bx.position.x, bx.position.y, bx.position.z)
+    rotateX(bx.rotation.x * elapsedSeconds)
+    rotateY(bx.rotation.y * elapsedSeconds)
+    rotateZ(bx.rotation.z * elapsedSeconds)
+    fill(bx.colour.red, bx.colour.green, bx.colour.blue)
+    box(bx.size.width, bx.size.height, bx.size.depth)
+    pop()
   }
+  //    //scale(scales[i]);
 }
 
 function windowResized() {
