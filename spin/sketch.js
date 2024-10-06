@@ -51,8 +51,6 @@ function draw() {
     // Turn on a white point light that follows the mouse.
     pointLight(255, 255, 255, mx, my, 1000);
 
-  console.log(mx)
-
   // Doing this before pushing the state onto the stack.
   let elapsedSeconds = millis()/1000
 //  rotateX(TWO_PI * elapsedSeconds / xPeriod)
