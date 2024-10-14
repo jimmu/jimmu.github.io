@@ -55,6 +55,8 @@ export default class Clock
 
     draw(p5){
         p5.push()
+        let fillColour = this.running? 40 : 35
+        let lineColour = this.running? 250 : 125
         p5.angleMode(p5.DEGREES)
         let fullRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
         let bigTickRadius = fullRadius * 0.95
@@ -64,10 +66,10 @@ export default class Clock
         // Draw the clock face
         let faceDiameter = 2 * fullRadius
         p5.noStroke()
-        p5.fill(this.remainingSeconds() > 0 ? 40 : 0)
+        p5.fill(this.remainingSeconds() > 0 ? fillColour : 0)
         p5.ellipse(0, 0, faceDiameter, faceDiameter)
         // Draw some ticks.
-        p5.stroke(250)
+        p5.stroke(lineColour)
         for (let i=0; i<60; i++){
             if (i % 5 == 0){
                 p5.strokeWeight(0.75)
@@ -89,6 +91,17 @@ export default class Clock
         let minutesAngle = this.remainingSeconds() / 10
         p5.rotate(minutesAngle - secondsAngle)
         p5.line(0, 0, 0, -minutesRadius)
+        p5.pop()
+        // Draw digital readout
+        p5.push()
+        p5.fill(lineColour)
+        let seconds = this.remainingSeconds() % 60
+        let minutes = (this.remainingSeconds() - seconds)/60
+        p5.textAlign(p5.CENTER, p5.BOTTOM)
+        p5.textSize(fullRadius/8)
+        p5.textFont("Courier New")
+        let paddedSeconds = ("00"+seconds).substr(-2)
+        p5.text(minutes+":"+paddedSeconds, 0, fullRadius/2)
         p5.pop()
     }
 }
