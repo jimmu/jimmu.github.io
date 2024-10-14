@@ -4,9 +4,17 @@ import Clock from './clock.js'
 export default class ChessClock
 {
     constructor(initialTimeSeconds){
-        this.clockA = new Clock(initialTimeSeconds, this.aTick.bind(this))
-        this.clockB = new Clock(initialTimeSeconds, this.bTick.bind(this))
+        this.initialTimeSeconds = initialTimeSeconds
+        this.reset()
+    }
+
+    reset(e){
+        this.clockA = new Clock(this.initialTimeSeconds, this.aTick.bind(this))
+        this.clockB = new Clock(this.initialTimeSeconds, this.bTick.bind(this))
         this.started = false
+        if (e){
+            e.stopPropagation()
+        }
     }
 
     startA(){
@@ -23,6 +31,13 @@ export default class ChessClock
             this.clockB.start()
             this.started = true
         }
+    }
+
+    stopBoth(e){
+        this.clockA.stop()
+        this.clockB.stop()
+        this.started = false
+        e.stopPropagation()
     }
 
     aTick(remainingSeconds){
@@ -45,6 +60,35 @@ export default class ChessClock
     draw(p5){
         // Draw the two clocks side by side.
         p5.push()
+        // TODO. Refactor the button creation
+        if (!this.pauseButton && this.started){
+            this.pauseButton = p5.createButton("Pause")
+            this.pauseButton.size(p5.windowWidth/16, p5.windowWidth/32)
+            this.pauseButton.position(p5.windowWidth * 15 / 32,  p5.windowHeight/4)
+            this.pauseButton.style("font", "Courier New")
+            let fontSize = Math.floor(p5.windowWidth/64)
+            this.pauseButton.style('font-size', fontSize+"px")
+            this.pauseButton.style("color", p5.color(130, 130, 130))
+            this.pauseButton.style("background-color", p5.color(50, 50, 50))
+            this.pauseButton.style("border", "0px")
+            this.pauseButton.mouseClicked(this.stopBoth.bind(this))
+        }
+        if (this.pauseButton && !this.started){
+            this.pauseButton.remove()
+            this.pauseButton = null
+        }
+        if (!this.resetButton){
+            this.resetButton = p5.createButton("Reset")
+            this.resetButton.size(p5.windowWidth/16, p5.windowWidth/32)
+            this.resetButton.position(p5.windowWidth * 15 / 32,  p5.windowHeight * 3 / 4)
+            this.resetButton.style("font", "Courier New")
+            let fontSize = Math.floor(p5.windowWidth/64)
+            this.resetButton.style('font-size', fontSize+"px")
+            this.resetButton.style("color", p5.color(130, 130, 130))
+            this.resetButton.style("background-color", p5.color(50, 50, 50))
+            this.resetButton.style("border", "0px")
+            this.resetButton.mouseClicked(this.reset.bind(this))
+        }
         let quarterWidth = p5.windowWidth/4
         p5.background(30)
         p5.translate(quarterWidth, p5.windowHeight/2)

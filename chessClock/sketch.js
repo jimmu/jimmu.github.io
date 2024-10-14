@@ -20,6 +20,7 @@ new p5(function(p5){
 
     p5.draw = function(){
         p5.push()
+        // TODO. Move this into the chess clock.
         if (!clock.started){
 //            p5.fill(250)
 //            p5.stroke(250)
@@ -41,7 +42,7 @@ new p5(function(p5){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
     }
 
-    p5.mouseClicked = function() {
+    p5.mouseClicked = function(e) {
         clock.clicked(p5)
     }
 })
