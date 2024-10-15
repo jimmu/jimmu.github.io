@@ -130,6 +130,11 @@ export default class ChessClock
             p5.text("Set time using slider", p5.windowWidth/2, timeSliderY + 20)
             p5.text("Tap a clock to start", p5.windowWidth/2, timeSliderY + 36)
         }
+        // Did one of the clocks run down?
+        if (this.clockA.remainingSeconds() == 0 || this.clockB.remainingSeconds() == 0){
+            this.pauseButton.hide()
+            this.resetButton.show()
+        }
         p5.pop()
     }
 
