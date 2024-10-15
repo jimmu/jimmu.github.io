@@ -68,14 +68,15 @@ export default class ChessClock
     }
 
     clicked(p5){
-        if (!this.paused){
-            if (p5.mouseX < p5.windowWidth/2){
+        if (!this.paused && p5.mouseY > p5.windowHeight * 0.1){
+            if (p5.mouseX < p5.windowWidth * 0.4){
                 this.startB()
+                this.pauseButton.show()
             }
-            else {
+            else if (p5.mouseX > p5.windowWidth * 0.6){
                 this.startA()
+                this.pauseButton.show()
             }
-            this.pauseButton.show()
         }
     }
 
@@ -88,7 +89,11 @@ export default class ChessClock
         this.pauseButton.hide()
 
         this.timeSlider = p5.createSlider(1, 60, this.initialTimeMinutes)
-        this.previousSliderValue = this.timeSlider.value()
+        this.timeSlider.input((e)=>{
+            this.initialTimeMinutes = this.timeSlider.value()
+            this.reset()
+            e.stopPropagation()
+        })
     }
 
     draw(p5){
@@ -107,9 +112,9 @@ export default class ChessClock
         p5.push()
         // Draw the buttons. They don't need drawing as such, but if the screen has changed size, they need to be moved.
         this.pauseButton.size(p5.windowWidth/16, p5.windowWidth/32)
-        this.pauseButton.position(p5.windowWidth * 15 / 32,  p5.windowHeight/2 - clockRadius * 0.75)
+        this.pauseButton.position(p5.windowWidth/2 - this.pauseButton.size().width/2,  p5.windowHeight/2 - clockRadius * 0.75)
         this.resetButton.size(p5.windowWidth/16, p5.windowWidth/32)
-        this.resetButton.position(p5.windowWidth * 15 / 32,  p5.windowHeight/2 + clockRadius * 0.75)
+        this.resetButton.position(p5.windowWidth/2 - this.resetButton.size().width/2,  p5.windowHeight/2 + clockRadius * 0.75)
         // Same for the time slider
         if (this.started){
             this.timeSlider.hide()
@@ -119,26 +124,21 @@ export default class ChessClock
             let timeSliderY = p5.windowHeight/2 - clockRadius
             this.timeSlider.position(p5.windowWidth * 0.4, timeSliderY)
             this.timeSlider.size(p5.windowWidth * 0.2)
-            if (this.timeSlider.value() != this.previousSliderValue){
-                this.previousSliderValue = this.timeSlider.value()
-                this.initialTimeMinutes = this.timeSlider.value()
-                this.reset()
-            }
             p5.textAlign(p5.CENTER, p5.TOP)
             p5.fill(200)
-            p5.text("Set time using slider", p5.windowWidth/2, timeSliderY + 16)
+            p5.textSize(clockRadius/16)
+            p5.text("Set time using slider", p5.windowWidth/2, timeSliderY + 20)
+            p5.text("Tap a clock to start", p5.windowWidth/2, timeSliderY + 36)
         }
         p5.pop()
     }
 
     makeButton(p5, label, onClick){
         let button = p5.createButton(label)
-        button.style("font", "Courier New")
         let fontSize = Math.floor(p5.windowWidth/64)
         button.style('font-size', fontSize+"px")
         button.style("color", p5.color(130, 130, 130))
         button.style("background-color", p5.color(50, 50, 50))
-        button.style("border", "0px")
         button.mouseClicked(onClick.bind(this))
         return button
     }
