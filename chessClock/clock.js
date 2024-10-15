@@ -53,12 +53,14 @@ export default class Clock
         }
     }
 
-    draw(p5){
+    setup(p5){
+    }
+
+    draw(p5, fullRadius){
         p5.push()
         let fillColour = this.running? 40 : 35
         let lineColour = this.running? 250 : 125
         p5.angleMode(p5.DEGREES)
-        let fullRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
         let bigTickRadius = fullRadius * 0.95
         let secondsRadius = fullRadius * 0.9
         let minutesRadius = secondsRadius * 0.9
