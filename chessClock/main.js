@@ -11,7 +11,6 @@ initP5(function(p5){
       p5.createCanvas(p5.windowWidth, p5.windowHeight)
       // Two clocks, which count down to zero. Analogue with minutes and seconds only. And digital.
       // Touching one clock stops it and starts the other.
-      p5.textFont("Courier New")
       clock = new ChessClock(10)    //  default time in minutes
       clock.setup()
     }
