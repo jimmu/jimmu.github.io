@@ -48,7 +48,7 @@ export default class ChessClock
             this.resetButton.hide()
         }
         else {
-            this.pauseButton.html("Restart")
+            this.pauseButton.html("Resume")
             // Note which clock was running so we know which one to unpause
             this.clockWhichGotPaused = this.clockA.running? this.clockA : this.clockB
             this.clockA.stop()
@@ -111,7 +111,10 @@ export default class ChessClock
         p5.pop()
         p5.push()
         // Draw the buttons. They don't need drawing as such, but if the screen has changed size, they need to be moved.
-        this.pauseButton.size(p5.windowWidth/16, p5.windowWidth/32)
+        let buttonFontSize = Math.floor(p5.windowWidth/64)
+        this.pauseButton.style('font-size', buttonFontSize+"px")
+        this.resetButton.style('font-size', buttonFontSize+"px")
+        this.pauseButton.size(p5.windowWidth/12, p5.windowWidth/32)
         this.pauseButton.position(p5.windowWidth/2 - this.pauseButton.size().width/2,  p5.windowHeight/2 - clockRadius * 0.75)
         this.resetButton.size(p5.windowWidth/16, p5.windowWidth/32)
         this.resetButton.position(p5.windowWidth/2 - this.resetButton.size().width/2,  p5.windowHeight/2 + clockRadius * 0.75)
