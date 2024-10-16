@@ -5,7 +5,7 @@
 // and doesn't have to get passed around between all the methods.
 export let p5instance
 
-export function makeP5(sketch){
+export function initP5(sketch){
     p5instance = new p5(sketch)
     return p5instance
 }

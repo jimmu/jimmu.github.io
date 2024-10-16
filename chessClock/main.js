@@ -1,8 +1,8 @@
 "use strict";
 import ChessClock from './chessClock.js'
-import {makeP5} from './lib.js'
+import {initP5} from './lib.js'
 
-makeP5(function(p5){
+initP5(function(p5){
     let clock
     let timeSlider
     let previousSliderValue
