@@ -1,7 +1,8 @@
 "use strict";
 import ChessClock from './chessClock.js'
+import {makeP5} from './lib.js'
 
-new p5(function(p5){
+makeP5(function(p5){
     let clock
     let timeSlider
     let previousSliderValue
@@ -12,11 +13,11 @@ new p5(function(p5){
       // Touching one clock stops it and starts the other.
       p5.textFont("Courier New")
       clock = new ChessClock(10)    //  default time in minutes
-      clock.setup(p5)
+      clock.setup()
     }
 
     p5.draw = function(){
-        clock.draw(p5)
+        clock.draw()
     }
 
     p5.windowResized = function(){
@@ -24,6 +25,6 @@ new p5(function(p5){
     }
 
     p5.mouseClicked = function(e) {
-        clock.clicked(p5)
+        clock.clicked()
     }
 })

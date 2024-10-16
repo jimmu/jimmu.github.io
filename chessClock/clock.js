@@ -1,4 +1,5 @@
 "use strict";
+import {p5instance as p5} from './lib.js'
 
 export default class Clock
 {
@@ -53,10 +54,10 @@ export default class Clock
         }
     }
 
-    setup(p5){
+    setup(){
     }
 
-    draw(p5, fullRadius){
+    draw(fullRadius){
         p5.push()
         let fillColour = this.running? 40 : 35
         let lineColour = this.running? 250 : 125

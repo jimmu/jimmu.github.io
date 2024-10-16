@@ -1,5 +1,6 @@
 "use strict";
 import Clock from './clock.js'
+import {p5instance as p5} from './lib.js'
 
 export default class ChessClock
 {
@@ -67,7 +68,7 @@ export default class ChessClock
         //console.log("B: "+remainingSeconds)
     }
 
-    clicked(p5){
+    clicked(){
         if (!this.paused && p5.mouseY > p5.windowHeight * 0.1){
             if (p5.mouseX < p5.windowWidth * 0.4){
                 this.startB()
@@ -80,11 +81,11 @@ export default class ChessClock
         }
     }
 
-    setup(p5){
-        this.clockA.setup(p5)
-        this.clockB.setup(p5)
-        this.pauseButton = this.makeButton(p5, "Pause", this.pause)
-        this.resetButton = this.makeButton(p5, "Reset", this.reset)
+    setup(){
+        this.clockA.setup()
+        this.clockB.setup()
+        this.pauseButton = this.makeButton("Pause", this.pause)
+        this.resetButton = this.makeButton("Reset", this.reset)
         this.resetButton.hide()
         this.pauseButton.hide()
 
@@ -96,18 +97,18 @@ export default class ChessClock
         })
     }
 
-    draw(p5){
+    draw(){
         // Draw the two clocks side by side.
         p5.push()
         let clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
         let quarterWidth = p5.windowWidth/4
         p5.background(30)
         p5.translate(quarterWidth, p5.windowHeight/2)
-        this.clockA.draw(p5, clockRadius)
+        this.clockA.draw(clockRadius)
         p5.pop()
         p5.push()
         p5.translate(3 * quarterWidth, p5.windowHeight/2)
-        this.clockB.draw(p5, clockRadius)
+        this.clockB.draw(clockRadius)
         p5.pop()
         p5.push()
         // Draw the buttons. They don't need drawing as such, but if the screen has changed size, they need to be moved.
@@ -141,7 +142,7 @@ export default class ChessClock
         p5.pop()
     }
 
-    makeButton(p5, label, onClick){
+    makeButton(label, onClick){
         let button = p5.createButton(label)
         let fontSize = Math.floor(p5.windowWidth/64)
         button.style('font-size', fontSize+"px")
