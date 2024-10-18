@@ -27,7 +27,7 @@ export default class Clock
     }
 
     remainingSeconds(){
-        return Math.floor(this.remainingTimeMillis/1000 + 0.5)
+        return Math.ceil(this.remainingTimeMillis/1000)
     }
 
     tick(){

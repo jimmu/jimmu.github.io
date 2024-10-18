@@ -7,10 +7,8 @@ export default class ChessClock
 {
     constructor(initialTimeMinutes){
         this.initialTimeMinutes = initialTimeMinutes
-        this.makeClocks()
         this.stateMachine = newStateMachine()
         // Four args to addTransition: From state, Trigger event, To state, Action
-        .addTransition("None", "start", "new")
         .onEnteringState("new", ()=>{
             this.makeClocks()
             this.pauseButton.hide()
@@ -18,17 +16,11 @@ export default class ChessClock
             this.resetButton.hide()
             this.timeSlider.show()
         })
-        .addTransition("new", "timeChange", "new", ()=>{
-            this.initialTimeMinutes = this.timeSlider.value()
-        })
-        .addTransition("new", "tapA", "running")
-        .addTransition("new", "tapB", "running")
-        .onEventNamed("tapA", ()=>{
-            this.startB()
-        })
-        .onEventNamed("tapB", ()=>{
-            this.startA()
-        })
+        .addTransition("new", "timeChange", "new")
+        .addTransition("new", "tapA", "running", ()=>{this.startB()})
+        .addTransition("new", "tapB", "running", ()=>{this.startA()})
+        .addTransition("running", "tapA", "running", ()=>{this.startB()})
+        .addTransition("running", "tapB", "running", ()=>{this.startA()})
         .onEnteringState("running", ()=>{
             this.pauseButton.show()
             this.resetButton.hide()
@@ -43,9 +35,7 @@ export default class ChessClock
             this.pauseButton.hide()
             this.resumeButton.show()
         })
-        .addTransition("paused", "resume", "running", ()=>{
-            this.clockWhichGotPaused?.start()
-        })
+        .addTransition("paused", "resume", "running", ()=>{this.clockWhichGotPaused?.start()})
         .addTransition("paused", "reset", "new")
         .addTransition("running", "timeout", "expired", ()=>{
             this.pauseButton.hide()
@@ -55,8 +45,8 @@ export default class ChessClock
     }
 
     makeClocks(){
-        this.clockA = new Clock(this.initialTimeMinutes * 60, this.aTick.bind(this))
-        this.clockB = new Clock(this.initialTimeMinutes * 60, this.bTick.bind(this))
+        this.clockA = new Clock(this.timeSlider.value() * 60, this.aTick.bind(this))
+        this.clockB = new Clock(this.timeSlider.value() * 60, this.bTick.bind(this))
     }
 
     startA(){
@@ -93,8 +83,6 @@ export default class ChessClock
     }
 
     setup(){
-        this.clockA.setup()
-        this.clockB.setup()
         this.pauseButton = this.makeButton("Pause")
         this.resumeButton = this.makeButton("Resume")
         this.resetButton = this.makeButton("Reset")
@@ -103,7 +91,10 @@ export default class ChessClock
         this.timeSlider.input((e)=>{
             this.stateMachine.trigger("timeChange")
         })
-        this.stateMachine.start()
+        this.makeClocks()
+        this.clockA.setup()
+        this.clockB.setup()
+        this.stateMachine.start("new")
     }
 
     draw(){

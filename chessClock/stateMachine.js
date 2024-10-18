@@ -21,8 +21,8 @@ export function newStateMachine(){
         return currentState
     }
 
-    function start(){
-        trigger("start")
+    function start(firstState){
+        enterState(firstState, "start")
         return machine
     }
 
@@ -46,18 +46,27 @@ export function newStateMachine(){
     }
 
     function trigger(eventName){
+        // If there is an event with this name - not linked to any particular state, trigger its action.
         namedEventActions.get(eventName)?.(currentState, eventName)
+        // Now look at events linked to the current state
         let transitions = statesAndTransitions.get(currentState)
         if (transitions){
             let thisTransition = transitions.get(eventName)
             if (thisTransition){
+                // If there's an action on this transition, execute it.
                 thisTransition.action?.(currentState, eventName, thisTransition.to)
                 //defaultAction(currentState, eventName, thisTransition.to)
-                currentState = thisTransition.to
-                enterStateActions.get(currentState)?.(currentState, eventName)
+                // Now we arrive at the target state
+                enterState(thisTransition.to, eventName)
             }
         }
         return machine
+    }
+
+    function enterState(state, eventName){
+        currentState = state
+        // If there's an action linked to entering this state - not particular to any transition then execute it
+        enterStateActions.get(currentState)?.(currentState, eventName)
     }
 
     return machine
