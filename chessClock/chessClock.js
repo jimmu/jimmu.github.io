@@ -45,8 +45,8 @@ export default class ChessClock
     }
 
     makeClocks(){
-        this.clockA = new Clock(this.timeSlider.value() * 60, this.aTick.bind(this))
-        this.clockB = new Clock(this.timeSlider.value() * 60, this.bTick.bind(this))
+        this.clockA = new Clock(this.timeSlider.value() * 60)
+        this.clockB = new Clock(this.timeSlider.value() * 60)
     }
 
     startA(){
@@ -61,14 +61,6 @@ export default class ChessClock
             this.clockA.stop()
             this.clockB.start()
         }
-    }
-
-    aTick(remainingSeconds){
-        //console.log("A: "+remainingSeconds)
-    }
-
-    bTick(remainingSeconds){
-        //console.log("B: "+remainingSeconds)
     }
 
     clicked(){
@@ -92,8 +84,6 @@ export default class ChessClock
             this.stateMachine.trigger("timeChange")
         })
         this.makeClocks()
-        this.clockA.setup()
-        this.clockB.setup()
         this.stateMachine.start("new")
     }
 

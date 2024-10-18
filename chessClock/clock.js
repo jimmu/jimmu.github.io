@@ -3,58 +3,37 @@ import {p5instance as p5} from './lib.js'
 
 export default class Clock
 {
-    constructor(initialTimeSeconds, onChange){
+    constructor(initialTimeSeconds){
         this.remainingTimeMillis = initialTimeSeconds * 1000
         this.running = false
-        this.onChangeCallback = onChange
-        this.remainingSecondsAtLastCallback = -1
     }
 
     start(){
         if (!this.running){
             this.timeStarted = Date.now()
             this.running = true
-            this.makeCallback()
-            this.tickTimer = setInterval(this.tick.bind(this), 200)
         }
     }
 
     stop(){
         if (this.running){
+            this.remainingTimeMillis = this.remainingMillis()
             this.running = false
-            clearTimeout(this.tickTimer)
         }
     }
 
     remainingSeconds(){
-        return Math.ceil(this.remainingTimeMillis/1000)
+        return Math.ceil(this.remainingMillis()/1000)
     }
 
-    tick(){
-        this.updateRemainingMillis()
-        this.makeCallback()
-    }
-
-    makeCallback(){
-        if (this.onChangeCallback && this.running){
-            let timeLeft = this.remainingSeconds()
-            if (timeLeft != this.remainingSecondsAtLastCallback){
-               this.onChangeCallback(timeLeft)
-               this.remainingSecondsAtLastCallback = timeLeft
-            }
-        }
-    }
-
-    updateRemainingMillis(){
+    remainingMillis(){
         if (this.running){
             let now = Date.now()
-            this.remainingTimeMillis = this.remainingTimeMillis + this.timeStarted - now
-            this.timeStarted = now
-            this.remainingTimeMillis = Math.max(this.remainingTimeMillis, 0)
+            return Math.max(this.remainingTimeMillis + this.timeStarted - now, 0)
         }
-    }
-
-    setup(){
+        else {
+            return this.remainingTimeMillis
+        }
     }
 
     draw(fullRadius){
