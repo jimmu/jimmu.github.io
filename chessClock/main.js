@@ -15,15 +15,7 @@ initP5(function(p5){
       clock.setup()
     }
 
-    p5.draw = function(){
-        clock.draw()
-    }
-
     p5.windowResized = function(){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
-    }
-
-    p5.mouseClicked = function(e) {
-        clock.clicked()
     }
 })

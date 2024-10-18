@@ -64,7 +64,7 @@ export default class ChessClock
     }
 
     clicked(){
-        if (!this.paused && p5.mouseY > p5.windowHeight * 0.1){
+        if (p5.mouseY > p5.windowHeight * 0.1){
             if (p5.mouseX < p5.windowWidth * 0.4){
                 this.stateMachine.trigger("tapA")
             }
@@ -85,6 +85,8 @@ export default class ChessClock
         })
         this.makeClocks()
         this.stateMachine.start("new")
+        p5.draw = this.draw.bind(this)
+        p5.mouseClicked = this.clicked.bind(this)
     }
 
     draw(){
