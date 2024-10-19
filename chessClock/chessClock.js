@@ -15,6 +15,8 @@ export default class ChessClock
             this.resumeButton.hide()
             this.resetButton.hide()
             this.timeSlider.show()
+            this.sliderLabel.show()
+            this.resizeHtmlElements()
         })
         .addTransition("new", "timeChange", "new")
         .addTransition("new", "tapA", "running", ()=>{this.startB()})
@@ -25,7 +27,9 @@ export default class ChessClock
             this.pauseButton.show()
             this.resetButton.hide()
             this.timeSlider.hide()
+            this.sliderLabel.hide()
             this.resumeButton.hide()
+            this.resizeHtmlElements()
         })
         .addTransition("running", "pause", "paused", ()=>{
             this.clockWhichGotPaused = this.clockA.running? this.clockA : this.clockB
@@ -34,6 +38,7 @@ export default class ChessClock
             this.resetButton.show()
             this.pauseButton.hide()
             this.resumeButton.show()
+            this.resizeHtmlElements()
         })
         .addTransition("paused", "resume", "running", ()=>{this.clockWhichGotPaused?.start()})
         .addTransition("paused", "reset", "new")
@@ -75,14 +80,20 @@ export default class ChessClock
     }
 
     setup(){
+        p5.createCanvas(p5.windowWidth, p5.windowHeight)
+        this.clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
+        p5.windowResized = function(){
+            p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
+            this.clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
+            this.resizeHtmlElements()
+        }.bind(this)
         this.pauseButton = this.makeButton("Pause")
         this.resumeButton = this.makeButton("Resume")
         this.resetButton = this.makeButton("Reset")
-
-        this.timeSlider = p5.createSlider(1, 60, this.initialTimeMinutes)
-        this.timeSlider.input((e)=>{
+        this.timeSlider = p5.createSlider(1, 60, this.initialTimeMinutes).input((e)=>{
             this.stateMachine.trigger("timeChange")
         })
+        this.sliderLabel = this.makeDiv("Set time. Tap a clock to start")
         this.makeClocks()
         this.stateMachine.start("new")
         p5.draw = this.draw.bind(this)
@@ -92,54 +103,63 @@ export default class ChessClock
     draw(){
         // Draw the two clocks side by side.
         p5.push()
-        let clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
         let quarterWidth = p5.windowWidth/4
         p5.background(30)
         p5.translate(quarterWidth, p5.windowHeight/2)
-        this.clockA.draw(clockRadius)
+        this.clockA.draw(this.clockRadius)
         p5.pop()
         p5.push()
         p5.translate(3 * quarterWidth, p5.windowHeight/2)
-        this.clockB.draw(clockRadius)
+        this.clockB.draw(this.clockRadius)
         p5.pop()
-        p5.push()
-        // Draw the buttons. They don't need drawing as such, but if the screen has changed size, they need to be moved.
-        let buttonFontSize = Math.floor(p5.windowWidth/64)
-        this.pauseButton.style('font-size', buttonFontSize+"px")
-        this.resetButton.style('font-size', buttonFontSize+"px")
-        this.resumeButton.style('font-size', buttonFontSize+"px")
+    }
+
+    // Redraw the buttons and so on if the screen has changed size.
+    resizeHtmlElements(){
+        this.setFontSize(this.pauseButton)
+        this.setFontSize(this.resetButton)
+        this.setFontSize(this.resumeButton)
         this.pauseButton.size(p5.windowWidth/12, p5.windowWidth/32)
-        this.pauseButton.position(p5.windowWidth/2 - this.pauseButton.size().width/2,  p5.windowHeight/2 - clockRadius * 0.75)
-        this.resumeButton.position(p5.windowWidth/2 - this.resumeButton.size().width/2,  p5.windowHeight/2 - clockRadius * 0.75)
+        this.pauseButton.position(p5.windowWidth/2 - this.pauseButton.size().width/2,  p5.windowHeight/2 - this.clockRadius * 0.75)
+        this.resumeButton.position(p5.windowWidth/2 - this.resumeButton.size().width/2,  p5.windowHeight/2 - this.clockRadius * 0.75)
         this.resumeButton.size(p5.windowWidth/12, p5.windowWidth/32)
         this.resetButton.size(p5.windowWidth/16, p5.windowWidth/32)
-        this.resetButton.position(p5.windowWidth/2 - this.resetButton.size().width/2,  p5.windowHeight/2 + clockRadius * 0.75)
+        this.resetButton.position(p5.windowWidth/2 - this.resetButton.size().width/2,  p5.windowHeight/2 + this.clockRadius * 0.75)
         // Same for the time slider
-        if (this.stateMachine.state() == "new"){
-            let timeSliderY = p5.windowHeight/2 - clockRadius
-            this.timeSlider.position(p5.windowWidth * 0.4, timeSliderY)
-            this.timeSlider.size(p5.windowWidth * 0.2)
-            p5.textAlign(p5.CENTER, p5.TOP)
-            p5.fill(200)
-            p5.textSize(clockRadius/16)
-            p5.text("Set time using slider", p5.windowWidth/2, timeSliderY + 20)
-            p5.text("Tap a clock to start", p5.windowWidth/2, timeSliderY + 36)
-        }
+        let timeSliderY = p5.windowHeight/2 - this.clockRadius
+        this.timeSlider.position(p5.windowWidth * 0.4, timeSliderY)
+        this.timeSlider.size(p5.windowWidth * 0.2)
+        this.sliderLabel.position(this.timeSlider.position().x, timeSliderY + this.timeSlider.size().height + 4)
+        this.sliderLabel.size(this.timeSlider.size())
+        this.setFontSize(this.sliderLabel)
         // Did one of the clocks run down?
         if (this.clockA.remainingSeconds() == 0 || this.clockB.remainingSeconds() == 0){
             this.stateMachine.trigger("timeout")
         }
-        p5.pop()
     }
 
     makeButton(label){
         let button = p5.createButton(label)
-        let fontSize = Math.floor(p5.windowWidth/64)
-        button.style('font-size', fontSize+"px")
-        button.style("color", p5.color(130, 130, 130))
+        this.addTextStyle(button)
         button.style("background-color", p5.color(50, 50, 50))
         // Trigger a state transition with the same name as the button label
         button.mouseClicked(function (){this.stateMachine.trigger(label.toLowerCase())}.bind(this))
         return button
+    }
+
+    makeDiv(text){
+        let div = p5.createDiv(text)
+        this.addTextStyle(div)
+        return div
+    }
+
+    addTextStyle(element){
+        this.setFontSize(element)
+        element.style("color", p5.color(130, 130, 130))
+    }
+
+    setFontSize(element){
+        let fontSize = Math.floor(p5.windowWidth/64)
+        element.style('font-size', fontSize+"px")
     }
 }
