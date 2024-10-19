@@ -130,7 +130,7 @@ export default class ChessClock
         this.timeSlider.position(p5.windowWidth * 0.4, timeSliderY)
         this.timeSlider.size(p5.windowWidth * 0.2)
         this.sliderLabel.position(this.timeSlider.position().x, timeSliderY + this.timeSlider.size().height + 4)
-        this.sliderLabel.size(this.timeSlider.size())
+        this.sliderLabel.size(this.timeSlider.size().width, this.timeSlider.size().height)
         this.setFontSize(this.sliderLabel)
         // Did one of the clocks run down?
         if (this.clockA.remainingSeconds() == 0 || this.clockB.remainingSeconds() == 0){
