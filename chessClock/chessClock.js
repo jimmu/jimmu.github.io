@@ -1,11 +1,17 @@
 "use strict";
 import Clock from './clock.js'
-import {p5instance as p5} from './lib.js'
+import {initP5, p5instance as p5} from './lib.js'
 import {newStateMachine} from './stateMachine.js'
 
 export default class ChessClock
 {
     constructor(initialTimeMinutes){
+        initP5((p5)=>{
+            p5.setup = this.setup.bind(this)
+            p5.draw = this.draw.bind(this)
+            p5.mouseClicked = this.clicked.bind(this)
+        })
+
         this.initialTimeMinutes = initialTimeMinutes
         this.stateMachine = newStateMachine()
         // Four args to addTransition: From state, Trigger event, To state, Action
@@ -96,8 +102,6 @@ export default class ChessClock
         this.sliderLabel = this.makeDiv("Set time. Tap a clock to start")
         this.makeClocks()
         this.stateMachine.start("new")
-        p5.draw = this.draw.bind(this)
-        p5.mouseClicked = this.clicked.bind(this)
     }
 
     draw(){
