@@ -71,6 +71,12 @@ function(constants, angleTools){
                     speed = 0
                 }
             },
+            touchStart: function(e){
+                document.getElementById("debug").value += ("Touch started at "+e.touches[0].clientX+","+e.touches[0].clientY)
+            },
+            touchEnd: function(e){
+                document.getElementById("debug").value += ("Touch ended at "+e.touches[0].clientX+","+e.touches[0].clientY)
+            },
             getPosition: function(){
                 return batPosition
             },

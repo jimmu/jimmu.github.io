@@ -32,6 +32,8 @@ function(constants){
 
             document.addEventListener("keydown", keyDown)
             document.addEventListener("keyup", keyUp)
+            document.addEventListener("touchstart", touchStart)
+            document.addEventListener("touchend", touchEnd)
         },
         start: ()=>{
             if (!running){
@@ -72,6 +74,16 @@ function(constants){
     function keyUp(e){
         if (running){
             gameElements.forEach((x)=>{x.keyUp?.(e.key)})
+        }
+    }
+    function touchStart(e){
+        if (running){
+            gameElements.forEach((x)=>{x.touchStart?.(e)})
+        }
+    }
+    function touchEnd(e){
+        if (running){
+            gameElements.forEach((x)=>{x.touchEnd?.(e)})
         }
     }
 })
