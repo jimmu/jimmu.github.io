@@ -42,6 +42,10 @@ function(constants){
                 }
             }
         },
+        coordsFromAngle: function(angle){
+            return {x: Math.floor(Math.cos(angle) * constants.radius),
+                    y: Math.floor(Math.sin(angle) * constants.radius)}
+        },
         limitRange
     }
 

@@ -25,6 +25,38 @@ function(constants, angleTools){
                 topSpeed = constants.batTopSpeed
                 speed = 0
                 acceleration = constants.batAcceleration
+                //TODO. Can a bat spawn its own left/right control buttons too?
+                //For use on a touch screen device.
+                //One just off each end of the bat's start position.
+                let leftButton=document.createElement("button")
+                leftButton.textContent=String.fromCharCode(0x2193)
+                leftButton.style.background=colour
+                leftButton.style.transform="rotate("+(initialPosition+constants.batSize)+"rad)"
+                document.body.appendChild(leftButton)
+                leftButton.style.position="absolute"
+                let leftPos = angleTools.coordsFromAngle(initialPosition + constants.batSize)
+                leftButton.style.top = (leftPos.y + constants.radius) + "px"
+                leftButton.style.left = (leftPos.x + constants.windowCentre) + "px"
+                leftButton.addEventListener("touchstart", leftPressed)
+                leftButton.addEventListener("touchend", (e)=>{
+                    goingCCW = false
+                    speed = 0
+                })
+
+                let rightButton=document.createElement("button")
+                rightButton.textContent=String.fromCharCode(0x2191)
+                rightButton.style.background=colour
+                rightButton.style.transform="rotate("+(initialPosition - constants.batSize)+"rad)"
+                document.body.appendChild(rightButton)
+                rightButton.style.position="absolute"
+                let rightPos = angleTools.coordsFromAngle(initialPosition - constants.batSize)
+                rightButton.style.top = (rightPos.y + constants.radius) + "px"
+                rightButton.style.left = (rightPos.x + constants.windowCentre) + "px"
+                rightButton.addEventListener("touchstart", rightPressed)
+                rightButton.addEventListener("touchend", (e)=>{
+                    goingCW = false
+                    speed = 0
+                })
             },
             update: function(ctx, deltaSeconds){
                 // Update bat position
@@ -48,20 +80,10 @@ function(constants, angleTools){
             },
             keyDown: function(key){
                 if (key.toUpperCase() == leftKey){
-                    if (goingCW){
-                        // We're changing direction
-                        speed = 0
-                    }
-                    goingCCW = true
-                    goingCW = false
+                    leftPressed()
                 }
                 if (key.toUpperCase() == rightKey){
-                    if (goingCCW){
-                        // Change of direction
-                        speed = 0
-                    }
-                    goingCCW = false
-                    goingCW = true
+                    rightPressed()
                 }
             },
             keyUp: function(key){
@@ -142,6 +164,24 @@ function(constants, angleTools){
                 }
                 return  angle > lowerLimit
             }
+        }
+
+        function leftPressed(){
+            if (goingCW){
+                // We're changing direction
+                speed = 0
+            }
+            goingCCW = true
+            goingCW = false
+        }
+
+        function rightPressed(){
+            if (goingCCW){
+                // Change of direction
+                speed = 0
+            }
+            goingCCW = false
+            goingCW = true
         }
 
         function moveCw(deltaSeconds){

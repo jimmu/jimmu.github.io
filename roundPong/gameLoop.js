@@ -32,8 +32,8 @@ function(constants){
 
             document.addEventListener("keydown", keyDown)
             document.addEventListener("keyup", keyUp)
-            canvas.addEventListener("touchstart", touchStart)
-            canvas.addEventListener("touchend", touchEnd)
+//            canvas.addEventListener("touchstart", touchStart)
+//            canvas.addEventListener("touchend", touchEnd)
         },
         start: ()=>{
             if (!running){
