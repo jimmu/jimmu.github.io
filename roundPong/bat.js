@@ -97,9 +97,9 @@ function(constants, angleTools){
                     goingCW = true
                 }
             },
-            touchEnd: function(e){
-                let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
-                let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
+            touchEnd: function(e){  // But how do we know it was _our_ touch which ended?
+                //let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
+                //let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
                 //document.getElementById("debug").value += ("Touch ended at "+x+","+y)
                 speed = 0
                 goingCCW = false
