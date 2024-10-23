@@ -9,6 +9,10 @@ function(constants, angleTools){
         let rightKey = right.toUpperCase()
         const angleSubtendedByBallRadius = angleTools.angleFromCoords(constants.radius, constants.ballRadius)
 
+        let centreOfTouchArea = initialPosition
+        let cwTouchAreaBound = angleTools.limitRange(centreOfTouchArea + Math.PI * 0.33)
+        let ccwTouchAreaBound = angleTools.limitRange(centreOfTouchArea - Math.PI * 0.33)
+
         let goingCW = false
         let goingCCW = false
         let acceleration = 0
@@ -72,7 +76,16 @@ function(constants, angleTools){
                 }
             },
             touchStart: function(e){
-                document.getElementById("debug").value += ("Touch started at "+e.touches[0].clientX+","+e.touches[0].clientY)
+                let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
+                let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
+                document.getElementById("debug").value += ("Touch started at "+x+","+e.touches[0].y)
+                let angleOfTouchPoint = angleTools.angleFromCoords(x, y)
+                if (angleOfTouchPoint < centreOfTouchArea && angleOfTouchPoint > ccwTouchAreaBound){
+                    document.getElementById("debug").value += colour + "ccw"
+                }
+                else if (angleOfTouchPoint > centreOfTouchArea && angleOfTouchPoint < cwTouchAreaBound){
+                    document.getElementById("debug").value += colour + "cw"
+                }
             },
             touchEnd: function(e){
                 document.getElementById("debug").value += ("Touch ended at "+e.touches[0].clientX+","+e.touches[0].clientY)
