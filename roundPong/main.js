@@ -7,6 +7,6 @@ function(gameLoop, bat, ball, batBallCollisionCheck, outOfBoundsCheck, scores){
                 bat("green", Math.PI * 1.33, "J", "L")]
     let scorer = scores(bats)
     let batCollisionCheck = batBallCollisionCheck(bats)
-    let ctx = gameLoop.init(bats.concat([ball, batCollisionCheck, outOfBoundsCheck, scorer]))
+    gameLoop.init(bats.concat([ball, batCollisionCheck, outOfBoundsCheck, scorer]))
     gameLoop.start()
 })
