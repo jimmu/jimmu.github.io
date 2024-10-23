@@ -102,6 +102,8 @@ function(constants, angleTools){
                 let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
                 //document.getElementById("debug").value += ("Touch ended at "+x+","+y)
                 speed = 0
+                goingCCW = false
+                goingCW = false
             },
             getPosition: function(){
                 return batPosition
