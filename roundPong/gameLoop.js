@@ -34,6 +34,7 @@ function(constants){
             document.addEventListener("keyup", keyUp)
             document.addEventListener("touchstart", touchStart)
             document.addEventListener("touchend", touchEnd)
+            document.addEventListener("touchcancel", touchEnd)
         },
         start: ()=>{
             if (!running){

@@ -81,16 +81,27 @@ function(constants, angleTools){
                 document.getElementById("debug").value += ("Touch started at "+x+","+y)
                 let angleOfTouchPoint = angleTools.angleFromCoords(x, y)
                 if (angleOfTouchPoint < centreOfTouchArea && angleOfTouchPoint > ccwTouchAreaBound){
-                    document.getElementById("debug").value += colour + "ccw"
+                    if (goingCW){
+                        // We're changing direction
+                        speed = 0
+                    }
+                    goingCCW = true
+                    goingCW = false
                 }
                 else if (angleOfTouchPoint > centreOfTouchArea && angleOfTouchPoint < cwTouchAreaBound){
-                    document.getElementById("debug").value += colour + "cw"
+                    if (goingCCW){
+                        // We're changing direction
+                        speed = 0
+                    }
+                    goingCCW = false
+                    goingCW = true
                 }
             },
             touchEnd: function(e){
                 let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
                 let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
                 document.getElementById("debug").value += ("Touch ended at "+x+","+y)
+                speed = 0
             },
             getPosition: function(){
                 return batPosition
