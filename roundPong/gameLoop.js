@@ -82,6 +82,7 @@ function(constants){
         }
     }
     function touchEnd(e){
+        document.getElementById("debug").value += ("Touch ended")
         if (running){
             gameElements.forEach((x)=>{x.touchEnd?.(e)})
         }
