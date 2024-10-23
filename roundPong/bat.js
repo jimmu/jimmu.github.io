@@ -78,7 +78,7 @@ function(constants, angleTools){
             touchStart: function(e){
                 let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
                 let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
-                document.getElementById("debug").value += ("Touch started at "+x+","+e.touches[0].y)
+                document.getElementById("debug").value += ("Touch started at "+x+","+y)
                 let angleOfTouchPoint = angleTools.angleFromCoords(x, y)
                 if (angleOfTouchPoint < centreOfTouchArea && angleOfTouchPoint > ccwTouchAreaBound){
                     document.getElementById("debug").value += colour + "ccw"
@@ -88,7 +88,9 @@ function(constants, angleTools){
                 }
             },
             touchEnd: function(e){
-                document.getElementById("debug").value += ("Touch ended at "+e.touches[0].clientX+","+e.touches[0].clientY)
+                let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
+                let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
+                document.getElementById("debug").value += ("Touch ended at "+x+","+y)
             },
             getPosition: function(){
                 return batPosition
