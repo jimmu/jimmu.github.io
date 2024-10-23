@@ -78,7 +78,7 @@ function(constants, angleTools){
             touchStart: function(e){
                 let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
                 let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
-                document.getElementById("debug").value += ("Touch started at "+x+","+y)
+                //document.getElementById("debug").value += ("Touch started at "+x+","+y)
                 let angleOfTouchPoint = angleTools.angleFromCoords(x, y)
                 if (angleOfTouchPoint < centreOfTouchArea && angleOfTouchPoint > ccwTouchAreaBound){
                     if (goingCW){
@@ -100,7 +100,7 @@ function(constants, angleTools){
             touchEnd: function(e){
                 let x = Math.floor(e.touches[0].clientX) - constants.windowCentre
                 let y = Math.floor(e.touches[0].clientY) - constants.windowCentre
-                document.getElementById("debug").value += ("Touch ended at "+x+","+y)
+                //document.getElementById("debug").value += ("Touch ended at "+x+","+y)
                 speed = 0
             },
             getPosition: function(){
