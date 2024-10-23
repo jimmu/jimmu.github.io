@@ -88,6 +88,7 @@ function(constants, angleTools){
                     goingCCW = true
                     goingCW = false
                 }
+                //TODO. Cope with wrapping around 0.
                 else if (angleOfTouchPoint > centreOfTouchArea && angleOfTouchPoint < cwTouchAreaBound){
                     if (goingCCW){
                         // We're changing direction

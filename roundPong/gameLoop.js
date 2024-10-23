@@ -77,13 +77,11 @@ function(constants){
         }
     }
     function touchStart(e){
-        document.getElementById("debug".value+=e.touches)
         if (running){
             gameElements.forEach((x)=>{x.touchStart?.(e)})
         }
     }
     function touchEnd(e){
-        document.getElementById("debug").value += ("Touch ended")
         if (running){
             gameElements.forEach((x)=>{x.touchEnd?.(e)})
         }
