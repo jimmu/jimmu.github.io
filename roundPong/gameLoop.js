@@ -77,6 +77,7 @@ function(constants){
         }
     }
     function touchStart(e){
+        document.getElementById("debug".value+=e.touches)
         if (running){
             gameElements.forEach((x)=>{x.touchStart?.(e)})
         }
