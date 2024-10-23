@@ -28,38 +28,8 @@ function(constants, angleTools){
                 //TODO. Can a bat spawn its own left/right control buttons too?
                 //For use on a touch screen device.
                 //One just off each end of the bat's start position.
-                makeButton(String.fromCharCode(0x2193), initialPosition+constants.batSize/2, rightPressed, (e)=>{goingCW = false;speed = 0})
-//                let leftButton=document.createElement("button")
-//                leftButton.textContent=String.fromCharCode(0x2193)
-//                leftButton.style.background=colour
-//                leftButton.style.transform="rotate("+(initialPosition+constants.batSize)+"rad)"
-//                document.body.appendChild(leftButton)
-//                leftButton.style.position="absolute"
-//                let leftPos = angleTools.coordsFromAngle(initialPosition + constants.batSize)
-//                leftButton.style.top = (leftPos.y + constants.radius) + "px"
-//                leftButton.style.left = (leftPos.x + constants.windowCentre) + "px"
-//                leftButton.addEventListener("touchstart", leftPressed)
-//                leftButton.addEventListener("touchend", (e)=>{
-//                    goingCCW = false
-//                    speed = 0
-//                })
-
-                makeButton(String.fromCharCode(0x2191), initialPosition-constants.batSize/2, leftPressed, (e)=>{goingCCW = false;speed = 0})
-
-//                let rightButton=document.createElement("button")
-//                rightButton.textContent=String.fromCharCode(0x2191)
-//                rightButton.style.background=colour
-//                rightButton.style.transform="rotate("+(initialPosition - constants.batSize)+"rad)"
-//                document.body.appendChild(rightButton)
-//                rightButton.style.position="absolute"
-//                let rightPos = angleTools.coordsFromAngle(initialPosition - constants.batSize)
-//                rightButton.style.top = (rightPos.y + constants.radius) + "px"
-//                rightButton.style.left = (rightPos.x + constants.windowCentre) + "px"
-//                rightButton.addEventListener("touchstart", rightPressed)
-//                rightButton.addEventListener("touchend", (e)=>{
-//                    goingCW = false
-//                    speed = 0
-//                })
+                makeButton(String.fromCharCode(0x2193), initialPosition+constants.batSize*1.4, rightPressed, (e)=>{goingCW = false;speed = 0})
+                makeButton(String.fromCharCode(0x2191), initialPosition-constants.batSize*1.4, leftPressed, (e)=>{goingCCW = false;speed = 0})
             },
             update: function(ctx, deltaSeconds){
                 // Update bat position
@@ -194,18 +164,19 @@ function(constants, angleTools){
 
         function makeButton(label, rotation, whenTouched, whenReleased){
             let button=document.createElement("button")
-            button.textContent=label
+            //button.textContent=label
             button.style.background=colour
-            button.style.opacity="0.5"
+            button.style.opacity="0.00"
             button.style.transform="rotate("+(rotation)+"rad)"
             button.style.border="0px"
-            button.style.height="6em"
-            button.style.width="2em"
+            let size = constants.radius/2
+            button.style.height = size+"px"
+            button.style.width = size+"px"
             document.body.appendChild(button)
             button.style.position="absolute"
             let pos = angleTools.coordsFromAngle(rotation)
-            button.style.top = (pos.y + constants.radius) + "px"
-            button.style.left = (pos.x + constants.windowCentre) + "px"
+            button.style.top = Math.max(0, Math.min(constants.height - size, (pos.y + constants.radius - size/2))) + "px"
+            button.style.left = Math.max(-constants.radius, Math.min(pos.x - size/2, constants.radius - size)) + constants.windowCentre + "px"
             button.addEventListener("touchstart", whenTouched)
             button.addEventListener("touchend", whenReleased)
             button.addEventListener("mousedown", whenTouched)
