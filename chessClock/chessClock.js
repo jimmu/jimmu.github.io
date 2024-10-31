@@ -51,6 +51,7 @@ export default class ChessClock
         .addTransition("running", "timeout", "expired", ()=>{
             this.pauseButton.hide()
             this.resetButton.show()
+            this.resizeHtmlElements()
         })
         .addTransition("expired", "reset", "new")
     }
@@ -116,6 +117,10 @@ export default class ChessClock
         p5.translate(3 * quarterWidth, p5.windowHeight/2)
         this.clockB.draw(this.clockRadius)
         p5.pop()
+        // Did either of the clocks run down?
+        if (this.clockA.remainingSeconds() == 0 || this.clockB.remainingSeconds() == 0){
+            this.stateMachine.trigger("timeout")
+        }
     }
 
     // Redraw the buttons and so on if the screen has changed size.
@@ -136,10 +141,6 @@ export default class ChessClock
         this.sliderLabel.position(this.timeSlider.position().x, timeSliderY + this.timeSlider.size().height + 4)
         this.sliderLabel.size(this.timeSlider.size().width, this.timeSlider.size().height)
         this.setFontSize(this.sliderLabel)
-        // Did one of the clocks run down?
-        if (this.clockA.remainingSeconds() == 0 || this.clockB.remainingSeconds() == 0){
-            this.stateMachine.trigger("timeout")
-        }
     }
 
     makeButton(label){
