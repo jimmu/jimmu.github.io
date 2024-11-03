@@ -27,15 +27,10 @@ export function resize(){
             }
         }
         if (sizeFns.fontSize){
-            setFontSize(resizable, sizeFns.fontSize())
+            resizable.style('font-size', Math.floor(sizeFns.fontSize())+"px")
         }
         if (sizeFns.xPos){
             resizable.position(sizeFns.xPos(), sizeFns.yPos())
         }
     }
-}
-
-function setFontSize(element, size){
-    let fontSize = Math.floor(size)
-    element.style('font-size', fontSize+"px")
 }
