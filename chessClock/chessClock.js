@@ -95,15 +95,33 @@ export default class ChessClock
             this.clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
             resize()
         }.bind(this)
-        this.pauseButton = this.makeButton("Pause", ()=>{return p5.windowWidth/12}, ()=>{return p5.windowWidth/32}, ()=>{return p5.windowWidth/64}, ()=>{return p5.windowWidth/2 - this.pauseButton.size().width/2}, ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75})
-        this.resumeButton = this.makeButton("Resume", ()=>{return p5.windowWidth/12}, ()=>{return p5.windowWidth/32}, ()=>{return p5.windowWidth/64}, ()=>{return p5.windowWidth/2 - this.resumeButton.size().width/2}, ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75})
-        this.resetButton = this.makeButton("Reset", ()=>{return p5.windowWidth/16}, ()=>{return p5.windowWidth/32}, ()=>{return p5.windowWidth/64}, ()=>{return p5.windowWidth/2 - this.resetButton.size().width/2}, ()=>{return p5.windowHeight/2 + this.clockRadius * 0.75})
+        this.pauseButton = this.makeButton("Pause", {width: ()=>{return p5.windowWidth/12},
+                                                     height: ()=>{return p5.windowWidth/32},
+                                                     fontSize: ()=>{return p5.windowWidth/64},
+                                                     xPos: ()=>{return p5.windowWidth/2 - this.pauseButton.size().width/2},
+                                                     yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
+        this.resumeButton = this.makeButton("Resume", {width: ()=>{return p5.windowWidth/12},
+                                                       height: ()=>{return p5.windowWidth/32},
+                                                       fontSize: ()=>{return p5.windowWidth/64},
+                                                       xPos: ()=>{return p5.windowWidth/2 - this.resumeButton.size().width/2},
+                                                       yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
+        this.resetButton = this.makeButton("Reset", {width: ()=>{return p5.windowWidth/16},
+                                                     height: ()=>{return p5.windowWidth/32},
+                                                     fontSize: ()=>{return p5.windowWidth/64},
+                                                     xPos: ()=>{return p5.windowWidth/2 - this.resetButton.size().width/2},
+                                                     yPos: ()=>{return p5.windowHeight/2 + this.clockRadius * 0.75}})
         this.timeSlider = p5.createSlider(1, 60, this.initialTimeMinutes).input((e)=>{
             this.stateMachine.trigger("timeChange")
         })
-        makeResizable(this.timeSlider, ()=>{return p5.windowWidth * 0.2}, null, null, ()=>{return p5.windowWidth * 0.4}, ()=>{return p5.windowHeight/2 - this.clockRadius})
+        makeResizable(this.timeSlider, {width: ()=>{return p5.windowWidth * 0.2},
+                                        xPos: ()=>{return p5.windowWidth * 0.4},
+                                        yPos: ()=>{return p5.windowHeight/2 - this.clockRadius}})
         this.sliderLabel = this.makeDiv("Set time. Tap a clock to start")
-        makeResizable(this.sliderLabel, ()=>{return this.timeSlider.size().width}, ()=>{return this.timeSlider.size().height},  ()=>{return p5.windowWidth/64}, ()=>{return this.timeSlider.position().x}, ()=>{return (p5.windowHeight/2 - this.clockRadius) + this.timeSlider.size().height + 4})
+        makeResizable(this.sliderLabel, {width: ()=>{return this.timeSlider.size().width},
+                                         height: ()=>{return this.timeSlider.size().height},
+                                         fontSize: ()=>{return p5.windowWidth/64},
+                                         xPos: ()=>{return this.timeSlider.position().x},
+                                         yPos: ()=>{return (p5.windowHeight/2 - this.clockRadius) + this.timeSlider.size().height + 4}})
         this.makeClocks()
         this.stateMachine.start("new")
         resize()
@@ -127,9 +145,9 @@ export default class ChessClock
         }
     }
 
-    makeButton(label, width, height, fontSize, xPos, yPos){
+    makeButton(label, sizeFunctions){
         let button = p5.createButton(label)
-        makeResizable(button, width, height, fontSize, xPos, yPos)
+        makeResizable(button, sizeFunctions)
         this.addTextStyle(button)
         button.style("background-color", p5.color(50, 50, 50))
         // Trigger a state transition with the same name as the button label

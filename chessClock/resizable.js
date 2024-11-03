@@ -7,11 +7,11 @@ const idField = resizableClass+"Id"
 
 const sizeFunctions = new Map()
 
-export function makeResizable(element, width, height, fontSize, xPos, yPos){
+export function makeResizable(element, sizeFns){
     element.addClass(resizableClass)
     let id = crypto.randomUUID()
     element.attribute(idField, id)
-    sizeFunctions.set(id, {width, height, fontSize, xPos, yPos})
+    sizeFunctions.set(id, sizeFns)
     return element
 }
 
