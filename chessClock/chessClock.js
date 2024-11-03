@@ -144,7 +144,6 @@ export default class ChessClock
     }
 
     addTextStyle(element){
-        this.setFontSize(element)
         element.style("color", p5.color(130, 130, 130))
     }
 }
