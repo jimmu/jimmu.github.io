@@ -95,28 +95,31 @@ export default class ChessClock
             this.clockRadius = (Math.min(p5.windowWidth/2, p5.windowHeight)/2)*0.9
             resize()
         }.bind(this)
-        this.pauseButton = this.makeButton("Pause", {width: ()=>{return p5.windowWidth/12},
-                                                     height: ()=>{return p5.windowWidth/32},
-                                                     fontSize: ()=>{return p5.windowWidth/64},
-                                                     xPos: ()=>{return p5.windowWidth/2 - this.pauseButton.size().width/2},
-                                                     yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
-        this.resumeButton = this.makeButton("Resume", {width: ()=>{return p5.windowWidth/12},
-                                                       height: ()=>{return p5.windowWidth/32},
-                                                       fontSize: ()=>{return p5.windowWidth/64},
-                                                       xPos: ()=>{return p5.windowWidth/2 - this.resumeButton.size().width/2},
-                                                       yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
-        this.resetButton = this.makeButton("Reset", {width: ()=>{return p5.windowWidth/16},
-                                                     height: ()=>{return p5.windowWidth/32},
-                                                     fontSize: ()=>{return p5.windowWidth/64},
-                                                     xPos: ()=>{return p5.windowWidth/2 - this.resetButton.size().width/2},
-                                                     yPos: ()=>{return p5.windowHeight/2 + this.clockRadius * 0.75}})
+        this.pauseButton = this.makeButton("Pause")
+        makeResizable(this.pauseButton, {width: ()=>{return p5.windowWidth/12},
+                                         height: ()=>{return p5.windowWidth/32},
+                                         fontSize: ()=>{return p5.windowWidth/64},
+                                         xPos: ()=>{return p5.windowWidth/2 - this.pauseButton.size().width/2},
+                                         yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
+        this.resumeButton = this.makeButton("Resume")
+        makeResizable(this.resumeButton, {width: ()=>{return p5.windowWidth/12},
+                                           height: ()=>{return p5.windowWidth/32},
+                                           fontSize: ()=>{return p5.windowWidth/64},
+                                           xPos: ()=>{return p5.windowWidth/2 - this.resumeButton.size().width/2},
+                                           yPos: ()=>{return p5.windowHeight/2 - this.clockRadius * 0.75}})
+        this.resetButton = this.makeButton("Reset")
+        makeResizable(this.resetButton, {width: ()=>{return p5.windowWidth/16},
+                                         height: ()=>{return p5.windowWidth/32},
+                                         fontSize: ()=>{return p5.windowWidth/64},
+                                         xPos: ()=>{return p5.windowWidth/2 - this.resetButton.size().width/2},
+                                         yPos: ()=>{return p5.windowHeight/2 + this.clockRadius * 0.75}})
         this.timeSlider = p5.createSlider(1, 60, this.initialTimeMinutes).input((e)=>{
             this.stateMachine.trigger("timeChange")
         })
         makeResizable(this.timeSlider, {width: ()=>{return p5.windowWidth * 0.2},
                                         xPos: ()=>{return p5.windowWidth * 0.4},
                                         yPos: ()=>{return p5.windowHeight/2 - this.clockRadius}})
-        this.sliderLabel = this.makeDiv("Set time. Tap a clock to start")
+        this.sliderLabel = p5.createDiv("Set time. Tap a clock to start")
         makeResizable(this.sliderLabel, {width: ()=>{return this.timeSlider.size().width},
                                          height: ()=>{return this.timeSlider.size().height},
                                          fontSize: ()=>{return p5.windowWidth/64},
@@ -134,9 +137,7 @@ export default class ChessClock
         p5.background(30)
         p5.translate(quarterWidth, p5.windowHeight/2)
         this.clockA.draw(this.clockRadius)
-        p5.pop()
-        p5.push()
-        p5.translate(3 * quarterWidth, p5.windowHeight/2)
+        p5.translate(2 * quarterWidth, 0)
         this.clockB.draw(this.clockRadius)
         p5.pop()
         // Did either of the clocks run down?
@@ -145,23 +146,10 @@ export default class ChessClock
         }
     }
 
-    makeButton(label, sizeFunctions){
+    makeButton(label){
         let button = p5.createButton(label)
-        makeResizable(button, sizeFunctions)
-        this.addTextStyle(button)
-        button.style("background-color", p5.color(50, 50, 50))
         // Trigger a state transition with the same name as the button label
         button.mouseClicked(function (){this.stateMachine.trigger(label.toLowerCase())}.bind(this))
         return button
-    }
-
-    makeDiv(text){
-        let div = p5.createDiv(text)
-        this.addTextStyle(div)
-        return div
-    }
-
-    addTextStyle(element){
-        element.style("color", p5.color(130, 130, 130))
     }
 }

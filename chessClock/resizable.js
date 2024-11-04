@@ -3,28 +3,22 @@
 import {p5instance as p5} from './lib.js'
 
 const resizableClass = "__resizable"
-const idField = resizableClass+"Id"
-
 const sizeFunctions = new Map()
 
 export function makeResizable(element, sizeFns){
     element.addClass(resizableClass)
-    let id = crypto.randomUUID()
-    element.attribute(idField, id)
-    sizeFunctions.set(id, sizeFns)
+    if (!element.id()){
+        element.id(crypto.randomUUID())
+    }
+    sizeFunctions.set(element.id(), sizeFns)
     return element
 }
 
 export function resize(){
     for (let resizable of p5.selectAll("."+resizableClass)){
-        let sizeFns = sizeFunctions.get(resizable.attribute(idField))
+        let sizeFns = sizeFunctions.get(resizable.id())
         if (sizeFns.width){
-            if (sizeFns.height){
-                resizable.size(sizeFns.width(), sizeFns.height())
-            }
-            else {
-                resizable.size(sizeFns.width())
-            }
+            resizable.size(sizeFns.width(), sizeFns.height?.())
         }
         if (sizeFns.fontSize){
             resizable.style('font-size', Math.floor(sizeFns.fontSize())+"px")
