@@ -7,16 +7,23 @@
   <title>A chess clock</title>
   <script src="libs/p5.min.js"></script>
   <style>
+    :root {
+      --clockRadius: 100px;
+    }
     * {
       color: #808080
     }
     body {
       padding 0;
       margin: 0;
-      text-align: center;
       font-family: sans-serif;
     }
     button {
+      position: absolute;
+      font-size: calc(0.08 * var(--clockRadius));
+      width: calc(0.35 * var(--clockRadius));
+      height: calc(0.15 * var(--clockRadius));
+      left: calc(50vw - calc(0.175 * var(--clockRadius)));
       border: 0px;
       border-radius: 0.4em;
       background-color: #323232
@@ -24,6 +31,22 @@
     canvas {
       display: block;
     }
+    .slider {
+      position: absolute;
+      font-size: 1.5vw;
+      width: 20vw;
+      top: calc(50vh - var(--clockRadius));
+      left: 40vw;
+    }
+    .label {
+      top: calc(53vh - var(--clockRadius));
+    }
+    .pause{
+      top: calc(50vh - calc(0.8 * var(--clockRadius)));
+    }
+    .reset{
+      top: calc(47vh + calc(0.8 * var(--clockRadius)));
+  }
   </style>
   <script type="module" src="main.js"></script>
 </head>
