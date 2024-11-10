@@ -37,8 +37,6 @@ export default class Clock
     }
 
     draw(fullRadius){
-        // TODO. Instead of being passed a calculated radius, could we use a constant one
-        // and have the caller use scale() to alter the size?
         p5.push()
         let fillColour = this.running? 40 : 35
         let lineColour = this.running? 250 : 125
