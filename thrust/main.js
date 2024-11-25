@@ -2,10 +2,12 @@
 import {initP5, p5instance as p5} from './lib.js'
 import {newShip} from './ship.js'
 import {newScene} from './scene.js'
+import {newGui} from './gui.js'
 import {level1} from './levels.js'
 
 let ship
 let scene
+let gui
 let minMargin   // How close can the ship go to the edge of the screen?
 
 initP5((p5)=>{
@@ -24,24 +26,43 @@ function setup(){
     ship.setup()
     scene = newScene(level1)
     scene.setup()
+    gui = newGui()
+    gui.setup()
+    gui.addElement("Fuel: ", ()=>{
+        return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
+    })
+    gui.addElement("Damage: ", ()=>{
+        return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
+    })
 }
 
 function draw(){
     p5.push()
-    p5.background(30)
-    // Put the origin in the centre.
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     ship.update()
     ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
+    ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
     let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
     ship.grab(collectedObject)
-    drawGround()
+    if (collectedObject && collectedObject.fuel){
+        ship.fuelPercent(collectedObject.fuel)
+    }
+    if (collectedObject && collectedObject.health){
+        ship.healthPercent(collectedObject.health)
+    }
+    if (collectedObject.landingPad){
+        console.log("Landed") //TODO. softly?
+    }
+    drawScene()
     drawShip()
+    drawGui()
     p5.pop()
 }
 
-function drawGround(){
+function drawScene(){
     p5.push()
+    p5.background(30)
+    // Put the origin in the centre.
+    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     p5.translate(groundXOffset(), groundYOffset())
     scene.draw()
     p5.pop()
@@ -49,12 +70,21 @@ function drawGround(){
 
 function drawShip(){
     p5.push()
+    // Put the origin in the centre.
+    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     p5.translate(shipXOffset(), shipYOffset())
     ship.draw()
-    //if (ship.grab()){
+    if (ship.grab()){
         ship.drawGrabber()
-    //}
+    }
+    if (ship.nearAnObject()){
+        ship.drawGrabberZone()
+    }
     p5.pop()
+}
+
+function drawGui(){
+    gui.draw()
 }
 
 function shipYOffset(){

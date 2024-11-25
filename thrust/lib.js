@@ -6,7 +6,6 @@
 export let p5instance
 
 export function initP5(sketch){
-    console.log("!")
     p5instance = new p5(sketch)
     return p5instance
 }

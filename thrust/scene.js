@@ -1,6 +1,5 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
-import {shapes as shapeHandlers} from './shapes.js'
 
 export function newScene(level){
 
@@ -12,7 +11,6 @@ export function newScene(level){
     }
 
     function setup(){
-        // TODO. Do the scaling of the coords here just one time? And the making of vertex equivalents?
     }
 
     function draw(){
@@ -25,7 +23,6 @@ export function newScene(level){
         p5.strokeWeight(1)
         p5.stroke(150)
         p5.fill(100)
-
         for (let shape of level.ground){
             drawShape(shape)
         }
@@ -56,26 +53,26 @@ export function newScene(level){
         return false
     }
 
-    function collectionCheck(position, diameter){
+    function collectionCheck(position, diameter, onlyChecking){
         // Only check things which have not already been collected
         for (let shape of level.objects.filter((s)=>{return !s.collected})){
             if (collisionCheckShape(position, shape, diameter)) {
-                console.log("Collected a "+shape)
-                shape.collected = true
-                if (shape.landingPad){
-                    console.log("Landed") //TODO. Landed softly?
+                if (onlyChecking){
+                    console.log("Detected a "+shape)
                 }
-                return true
+                else {
+                    console.log("Collected a "+shape)
+                    shape.collected = true
+                }
+                return shape
             }
         }
         return false
     }
 
     function drawShape(shape){
-        if (!shape.collected){
-            let coords = scale(shape.coords)
-            shape.type.render(coords)
-        }
+        let coords = scale(shape.coords)
+        shape.type.render(coords)
     }
 
     function collisionCheckShape(position, shape, collisionDiameter){

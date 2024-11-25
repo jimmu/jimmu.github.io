@@ -13,26 +13,37 @@ export function newShip(){
     let thrust = 0.2
     let maxSpeed = 300   // Coordinate units per second.
     let position = p5.createVector(0, 0)
+    let angle = -Math.PI/2
     let grabberPosition = p5.createVector(0, 0)
     let grabberSize = size/2
+    let grabberZoneSize = size  // Near enough the grabber to show some visual indication
     let velocity = p5.createVector(0, 0)
+    let fuel = 100  // Percent
+    let health = 100 // Percent. Undamagedness
+    let fuelPerSecondThrust = 10    // Percentage points per second
+    let damagePerSecond = 50
     let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(thrust/5)
     let friction = 0.005
-    let angle = -Math.PI/2
     let thrusting = false
     let colliding = false
     let grabbing = false
+    let grabAdjacent = false
 
     return {
         setup,
         draw,
         drawGrabber,
+        drawGrabberZone,
         update,
         position,
         hit,
         grab,
+        nearAnObject,
         collisionShape: {position, size: scale([size])[0]},
-        grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]}
+        grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
+        grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
+        fuelPercent,
+        healthPercent
     }
 
     function setup(){
@@ -50,10 +61,10 @@ export function newShip(){
         p5.noFill()
 
         p5.rotate(angle)
-        line(size*0.66, 0, -size*0.33, -size/3)
-        line(-size*0.33, -size/3, -size*0.5, 0)
-        line(-size*0.5, 0, -size*0.33, size/3)
-        line(-size*0.33, size/3, size*0.66, 0)
+        quad(size*0.66, 0,
+            -size*0.33, -size/3,
+            -size*0.5, 0,
+            -size*0.33, size/3)
 
         if (thrusting && !grabbing){
             circle(-size*0.32, -size/7, size*0.1)
@@ -84,23 +95,39 @@ export function newShip(){
         p5.pop()
     }
 
+    function drawGrabberZone(){
+        p5.push()
+        p5.strokeWeight(0.5)
+        p5.stroke(200)
+        p5.noFill()
+        p5.rotate(angle)
+        quad(-size*1.25, -grabberZoneSize/2,
+            grabberZoneSize-size, -grabberZoneSize/2,
+            grabberZoneSize-size, grabberZoneSize/2,
+            -size*1.25, grabberZoneSize/2
+            )
+        p5.pop()
+    }
+
     function getCollisionShape(){
     }
 
     function checkControls(){
+        let elapsedSeconds = p5.deltaTime/1000
         if (leftPressed()){
-            angle -= (p5.deltaTime/1000 * rotationSpeed)
+            angle -= (elapsedSeconds * rotationSpeed)
         }
         if (rightPressed()){
-            angle += (p5.deltaTime/1000 * rotationSpeed)
+            angle += (elapsedSeconds * rotationSpeed)
         }
-        thrusting = forwardPressed()
+        thrusting = forwardPressed() && fuel>0
         if (thrusting){
             // Change the velocity based on the direction and the amount of thrust
             let thrustVector = p5.constructor.Vector.fromAngle(angle)
             let velocityChange = p5.constructor.Vector.mult(thrustVector, thrust * p5.deltaTime)
             velocity.add(velocityChange)
             velocity.limit(maxSpeed)
+            fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds))
         }
     }
 
@@ -122,6 +149,9 @@ export function newShip(){
             return colliding
         }
         colliding = hit
+        if (colliding){
+            health = Math.max(0, health - (p5.deltaTime/1000 * damagePerSecond))
+        }
     }
 
    function grab(grab){
@@ -129,6 +159,29 @@ export function newShip(){
             return grabbing
         }
         grabbing = grab
+    }
+
+    function nearAnObject(near){
+        if (near === undefined){
+            return grabAdjacent
+        }
+        grabAdjacent = near
+    }
+
+    function fuelPercent(percentage){
+        // Either add this amount of fuel, or return the percentage left
+        if (percentage){
+            fuel = Math.min(fuel + percentage, 100)
+        }
+        return Math.ceil(fuel)
+    }
+
+    function healthPercent(percentage){
+        // Either add this amount of healthiness, or return the percentage left
+        if (percentage){
+            health = Math.min(health + percentage, 100)
+        }
+        return Math.ceil(health)
     }
 
     function outlineCircle(){
@@ -153,8 +206,13 @@ export function newShip(){
     function line(...coords){
         p5.line(...scale(coords))
     }
+
     function circle(...coords){
         p5.circle(...scale(coords))
+    }
+
+    function quad(...coords){
+        p5.quad(...scale(coords))
     }
 
     // Note that this scaling is not quite the same as is used for the landscape, where widths and heights scale separately
