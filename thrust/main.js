@@ -3,11 +3,12 @@ import {initP5, p5instance as p5} from './lib.js'
 import {newShip} from './ship.js'
 import {newScene} from './scene.js'
 import {newGui} from './gui.js'
-import {level1} from './levels.js'
+import {getLevel} from './levels.js'
 
 let ship
 let scene
 let gui
+let levelNumber = 0
 let minMargin   // How close can the ship go to the edge of the screen?
 
 initP5((p5)=>{
@@ -24,7 +25,7 @@ function setup(){
     minMargin = Math.min(p5.windowWidth, p5.windowHeight)/4
     ship = newShip()
     ship.setup()
-    scene = newScene(level1)
+    scene = newScene(getLevel(levelNumber))
     scene.setup()
     gui = newGui()
     gui.setup()
@@ -34,23 +35,31 @@ function setup(){
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
+    gui.splash("Hello", 4)
 }
 
 function draw(){
     p5.push()
-    ship.update()
-    ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
-    ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
-    let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
-    ship.grab(collectedObject)
-    if (collectedObject && collectedObject.fuel){
-        ship.fuelPercent(collectedObject.fuel)
-    }
-    if (collectedObject && collectedObject.health){
-        ship.healthPercent(collectedObject.health)
-    }
-    if (collectedObject.landingPad){
-        console.log("Landed") //TODO. softly?
+    if (!scene.isComplete()){
+        ship.update()
+        ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
+        ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
+        let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
+        ship.grab(collectedObject)
+        if (collectedObject && collectedObject.fuel){
+            gui.splash("Fuel")
+            ship.fuelPercent(collectedObject.fuel)
+        }
+        if (collectedObject && collectedObject.health){
+            gui.splash("Undamage")
+            ship.healthPercent(collectedObject.health)
+        }
+        if (collectedObject.landingPad){
+            gui.splash("Touchdown")
+        }
+        if (scene.isComplete()){
+            gui.splash("Good")
+        }
     }
     drawScene()
     drawShip()

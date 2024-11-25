@@ -6,11 +6,14 @@ export function newGui(){
     const scales = {x:1, y:1}
     const textSize = 1/80   // Fraction of the screen width
     const elements = []
+    let splashMessage
+    let splashMessageExpiryTime
 
     return {
         setup,
         draw,
-        addElement
+        addElement,
+        splash
     }
 
     function setup(){
@@ -34,10 +37,21 @@ export function newGui(){
             p5.text(text, 0, characterSize * rowNum)
             rowNum++
         }
+        // Is there a message to put in big text in the middle?
+        if (splashMessage && splashMessageExpiryTime > Date.now()){
+            p5.textSize(characterSize*5)
+            let stringWidth = p5.textWidth(splashMessage)
+            p5.text(splashMessage, (p5.windowWidth-stringWidth)/2, p5.windowHeight/2)
+        }
         p5.pop()
     }
 
     function addElement(label, valueFunction){
         elements.push({label, valueFunction})
+    }
+
+    function splash(message, timeoutSeconds){
+        splashMessage = message
+        splashMessageExpiryTime = Date.now()+(timeoutSeconds? timeoutSeconds : 0.5 * 1000)
     }
 }

@@ -7,7 +7,9 @@ export function newScene(level){
         setup,
         draw,
         collisionCheck,
-        collectionCheck
+        collectionCheck,
+        isComplete: ()=>{return level.isComplete()},
+        greeting: level.name
     }
 
     function setup(){
