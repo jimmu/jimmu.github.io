@@ -1,0 +1,24 @@
+:root {
+  --clockRadius: 100px;
+}
+* {
+  color: #808080
+}
+body {
+  padding 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+button {
+  position: absolute;
+  font-size: calc(0.08 * var(--clockRadius));
+  width: calc(0.35 * var(--clockRadius));
+  height: calc(0.15 * var(--clockRadius));
+  left: calc(50vw - (0.175 * var(--clockRadius)));
+  border: 0px;
+  border-radius: 0.4em;
+  background-color: #323232
+}
+canvas {
+  display: block;
+}
