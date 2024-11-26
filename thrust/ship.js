@@ -58,7 +58,7 @@ export function newShip(){
         p5.push()
         p5.strokeWeight(1)
         p5.stroke(200)
-        p5.noFill()
+        p5.fill(30)
 
         p5.rotate(angle)
         quad(size*0.66, 0,
@@ -66,6 +66,7 @@ export function newShip(){
             -size*0.5, 0,
             -size*0.33, size/3)
 
+        p5.noFill()
         if (thrusting && !grabbing){
             circle(-size*0.32, -size/7, size*0.1)
             circle(-size*0.32, size/7, size*0.1)

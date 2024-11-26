@@ -5,8 +5,10 @@ import {newScene} from './scene.js'
 import {newGui} from './gui.js'
 import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
+import {newBackdrop} from './backdrop.js'
 
 let ship
+let backdrop
 let scene
 let gui
 let levelNumber = 0
@@ -39,6 +41,8 @@ function setup(){
             gui.splash(scene.greeting, 2)
         })
         .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
+    backdrop = newBackdrop()
+    backdrop.setup()
     gui = newGui()
     gui.setup()
     gui.addElement("Fuel: ", ()=>{
@@ -77,6 +81,7 @@ function draw(){
             stateMachine.trigger("lose")
         }
     }
+    drawBackdrop()
     drawScene()
     drawShip()
     drawGui()
@@ -90,9 +95,17 @@ function prepareLevel(){
     ship.setup()
 }
 
+function drawBackdrop(){
+    p5.push()
+    // Put the origin in the centre.
+    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
+    //p5.translate()
+    backdrop.draw(groundXOffset(), groundYOffset())
+    p5.pop()
+}
+
 function drawScene(){
     p5.push()
-    p5.background(30)
     // Put the origin in the centre.
     p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     p5.translate(groundXOffset(), groundYOffset())
