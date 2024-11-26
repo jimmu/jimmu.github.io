@@ -4,12 +4,14 @@ import {newShip} from './ship.js'
 import {newScene} from './scene.js'
 import {newGui} from './gui.js'
 import {getLevel} from './levels.js'
+import {newStateMachine} from './stateMachine.js'
 
 let ship
 let scene
 let gui
 let levelNumber = 0
 let minMargin   // How close can the ship go to the edge of the screen?
+let stateMachine
 
 initP5((p5)=>{
     p5.setup = setup
@@ -23,10 +25,20 @@ function setup(){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
     }
     minMargin = Math.min(p5.windowWidth, p5.windowHeight)/4
-    ship = newShip()
-    ship.setup()
-    scene = newScene(getLevel(levelNumber))
-    scene.setup()
+    stateMachine = newStateMachine()
+        .addTransition("new", "tapOrKeyPress", "preLevel")
+        .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
+        .addTransition("inLevel", "lose", "lostLevel", ()=>{gui.splash("Ungood", 1)})
+        .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Good")})
+        .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
+            levelNumber++
+            prepareLevel()
+        })
+        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{console.log("Reset the level state?")})
+        .onEnteringState("preLevel", ()=>{
+            gui.splash(scene.greeting, 2)
+        })
+        .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
     gui = newGui()
     gui.setup()
     gui.addElement("Fuel: ", ()=>{
@@ -35,12 +47,13 @@ function setup(){
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
-    gui.splash("Hello", 4)
+    prepareLevel()
+    stateMachine.start("new")
 }
 
 function draw(){
     p5.push()
-    if (!scene.isComplete()){
+    if (stateMachine.state() == "inLevel"){
         ship.update()
         ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
         ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
@@ -58,13 +71,20 @@ function draw(){
             gui.splash("Touchdown")
         }
         if (scene.isComplete()){
-            gui.splash("Good")
+            stateMachine.trigger("win")
         }
     }
     drawScene()
     drawShip()
     drawGui()
     p5.pop()
+}
+
+function prepareLevel(){
+    scene = newScene(getLevel(levelNumber))
+    scene.setup()
+    ship = newShip()
+    ship.setup()
 }
 
 function drawScene(){
@@ -115,4 +135,5 @@ function groundXOffset(){
 }
 
 function keyPressed(){
+    stateMachine.trigger("tapOrKeyPress")
 }

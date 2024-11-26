@@ -52,6 +52,9 @@ export function newGui(){
 
     function splash(message, timeoutSeconds){
         splashMessage = message
-        splashMessageExpiryTime = Date.now()+(timeoutSeconds? timeoutSeconds : 0.5 * 1000)
+        if (!timeoutSeconds){
+            timeoutSeconds = 0.5
+        }
+        splashMessageExpiryTime = Date.now()+(timeoutSeconds * 1000)
     }
 }

@@ -9,10 +9,10 @@ const levels = [
             {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
             {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
             {type: shapes.quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05]},
+            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
         ],
         objects: [
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.01], landingPad: true},
             {type: shapes.circle, coords:[-0.1, 0.1, 0.01], fuel: 25},
             {type: shapes.circle, coords:[-0.2, 0.1, 0.01], health: 50}
         ],
@@ -28,6 +28,24 @@ const levels = [
             for (let landingPad of this.objects.filter((e)=>{return e.landingPad})){
                 return landingPad.collected
             }
+            return false
+        }
+    },
+    {
+        name: "Level 2",
+        scales: {x:1, y:0.5},
+        ground: [
+            {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
+            {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
+            {type: shapes.quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
+            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+        ],
+        objects: [
+            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: shapes.circle, coords:[-0.1, 0.1, 0.01], fuel: 25},
+            {type: shapes.circle, coords:[-0.2, 0.1, 0.01], health: 50}
+        ],
+        isComplete: function(){
             return false
         }
     }
