@@ -43,7 +43,8 @@ export function newShip(){
         grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
         grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
         fuelPercent,
-        healthPercent
+        healthPercent,
+        setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])}
     }
 
     function setup(){

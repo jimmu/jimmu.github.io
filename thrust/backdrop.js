@@ -14,7 +14,7 @@ export function newBackdrop(){
 
     function setup(howManyStars){
         if (!howManyStars){
-            howManyStars = 1000
+            howManyStars = 500
         }
         for (let i=0; i<howManyStars; i++){
             stars.push(Math.random()-0.5)   // x coord. Will be scaled to window width later

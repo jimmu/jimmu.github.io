@@ -9,7 +9,7 @@ export const shapes = {
         collision: (position, coords, diameter)=>{
             if (diameter){
                 // Use circle-poly for triangles
-                return p5.collideCirclePoly(position.x, position.y, diameter, coordsToVertices(coords))
+                return p5.collideCirclePoly(position.x, position.y, diameter, coordsToVertices(coords), true) // True for including collisions inside the shape
             }
             return p5.collidePointTriangle(position.x, position.y, ...coords)
         }
@@ -31,7 +31,7 @@ export const shapes = {
         },
         collision: (position, coords, diameter)=>{
             if (diameter){
-                return p5.collideCirclePoly(position.x, position.y, diameter, coordsToVertices(coords))
+                return p5.collideCirclePoly(position.x, position.y, diameter, coordsToVertices(coords), true)
             }
             return p5.collidePointPoly(position.x, position.y, coordsToVertices(coords))
         }

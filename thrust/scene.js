@@ -9,7 +9,8 @@ export function newScene(level){
         collisionCheck,
         collectionCheck,
         isComplete: ()=>{return level.isComplete()},
-        greeting: level.name
+        greeting: level.name,
+        startCoords: level.startCoords
     }
 
     function setup(){
@@ -23,7 +24,7 @@ export function newScene(level){
     function drawGround(){
         p5.push()
         p5.strokeWeight(1)
-        p5.stroke(150)
+        p5.noStroke()
         p5.fill(100)
         for (let shape of level.ground){
             drawShape(shape)
@@ -36,7 +37,7 @@ export function newScene(level){
         p5.strokeWeight(1)
         p5.stroke(200)
         p5.fill(150)
-        for (let shape of level.objects.filter((s)=>{return !s.collected})){
+        for (let shape of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
             drawShape(shape)
         }
         p5.pop()
@@ -57,7 +58,7 @@ export function newScene(level){
 
     function collectionCheck(position, diameter, onlyChecking){
         // Only check things which have not already been collected
-        for (let shape of level.objects.filter((s)=>{return !s.collected})){
+        for (let shape of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
             if (collisionCheckShape(position, shape, diameter)) {
                 if (onlyChecking){
                     console.log("Detected a "+shape)
@@ -65,6 +66,7 @@ export function newScene(level){
                 else {
                     console.log("Collected a "+shape)
                     shape.collected = true
+                    level.isComplete()  // Run this in case it has side effects such as enabling the landing pad when everything has been collected
                 }
                 return shape
             }

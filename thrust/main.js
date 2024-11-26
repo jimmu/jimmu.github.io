@@ -38,7 +38,7 @@ function setup(){
         })
         .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{prepareLevel()})
         .onEnteringState("preLevel", ()=>{
-            gui.splash(scene.greeting, 2)
+            gui.splash(levelNumber+":"+scene.greeting, 2)
         })
         .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
     backdrop = newBackdrop()
@@ -63,20 +63,27 @@ function draw(){
         ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
         let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
         ship.grab(collectedObject)
+        if (collectedObject && collectedObject.message){
+            gui.splash(collectedObject.message)
+        }
         if (collectedObject && collectedObject.fuel){
-            gui.splash("Fuel")
             ship.fuelPercent(collectedObject.fuel)
         }
         if (collectedObject && collectedObject.health){
-            gui.splash("Undamage")
             ship.healthPercent(collectedObject.health)
         }
         if (collectedObject.landingPad){
-            gui.splash("Touchdown")
+            if (scene.isComplete()){
+                gui.splash("Touchdown")
+                stateMachine.trigger("win")
+            }
+            else {
+                collectedObject.collected = false   // We landed before the goals were complete.
+            }
         }
-        if (scene.isComplete()){
-            stateMachine.trigger("win")
-        }
+//        if (scene.isComplete()){
+//            stateMachine.trigger("win")
+//        }
         if (ship.healthPercent() == 0){
             stateMachine.trigger("lose")
         }
@@ -93,6 +100,7 @@ function prepareLevel(){
     scene.setup()
     ship = newShip()
     ship.setup()
+    ship.setPos(scene.startCoords.x, scene.startCoords.y)
 }
 
 function drawBackdrop(){
@@ -108,7 +116,7 @@ function drawScene(){
     p5.push()
     // Put the origin in the centre.
     p5.translate(p5.windowWidth/2, p5.windowHeight/2)
-    p5.translate(groundXOffset(), groundYOffset())
+    p5.translate(groundXOffset(), groundYOffset())  // TODO. Scale these coords? And agree on scaling between ship and scene. Use the length of the window diagonal?
     scene.draw()
     p5.pop()
 }
@@ -117,7 +125,7 @@ function drawShip(){
     p5.push()
     // Put the origin in the centre.
     p5.translate(p5.windowWidth/2, p5.windowHeight/2)
-    p5.translate(shipXOffset(), shipYOffset())
+    p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
     ship.draw()
     if (ship.grab()){
         ship.drawGrabber()
