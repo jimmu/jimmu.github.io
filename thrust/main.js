@@ -34,7 +34,7 @@ function setup(){
             levelNumber++
             prepareLevel()
         })
-        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{console.log("Reset the level state?")})
+        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{prepareLevel()})
         .onEnteringState("preLevel", ()=>{
             gui.splash(scene.greeting, 2)
         })
@@ -72,6 +72,9 @@ function draw(){
         }
         if (scene.isComplete()){
             stateMachine.trigger("win")
+        }
+        if (ship.healthPercent() == 0){
+            stateMachine.trigger("lose")
         }
     }
     drawScene()

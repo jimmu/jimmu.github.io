@@ -52,5 +52,27 @@ const levels = [
 ]
 
 export function getLevel(levelNum){
-    return levels[levelNum % levels.length]
+    let level = levels[levelNum % levels.length]
+    // Return a copy of it, because some state in it gets mutated during play.
+    // Can't use structuredClone because of the type fields which contain functions.
+    return {name: level.name,
+            scales: level.scales,
+            ground: cloneGroundOrObjects(level.ground),
+            objects: cloneGroundOrObjects(level.objects),
+            isComplete: level.isComplete
+            }
+}
+
+function cloneGroundOrObjects(originalArray){
+    return originalArray.map((e)=>{
+        let copy=clone(e)
+        copy.type = e.type
+        return copy
+    })
+}
+
+function clone(original){
+    let copy = JSON.parse(JSON.stringify(original))
+    copy.type = original.type
+    return copy
 }
