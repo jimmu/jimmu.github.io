@@ -49,16 +49,16 @@ const levels = [
         scales: {x:1, y:1}, // Wide
         startCoords: {x:-0.3, y:-0.25},    //TODO. When these are passed to the ship, they use the ship's scaling, but I want them to use the _level_/scene scaling.
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 5, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 5, 0.5]},
-            {type: shapes.rectangle, coords:[-0.5, -0.1, 3.5, 0.2]},
+            {type: shapes.rectangle, coords:[-1, -1, 4, 0.5]},
+            {type: shapes.rectangle, coords:[-1, 0.5, 4, 0.5]},
+            {type: shapes.rectangle, coords:[-0.5, -0.1, 2.5, 0.2]},
             {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[3.5, -0.5, 0.5, 1]},
+            {type: shapes.rectangle, coords:[2.5, -0.5, 0.5, 1]},
             {type: shapes.rectangle, coords:[-0.3, 0.35, 0.1, 0.05], landingPad: true}
         ],
         objects: [
             {type: shapes.rectangle, coords:[-0.3, 0.35, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: shapes.circle, coords:[3.35, 0, 0.08], fuel: 75, message: "Fuel"},
+            {type: shapes.circle, coords:[2.35, 0, 0.08], fuel: 75, message: "Fuel"},
         ],
         isComplete: function(){
             for (let collectable of this.objects){

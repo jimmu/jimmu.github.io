@@ -4,8 +4,8 @@ import {p5instance as p5} from './lib.js'
 export function newShip(){
 
     //TODO. Touch controls too.
-    //TODO. Carrying things.
     //TODO. Explode
+    //TODO. Locks and keys
     //Show inventory in gui
     const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
     const rightKey="d".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
@@ -14,7 +14,9 @@ export function newShip(){
     let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
     let thrust = 0.2
-    let maxSpeed = 300   // Coordinate units per second.
+    const maxLandingSpeed = 40
+    const maxLandingAngle = Math.PI/6
+    const maxSpeed = 300   // Coordinate units per second.
     let position = p5.createVector(0, 0)
     let angle = -Math.PI/2
     let grabberPosition = p5.createVector(0, 0)
@@ -52,7 +54,8 @@ export function newShip(){
         grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
         fuelPercent,
         healthPercent,
-        setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])}
+        setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])},
+        slowEnoughToLand
     }
 
     function setup(){
@@ -87,6 +90,15 @@ export function newShip(){
             -size*0.33, -size/3,
             -size*0.5, 0,
             -size*0.33, size/3)
+        if (slowEnoughToLand()){
+            // Draw landing legs
+            line(-size, 0, -size*0.4, 0)
+            line(-size, -size*0.05, -size, size*0.05)
+            line(-size, -size*0.3, -size*0.4, -size*0.2)
+            line(-size, -size*0.35, -size, -size*0.25)
+            line(-size, size*0.3, -size*0.4, size*0.2)
+            line(-size, size*0.25, -size, size*0.35)
+        }
 
         p5.noFill()
         if (thrusting && !grabbing){
@@ -259,6 +271,13 @@ export function newShip(){
         p5.noFill()
         circle(0, 0, size)
         p5.pop()
+    }
+
+    function slowEnoughToLand(){
+        return velocity.mag() <= maxLandingSpeed &&
+                angle <= maxLandingAngle - Math.PI/2 &&
+                angle >= -Math.PI/2 - maxLandingAngle &&
+                grabAdjacent && grabAdjacent.landingPad
     }
 
     function leftPressed(){

@@ -87,8 +87,14 @@ function draw(){
         }
         if (collectedObject.landingPad){
             if (scene.isComplete()){
-                gui.splash("Touchdown")
-                stateMachine.trigger("win")
+                if (ship.slowEnoughToLand()){
+                    gui.splash("Touchdown")
+                    stateMachine.trigger("win")
+                }
+                else {
+                    gui.splash("Ouch")
+                    stateMachine.trigger("lose")
+                }
             }
             else {
                 collectedObject.collected = false   // We landed before the goals were complete.
