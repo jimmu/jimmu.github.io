@@ -54,8 +54,8 @@ function setup(){
     backdrop.setup()
     gui = newGui()
     gui.setup()
-    gui.addElement("Lives: ", ()=>{return livesRemaining})
-    gui.addElement("Fuel: ", ()=>{
+    gui.addElement("Lives : ", ()=>{return livesRemaining})
+    gui.addElement("Fuel  : ", ()=>{
         return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
     })
     gui.addElement("Damage: ", ()=>{
@@ -81,6 +81,9 @@ function draw(){
         }
         if (collectedObject && collectedObject.health){
             ship.healthPercent(collectedObject.health)
+        }
+        if (collectedObject && collectedObject.payload){
+            ship.carrying(collectedObject.payload)
         }
         if (collectedObject.landingPad){
             if (scene.isComplete()){
@@ -109,8 +112,6 @@ function prepareLevel(){
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)
-    ship.carrying(1) // Times the mass of the ship. TODO - remove
-
 }
 
 function drawBackdrop(){

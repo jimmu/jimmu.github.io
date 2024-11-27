@@ -233,6 +233,7 @@ export function newShip(){
             return payload
         }
         payload = thing
+        payloadPosition.set(grabberPosition.x, grabberPosition.y)
     }
 
     function fuelPercent(percentage){

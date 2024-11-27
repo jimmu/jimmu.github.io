@@ -72,6 +72,31 @@ const levels = [
         }
     },
     {
+        name: "Carry",
+        scales: {x:1, y:1},
+        ground: [
+            {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
+            {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
+            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
+            {type: shapes.rectangle, coords:[0.5, -0.5, 0.5, 1]},
+            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
+        ],
+        objects: [
+            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
+            {type: shapes.circle, coords:[-0.25, 0.25, 0.02], message: "Carry me", payload: 1},
+        ],
+        isComplete: function(){
+            for (let collectable of this.objects){
+                if (!collectable.landingPad && !collectable.collected){
+                    return false
+                }
+            }
+            // Everything has been collected. Enable the landing pad.
+            this.objects[0].disabled = false    // Assumes the landing pad is first object. Rather than scanning for it.
+            return true
+        }
+    },
+    {
         name: "Level x",
         scales: {x:2, y:1},
         ground: [
