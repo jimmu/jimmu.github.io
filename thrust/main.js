@@ -14,6 +14,8 @@ let gui
 let levelNumber = 0
 let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
+let maxLives = 3
+let livesRemaining
 
 initP5((p5)=>{
     p5.setup = setup
@@ -27,6 +29,7 @@ function setup(){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
     }
     minMargin = Math.min(p5.windowWidth, p5.windowHeight)/4
+    livesRemaining = maxLives
     stateMachine = newStateMachine()
         .addTransition("new", "tapOrKeyPress", "preLevel")
         .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
@@ -36,7 +39,13 @@ function setup(){
             levelNumber++
             prepareLevel()
         })
-        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{prepareLevel()})
+        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{
+            if (livesRemaining == 0){
+                levelNumber = 0
+                livesRemaining = maxLives
+            }
+            prepareLevel()
+        })
         .onEnteringState("preLevel", ()=>{
             gui.splash(levelNumber+":"+scene.greeting, 2)
         })
@@ -45,6 +54,7 @@ function setup(){
     backdrop.setup()
     gui = newGui()
     gui.setup()
+    gui.addElement("Lives: ", ()=>{return livesRemaining})
     gui.addElement("Fuel: ", ()=>{
         return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
     })
@@ -85,6 +95,7 @@ function draw(){
 //            stateMachine.trigger("win")
 //        }
         if (ship.healthPercent() == 0){
+            livesRemaining--
             stateMachine.trigger("lose")
         }
     }

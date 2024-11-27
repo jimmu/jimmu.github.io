@@ -4,6 +4,9 @@ import {p5instance as p5} from './lib.js'
 export function newShip(){
 
     //TODO. Touch controls too.
+    //TODO. Carrying things.
+    //TODO. Lives
+    //Show inventory in gui
     const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
     const rightKey="d".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
     const forwardKey="p".toUpperCase().charCodeAt(0)
