@@ -70,50 +70,55 @@ function draw(){
     p5.push()
     if (stateMachine.state() == "inLevel"){
         ship.update()
-        ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
-        // Has the payload hit anything?
-        if (ship.carrying() && !ship.hit()){
-            ship.hit(scene.collisionCheck(ship.payloadCollisionShape.position, ship.payloadCollisionShape.size))
-        }
-        ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
-        let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
-        ship.grab(collectedObject)
-        if (collectedObject && collectedObject.message){
-            gui.splash(collectedObject.message)
-        }
-        if (collectedObject && collectedObject.fuel){
-            ship.fuelPercent(collectedObject.fuel)
-        }
-        if (collectedObject && collectedObject.health){
-            ship.healthPercent(collectedObject.health)
-        }
-        if (collectedObject && collectedObject.payload){
-            ship.carrying(collectedObject)
-        }
-        if (collectedObject.landingPad){
-            if (scene.isComplete()){
-                if (ship.slowEnoughToLand()){
-                    gui.splash("Touchdown")
-                    stateMachine.trigger("win")
-                }
-                else {
-                    gui.splash("Ouch")
-                    stateMachine.trigger("lose")
-                }
-            }
-            else {
-                collectedObject.collected = false   // We landed before the goals were complete.
-            }
-        }
-        if (ship.healthPercent() == 0){
-            stateMachine.trigger("lose")
-        }
+        collisionChecks()
     }
     drawBackdrop()
     drawScene()
     drawShip()
     drawGui()
     p5.pop()
+}
+
+function collisionChecks(){
+    // Did the ship hit the ground?
+    ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
+    // Has the payload hit the ground?
+    if (ship.carrying() && !ship.hit()){
+        ship.hit(scene.collisionCheck(ship.payloadCollisionShape.position, ship.payloadCollisionShape.size))
+    }
+    // Now check the collectable objects
+    ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
+    let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
+    ship.grab(collectedObject)
+    if (collectedObject && collectedObject.message){
+        gui.splash(collectedObject.message)
+    }
+    if (collectedObject && collectedObject.fuel){
+        ship.fuelPercent(collectedObject.fuel)
+    }
+    if (collectedObject && collectedObject.health){
+        ship.healthPercent(collectedObject.health)
+    }
+    if (collectedObject && collectedObject.payload){
+        ship.carrying(collectedObject)
+    }
+    if (collectedObject.landingPad){
+        if (scene.isComplete()){
+            if (ship.slowEnoughToLand()){
+                gui.splash("Touchdown")
+                stateMachine.trigger("win")
+            }
+            else {
+                gui.splash("Ouch")
+                stateMachine.trigger("lose")
+            }
+        }
+        // Mark landing pads as not collected as we don't want them to vanish.
+        collectedObject.collected = false   // We landed before the goals were complete.
+    }
+    if (ship.healthPercent() == 0){
+        stateMachine.trigger("lose")
+    }
 }
 
 function prepareLevel(){
@@ -148,9 +153,9 @@ function drawShip(){
     p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
     ship.draw()
-    if (ship.grab()){
-        ship.drawGrabber()
-    }
+//    if (ship.grab()){
+//        ship.drawGrabber()
+//    }
     if (ship.nearAnObject()){
         ship.drawGrabberZone()
     }
