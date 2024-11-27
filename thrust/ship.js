@@ -5,7 +5,7 @@ export function newShip(){
 
     //TODO. Touch controls too.
     //TODO. Carrying things.
-    //TODO. Lives
+    //TODO. Explode
     //Show inventory in gui
     const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
     const rightKey="d".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
@@ -31,6 +31,10 @@ export function newShip(){
     let colliding = false
     let grabbing = false
     let grabAdjacent = false
+    let payloadRopeLength = size * 2
+    let payload // Shall we consider this to be a mass?
+    let payloadPosition = p5.createVector(0, 0)
+    let payloadVelocity = p5.createVector(0, 0)
 
     return {
         setup,
@@ -42,6 +46,7 @@ export function newShip(){
         hit,
         grab,
         nearAnObject,
+        carrying,
         collisionShape: {position, size: scale([size])[0]},
         grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
         grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
@@ -59,6 +64,19 @@ export function newShip(){
     }
 
     function draw(){
+        p5.push()
+        drawShip()
+        if (payload){
+            drawPayload()
+        }
+
+        if (colliding){
+            outlineCircle()
+        }
+        p5.pop()
+    }
+
+    function drawShip(){
         p5.push()
         p5.strokeWeight(1)
         p5.stroke(200)
@@ -82,11 +100,22 @@ export function newShip(){
             p5.rotate(-Math.PI/10)
             line(-size*0.85, 0, -size*0.6, 0)
         }
+        p5.pop()
+    }
 
-        if (colliding){
-            outlineCircle()
-        }
-
+    function drawPayload(){
+        p5.push()
+        // The canvas will have been moved so that the ship will be at 0,0
+        // So the coordinates for the payload depend on the difference between the ships and payloads positions.
+        p5.stroke(100)
+        p5.strokeWeight(0.5)
+        // Using p5.line to _avoid_ scaling the coords here.
+        p5.line(0,0, payloadPosition.x - position.x, payloadPosition.y - position.y)
+        p5.translate(payloadPosition.x - position.x, payloadPosition.y - position.y)
+        p5.fill(200)
+        p5.noStroke()
+        circle(0,0, size*0.5)
+        //circle(payloadPosition.x - position.x, payloadPosition.y - position.y, size*0.5)
         p5.pop()
     }
 
@@ -137,6 +166,32 @@ export function newShip(){
     }
 
     function move(){
+        // Are we towing something?
+        if (payload){
+            // Subject the payload to gravity too.
+            // It will also have its own position and velocity.
+            // The only other force to act on it is a pull towards the ship if the ship is thrusting.
+            // Which will only be the component of the thrust in that direction.
+            payloadVelocity.mult(1-friction)
+            let gravityIncrement = p5.constructor.Vector.mult(gravity, p5.deltaTime)
+            payloadVelocity.add(gravityIncrement)
+            let moveIncrement = p5.constructor.Vector.mult(payloadVelocity, p5.deltaTime/1000)
+            payloadPosition.add(moveIncrement)
+            // That's the payload drifting an falling.
+            // Now is it tugging on the string?
+            let scaledRopeLength = scale([payloadRopeLength])[0]
+            let shipToPayload = p5.constructor.Vector.sub(payloadPosition, position)
+            if (shipToPayload.mag() > scaledRopeLength){
+                // Constrain the payload to stay near enough the ship
+                shipToPayload.normalize().mult(scaledRopeLength)   // or use limit.
+                payloadPosition.set(position.x+shipToPayload.x, position.y+shipToPayload.y)
+                // Give the velocity of the payload and the ship a tug too.
+                // These should really be in proportion to the masses of the ship (1) and the payload.
+                payloadVelocity.sub(p5.constructor.Vector.mult(shipToPayload, 0.75))
+                // And tug the ship too
+                velocity.add(p5.constructor.Vector.mult(shipToPayload, 0.25))
+            }
+        }
         velocity.mult(1-friction)
         let gravityIncrement = p5.constructor.Vector.mult(gravity, p5.deltaTime)
         velocity.add(gravityIncrement)
@@ -173,6 +228,13 @@ export function newShip(){
         grabAdjacent = near
     }
 
+    function carrying(thing){
+        if (thing === undefined){
+            return payload
+        }
+        payload = thing
+    }
+
     function fuelPercent(percentage){
         // Either add this amount of fuel, or return the percentage left
         if (percentage){
@@ -192,6 +254,8 @@ export function newShip(){
     function outlineCircle(){
         p5.push()
         p5.strokeWeight(0.25)
+        p5.stroke(200)
+        p5.noFill()
         circle(0, 0, size)
         p5.pop()
     }

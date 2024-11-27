@@ -91,9 +91,6 @@ function draw(){
                 collectedObject.collected = false   // We landed before the goals were complete.
             }
         }
-//        if (scene.isComplete()){
-//            stateMachine.trigger("win")
-//        }
         if (ship.healthPercent() == 0){
             livesRemaining--
             stateMachine.trigger("lose")
@@ -112,6 +109,8 @@ function prepareLevel(){
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)
+    ship.carrying(1) // Times the mass of the ship. TODO - remove
+
 }
 
 function drawBackdrop(){
