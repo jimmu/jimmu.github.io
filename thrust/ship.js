@@ -14,7 +14,7 @@ export function newShip(){
     let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
     let thrust = 0.2
-    const maxLandingSpeed = 40
+    const maxLandingSpeed = 50
     const maxLandingAngle = Math.PI/6
     const maxSpeed = 300   // Coordinate units per second.
     let position = p5.createVector(0, 0)
@@ -32,7 +32,8 @@ export function newShip(){
     let thrusting = false
     let colliding = false
     let grabbing = false
-    let grabAdjacent = false
+    let grabAdjacent
+    let payloadSize = size*0.75
     let payloadRopeLength = size * 2
     let payload // Shall we consider this to be a mass?
     let payloadPosition = p5.createVector(0, 0)
@@ -52,6 +53,7 @@ export function newShip(){
         collisionShape: {position, size: scale([size])[0]},
         grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
         grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
+        payloadCollisionShape: {position: payloadPosition, size: scale([payloadSize])[0]},
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])},
@@ -120,14 +122,13 @@ export function newShip(){
         // The canvas will have been moved so that the ship will be at 0,0
         // So the coordinates for the payload depend on the difference between the ships and payloads positions.
         p5.stroke(100)
-        p5.strokeWeight(0.5)
-        // Using p5.line to _avoid_ scaling the coords here.
+        p5.strokeWeight(0.3)
+        // Using p5.line instead of line to _avoid_ scaling the coords here.
         p5.line(0,0, payloadPosition.x - position.x, payloadPosition.y - position.y)
         p5.translate(payloadPosition.x - position.x, payloadPosition.y - position.y)
-        p5.fill(200)
+        p5.fill(150)
         p5.noStroke()
-        circle(0,0, size*0.5)
-        //circle(payloadPosition.x - position.x, payloadPosition.y - position.y, size*0.5)
+        circle(0,0, payloadSize)
         p5.pop()
     }
 

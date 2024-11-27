@@ -50,6 +50,7 @@ function setup(){
             gui.splash(levelNumber+":"+scene.greeting, 2)
         })
         .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
+        .onEventNamed("lose", ()=>{livesRemaining--})
     backdrop = newBackdrop()
     backdrop.setup()
     gui = newGui()
@@ -70,6 +71,10 @@ function draw(){
     if (stateMachine.state() == "inLevel"){
         ship.update()
         ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
+        // Has the payload hit anything?
+        if (ship.carrying() && !ship.hit()){
+            ship.hit(scene.collisionCheck(ship.payloadCollisionShape.position, ship.payloadCollisionShape.size))
+        }
         ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
         let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
         ship.grab(collectedObject)
@@ -83,7 +88,7 @@ function draw(){
             ship.healthPercent(collectedObject.health)
         }
         if (collectedObject && collectedObject.payload){
-            ship.carrying(collectedObject.payload)
+            ship.carrying(collectedObject)
         }
         if (collectedObject.landingPad){
             if (scene.isComplete()){
@@ -101,7 +106,6 @@ function draw(){
             }
         }
         if (ship.healthPercent() == 0){
-            livesRemaining--
             stateMachine.trigger("lose")
         }
     }
