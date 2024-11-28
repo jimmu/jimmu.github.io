@@ -160,7 +160,7 @@ export function newShip(){
         let directions = controls.directions()
         let leftOrRight = directions.right - directions.left
         angle += (leftOrRight * elapsedSeconds * rotationSpeed)
-        thrusting = directions.up > 0 && fuel>0
+        thrusting = (directions.up + directions.down) > 0 && fuel>0
         if (thrusting){
             // Change the velocity based on the direction and the amount of thrust
             let thrustVector = p5.constructor.Vector.fromAngle(angle)
