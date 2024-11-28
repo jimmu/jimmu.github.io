@@ -102,6 +102,24 @@ function collisionChecks(){
     if (collectedObject && collectedObject.payload){
         ship.carrying(collectedObject)
     }
+    if (collectedObject && collectedObject.needsKey){
+        // Check the ships inventory for this key.
+        // Use it if it has it.
+        if (ship.hasInInventory("keys", collectedObject.needsKey)){
+            scene.useKey(collectedObject.needsKey)
+        }
+        else {
+            // What to do. Bump off the object?
+            ship.velocity.mult(-1)
+            collectedObject.collected = false
+            gui.splash("Locked")
+        }
+    }
+    if (collectedObject && collectedObject.key){
+        // Key is a number. Disable any objects with "needsKey" equal to that number.
+        // Add the key to the ship's inventory
+        ship.addToInventory("keys", collectedObject.key)
+    }
     if (collectedObject.landingPad){
         if (scene.isComplete()){
             if (ship.slowEnoughToLand()){

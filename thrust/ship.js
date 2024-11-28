@@ -5,7 +5,6 @@ export function newShip(){
 
     //TODO. Touch controls too.
     //TODO. Explode
-    //TODO. Locks and keys
     //Show inventory in gui
     const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
     const rightKey="d".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
@@ -38,6 +37,7 @@ export function newShip(){
     let payload // Shall we consider this to be a mass?
     let payloadPosition = p5.createVector(0, 0)
     let payloadVelocity = p5.createVector(0, 0)
+    let inventory = new Map()
 
     return {
         setup,
@@ -46,6 +46,7 @@ export function newShip(){
         drawGrabberZone,
         update,
         position,
+        velocity,
         hit,
         grab,
         nearAnObject,
@@ -57,7 +58,9 @@ export function newShip(){
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])},
-        slowEnoughToLand
+        slowEnoughToLand,
+        addToInventory,
+        hasInInventory
     }
 
     function setup(){
@@ -215,6 +218,17 @@ export function newShip(){
         grabberOffset.mult(...scale([size*0.75]))
         grabberPosition.set(position.x, position.y)
         grabberPosition.add(grabberOffset)
+    }
+
+    function hasInInventory(pocket, thing){
+        return inventory.has(pocket) && inventory.get(pocket).includes(thing)
+    }
+
+    function addToInventory(pocket, thing){
+        if (!inventory.has(pocket)){
+            inventory.set(pocket, [])
+        }
+        inventory.get(pocket).push(thing)
     }
 
     function hit(hit){

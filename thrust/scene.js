@@ -10,7 +10,8 @@ export function newScene(level){
         collectionCheck,
         isComplete: ()=>{return level.isComplete()},
         greeting: level.name,
-        startCoords: level.startCoords
+        startCoords: level.startCoords,
+        useKey
     }
 
     function setup(){
@@ -72,6 +73,12 @@ export function newScene(level){
             }
         }
         return false
+    }
+
+    function useKey(key){
+        for (let shape of level.objects.filter((s)=>{return s.needsKey == key})){
+            shape.disabled = true
+        }
     }
 
     function drawShape(shape){
