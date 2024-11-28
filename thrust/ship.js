@@ -1,15 +1,12 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
 import {newInventory} from './inventory.js'
+import {newControls} from './controls.js'
 
 export function newShip(){
 
-    //TODO. Touch controls too.
     //TODO. Explode
-    const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
-    const rightKey="d".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
-    const forwardKey="p".toUpperCase().charCodeAt(0)
-
+    let controls = newControls()
     let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
     let thrust = 0.2
@@ -158,25 +155,18 @@ export function newShip(){
         p5.pop()
     }
 
-    function getCollisionShape(){
-    }
-
     function checkControls(){
         let elapsedSeconds = p5.deltaTime/1000
-        if (leftPressed()){
-            angle -= (elapsedSeconds * rotationSpeed)
-        }
-        if (rightPressed()){
-            angle += (elapsedSeconds * rotationSpeed)
-        }
-        thrusting = forwardPressed() && fuel>0
-        if (thrusting){
+        let directions = controls.directions()
+        let leftOrRight = directions.right - directions.left
+        angle += (leftOrRight * elapsedSeconds * rotationSpeed)
+        if (directions.up > 0 && fuel>0){
             // Change the velocity based on the direction and the amount of thrust
             let thrustVector = p5.constructor.Vector.fromAngle(angle)
-            let velocityChange = p5.constructor.Vector.mult(thrustVector, thrust * p5.deltaTime)
+            let velocityChange = p5.constructor.Vector.mult(thrustVector, directions.up * thrust * p5.deltaTime)
             velocity.add(velocityChange)
             velocity.limit(maxSpeed)
-            fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds))
+            fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds * directions.up))
         }
     }
 
@@ -281,18 +271,6 @@ export function newShip(){
                 angle <= maxLandingAngle - Math.PI/2 &&
                 angle >= -Math.PI/2 - maxLandingAngle &&
                 grabAdjacent && grabAdjacent.landingPad
-    }
-
-    function leftPressed(){
-        return p5.keyIsDown(leftKey) || p5.keyIsDown(p5.LEFT_ARROW)
-    }
-
-    function rightPressed(){
-        return p5.keyIsDown(rightKey) || p5.keyIsDown(p5.RIGHT_ARROW)
-    }
-
-    function forwardPressed(){
-        return p5.keyIsDown(forwardKey) || p5.keyIsDown(p5.UP_ARROW)
     }
 
     function line(...coords){
