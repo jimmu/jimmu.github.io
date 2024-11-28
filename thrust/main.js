@@ -62,6 +62,7 @@ function setup(){
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
+    gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     prepareLevel()
     stateMachine.start("new")
 }
@@ -105,20 +106,20 @@ function collisionChecks(){
     if (collectedObject && collectedObject.needsKey){
         // Check the ships inventory for this key.
         // Use it if it has it.
-        if (ship.hasInInventory("keys", collectedObject.needsKey)){
+        if (ship.inventory.has("keys", collectedObject.needsKey)){
             scene.useKey(collectedObject.needsKey)
         }
         else {
             // What to do. Bump off the object?
             ship.velocity.mult(-1)
             collectedObject.collected = false
-            gui.splash("Locked")
+            gui.splash("Lock "+collectedObject.needsKey)
         }
     }
     if (collectedObject && collectedObject.key){
         // Key is a number. Disable any objects with "needsKey" equal to that number.
         // Add the key to the ship's inventory
-        ship.addToInventory("keys", collectedObject.key)
+        ship.inventory.add("keys", collectedObject.key)
     }
     if (collectedObject.landingPad){
         if (scene.isComplete()){
@@ -171,9 +172,9 @@ function drawShip(){
     p5.translate(p5.windowWidth/2, p5.windowHeight/2)
     p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
     ship.draw()
-//    if (ship.grab()){
-//        ship.drawGrabber()
-//    }
+    //    if (ship.grab()){
+    //        ship.drawGrabber()
+    //    }
     if (ship.nearAnObject()){
         ship.drawGrabberZone()
     }

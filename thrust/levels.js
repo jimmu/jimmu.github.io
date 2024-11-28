@@ -109,8 +109,8 @@ const levels = [
         ],
         objects: [
             {type: shapes.rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false},
-            {type: shapes.triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key", key: 1},
-            {type: shapes.rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: 1}
+            {type: shapes.triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
+            {type: shapes.rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", message: "Unlocked"}
         ],
         isComplete: function(){
             // If you can reach the landing pad then that's all there is to it.
