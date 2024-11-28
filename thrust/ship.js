@@ -33,7 +33,7 @@ export function newShip(){
     let grabbing = false
     let grabAdjacent
     let payloadSize = size*0.75
-    let payloadRopeLength = size * 2
+    let payloadRopeLength = size * 3
     let payload // Shall we consider this to be a mass?
     let payloadPosition = p5.createVector(0, 0)
     let payloadVelocity = p5.createVector(0, 0)
