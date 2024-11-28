@@ -20,7 +20,8 @@ let livesRemaining
 initP5((p5)=>{
     p5.setup = setup
     p5.draw = draw
-    p5.keyPressed=keyPressed
+    p5.keyPressed = keyPressed
+    p5.touchStarted = touchStarted
 })
 
 function setup(){
@@ -204,5 +205,9 @@ function groundXOffset(){
 }
 
 function keyPressed(){
+    stateMachine.trigger("tapOrKeyPress")
+}
+
+function touchStarted(){
     stateMachine.trigger("tapOrKeyPress")
 }
