@@ -19,7 +19,6 @@ let stateMachine
 let maxLives = 3
 let livesRemaining
 
-//TODO. Put the rendering times on the GUI for debugging why it's slow in portrait mode on mobile.
 let timeToDraw = 0
 
 initP5((p5)=>{
@@ -73,6 +72,7 @@ function setup(){
     })
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     gui.addElement("Frame time: ", ()=>{return timeToDraw.toFixed(1)+"ms"})
+    gui.addElement("Frame rate: ", ()=>{return Math.ceil(p5.frameRate())})
     prepareLevel()
     stateMachine.start("new")
 }
