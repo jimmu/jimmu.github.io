@@ -41,7 +41,7 @@ function setup(){
         .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
         .addTransition("inLevel", "lose", "lostLevel", ()=>{
             gui.splash("Ungood", 1)
-            explosion = newExplosion(p5.windowWidth, 1)
+            explosion = newExplosion(p5.windowWidth, 0.75)//seconds to reach most of the final size
         })
         .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Good")})
         .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{

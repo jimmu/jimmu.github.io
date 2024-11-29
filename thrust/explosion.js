@@ -5,9 +5,9 @@ export function newExplosion(size, durationSeconds){
 
     let startTime = Date.now()
     let durationMillis = durationSeconds * 1000
-    const minSizeFactor = 0.125
+    const minSizeFactor = 0.0125
     const shrapnelCount = 24
-    const maxShrapnelSize = p5.windowWidth*0.015
+    const maxShrapnelSize = p5.windowWidth*0.15
 
     return{
         draw
@@ -25,13 +25,13 @@ export function newExplosion(size, durationSeconds){
         if (sizeFactor <= 1){
             p5.noFill()
             p5.stroke(250)
-            p5.strokeWeight(1-sizeFactor)
+            p5.strokeWeight(6 - (6*sizeFactor))
             for (let i = 0; i < shrapnelCount; i++){
-                //p5.rotate(Math.random()*Math.PI/12)
                 p5.rotate(2*Math.PI/shrapnelCount)
-                p5.circle(size*sizeFactor/2, 0, (0.5+Math.random()/2)*maxShrapnelSize)
+                p5.arc(size*sizeFactor/2, 0,
+                        (0.5+sizeFactor)*maxShrapnelSize, (0.5+sizeFactor)*0.7*maxShrapnelSize,
+                        -Math.PI/4, Math.PI/4)
             }
-            //p5.circle(0, 0, size*sizeFactor)    // Too simple?
         }
         p5.pop()
     }
