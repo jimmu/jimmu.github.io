@@ -22,7 +22,6 @@ export function newControls(){
         }
     }
 
-    //TODO. Check the touches array too.
     function leftPressed(){
         return p5.keyIsDown(leftKey) || p5.keyIsDown(p5.LEFT_ARROW)
     }

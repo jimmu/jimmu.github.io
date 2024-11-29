@@ -6,11 +6,13 @@ import {newGui} from './gui.js'
 import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
+import {newExplosion} from './explosion.js'
 
 let ship
 let backdrop
 let scene
 let gui
+let explosion
 let levelNumber = 0
 let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
@@ -34,7 +36,10 @@ function setup(){
     stateMachine = newStateMachine()
         .addTransition("new", "tapOrKeyPress", "preLevel")
         .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
-        .addTransition("inLevel", "lose", "lostLevel", ()=>{gui.splash("Ungood", 1)})
+        .addTransition("inLevel", "lose", "lostLevel", ()=>{
+            gui.splash("Ungood", 1)
+            explosion = newExplosion(p5.windowWidth, 1)
+        })
         .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Good")})
         .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
             levelNumber++
@@ -76,6 +81,9 @@ function draw(){
     }
     drawBackdrop()
     drawScene()
+    if (stateMachine.state() == "lostLevel"){
+        drawExplosion()
+    }
     drawShip()
     drawGui()
     p5.pop()
@@ -179,6 +187,15 @@ function drawShip(){
     if (ship.nearAnObject()){
         ship.drawGrabberZone()
     }
+    p5.pop()
+}
+
+function drawExplosion(){
+    p5.push()
+    // Put the origin in the centre.
+    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
+    p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
+    explosion.draw()
     p5.pop()
 }
 

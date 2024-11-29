@@ -5,7 +5,6 @@ import {newControls} from './controls.js'
 
 export function newShip(){
 
-    //TODO. Explode
     let controls = newControls()
     let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
