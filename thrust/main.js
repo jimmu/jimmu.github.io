@@ -73,6 +73,7 @@ function setup(){
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     gui.addElement("Frame time: ", ()=>{return timeToDraw.toFixed(1)+"ms"})
     gui.addElement("Frame rate: ", ()=>{return Math.ceil(p5.frameRate())})
+    gui.addElement("Canvas size: ", ()=>{return p5.windowWidth + " x " + p5.windowHeight})
     prepareLevel()
     stateMachine.start("new")
 }

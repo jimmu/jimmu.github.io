@@ -21,13 +21,12 @@ export function newGui(){
 
     function draw(){
         p5.push()
-        let characterSize = p5.windowWidth * textSize * scales.x
+        let characterSize = Math.ceil(p5.windowWidth * textSize * scales.x)
         p5.translate(characterSize, characterSize)
         p5.noStroke()
         p5.fill(200)
         p5.textStyle(p5.BOLD)
-        p5.textFont("Courier New")
-        p5.textSize(characterSize)
+        p5.textFont("Courier New", characterSize)
         let rowNum = 1
         for (let element of elements){
             let text = element.label
