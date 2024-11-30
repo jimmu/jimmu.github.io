@@ -19,8 +19,6 @@ let stateMachine
 let maxLives = 3
 let livesRemaining
 
-let timeToDraw = 0
-
 initP5((p5)=>{
     p5.setup = setup
     p5.draw = draw
@@ -71,9 +69,6 @@ function setup(){
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
-    gui.addElement("Frame time: ", ()=>{return timeToDraw.toFixed(1)+"ms"})
-    gui.addElement("Frame rate: ", ()=>{return Math.ceil(p5.frameRate())})
-    gui.addElement("Canvas size: ", ()=>{return p5.windowWidth + " x " + p5.windowHeight})
     prepareLevel()
     stateMachine.start("new")
 }
@@ -93,7 +88,6 @@ function draw(){
     drawShip()
     drawGui()
     p5.pop()
-    timeToDraw = (19*timeToDraw + Date.now()-startTime)/20   // A bit of smoothing
 }
 
 function collisionChecks(){

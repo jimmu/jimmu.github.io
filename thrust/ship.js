@@ -163,7 +163,7 @@ export function newShip(){
         if (thrusting){
             // Change the velocity based on the direction and the amount of thrust
             let thrustVector = p5.constructor.Vector.fromAngle(angle)
-            let velocityChange = p5.constructor.Vector.mult(thrustVector, directions.up * thrust * p5.deltaTime)
+            let velocityChange = p5.constructor.Vector.mult(thrustVector, (directions.up + directions.down) * thrust * p5.deltaTime)
             velocity.add(velocityChange)
             velocity.limit(maxSpeed)
             fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds * directions.up))
