@@ -3,7 +3,7 @@ import {shapes} from './shapes.js'
 
 const levels = [
     {
-        name: "Land",
+        name: "Land Carefully",
         scales: {x:1, y:1},
         ground: [
             {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
@@ -114,6 +114,29 @@ const levels = [
         ],
         isComplete: function(){
             // If you can reach the landing pad then that's all there is to it.
+            return true
+        }
+    },
+    {
+        name: "Tight Squeeze",
+        scales: {x:1, y:1},
+        startCoords: {x:-0.4, y:0},
+        ground: [
+            {type: shapes.rectangle, coords:[-1, -0.85, 1, 0.8]},
+            {type: shapes.rectangle, coords:[-1, 0.05, 3, 1]},
+            {type: shapes.rectangle, coords:[0.05, -0.75, 0.5, 0.8]},
+            {type: shapes.rectangle, coords:[-1, -1.05, 2.5, 0.2]},
+            {type: shapes.rectangle, coords:[0.6, -1, 0.1, 0.95]},
+            {type: shapes.rectangle, coords:[1.2, -1, 1, 1.25]}
+        ],
+        objects: [
+            {type: shapes.rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true},
+            {type: shapes.triangle, coords:[0.95, -0.45, 0.945, -0.425, 0.955, -0.425], key: "A"},
+            {type:shapes.circle, coords:[0.95, -0.3, 0.025], fuel:100},
+            {type:shapes.circle, coords:[-0.4, 0, 0.025], fuel:100},
+            {type: shapes.rectangle, coords:[-0.375, -0.1, 0.05, 0.2], needsKey: "A"}
+        ],
+        isComplete: function(){
             return true
         }
     },

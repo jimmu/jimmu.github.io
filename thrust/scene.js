@@ -82,8 +82,13 @@ export function newScene(level){
     }
 
     function drawShape(shape){
+        p5.push()
         let coords = scale(shape.coords)
+        if (shape.colour){
+            p5.fill(shape.colour)
+        }
         shape.type.render(coords)
+        p5.pop()
     }
 
     function collisionCheckShape(position, shape, collisionDiameter){

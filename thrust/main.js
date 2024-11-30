@@ -18,6 +18,7 @@ let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
 let maxLives = 3
 let livesRemaining
+let devMode = false
 
 initP5((p5)=>{
     p5.setup = setup
@@ -69,6 +70,9 @@ function setup(){
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
+    if (devMode){
+        gui.addElement("Co-ordinates   :  ", ()=>{return ship.position.x/p5.windowWidth+","+ship.position.y/p5.windowHeight})
+    }
     prepareLevel()
     stateMachine.start("new")
 }

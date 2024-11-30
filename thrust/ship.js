@@ -11,7 +11,7 @@ export function newShip(){
     let thrust = 0.2
     const maxLandingSpeed = 50
     const maxLandingAngle = Math.PI/6
-    const maxSpeed = 300   // Coordinate units per second.
+    const maxSpeed = 600   // Coordinate units per second.
     let position = p5.createVector(0, 0)
     let angle = -Math.PI/2
     let grabberPosition = p5.createVector(0, 0)
@@ -20,8 +20,8 @@ export function newShip(){
     let velocity = p5.createVector(0, 0)
     let fuel = 100  // Percent
     let health = 100 // Percent. Undamagedness
-    let fuelPerSecondThrust = 10    // Percentage points per second
-    let damagePerSecond = 50
+    let fuelPerSecondThrust = 8.5    // Percentage points per second TODO - make this optionally level specific
+    let damagePerSecond = 67
     let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(thrust/5)
     let friction = 0.005
     let thrusting = false
