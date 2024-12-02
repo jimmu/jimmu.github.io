@@ -5,7 +5,9 @@ import {newControls} from './controls.js'
 import {scale} from './shapes.js'
 
 export function newShip(){
-
+    //TODO. Vapour trail
+    //TODO. Body collision detection
+    //TODO. Grabber collision detection
     let devMode = false
     let controls = newControls()
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
@@ -49,10 +51,10 @@ export function newShip(){
         grab,
         nearAnObject,
         carrying,
-        collisionShape: {position, size: scale(size)},
-        grabberShape: {position: grabberPosition, size: scale(grabberSize)},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
-        grabberZoneShape: {position: grabberPosition, size: scale(grabberZoneSize)},
-        payloadCollisionShape: {position: payloadPosition, size: scale(payloadSize)},
+        collisionShape: {position, size},
+        grabberShape: {position: grabberPosition, size: grabberSize},
+        grabberZoneShape: {position: grabberPosition, size: grabberZoneSize},
+        payloadCollisionShape: {position: payloadPosition, size: payloadSize},
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(scale(x), scale(y))},

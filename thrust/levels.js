@@ -1,5 +1,5 @@
 "use strict";
-import {shapes} from './shapes.js'
+import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
 
 const levels = [
     {
@@ -18,10 +18,10 @@ const levels = [
             ]
         },
         ground: [
-            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true},
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true},
         ],
         isComplete: function(){
             return true
@@ -38,11 +38,11 @@ const levels = [
             ]
         },
         ground: [
-            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: shapes.circle, coords:[-0.25, 0.25, 0.05], message: "Nom"},
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
+            {type: circle, coords:[-0.25, 0.25, 0.05], message: "Nom"},
         ],
         isComplete: function(){
             for (let collectable of this.objects){
@@ -69,11 +69,11 @@ const levels = [
             ]
         },
         ground: [
-            {type: shapes.rectangle, coords:[-2.25, 0.5, 0.1, 0.05], landingPad: true}
+            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: shapes.circle, coords:[2.35, 0, 0.08], fuel: 75, message: "Fuel"},
+            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true},
+            {type: circle, coords:[2.35, 0, 0.08], fuel: 75, message: "Fuel"},
         ],
         isComplete: function(){
             for (let collectable of this.objects){
@@ -89,14 +89,14 @@ const levels = [
     {
         name: "Carry",
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[0.5, -0.5, 0.5, 1]}
+            {type: rectangle, coords:[-1, -1, 2, 0.5]},
+            {type: rectangle, coords:[-1, 0.5, 2, 0.5]},
+            {type: rectangle, coords:[-1, -0.5, 0.5, 1]},
+            {type: rectangle, coords:[0.5, -0.5, 0.5, 1]}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: shapes.circle, coords:[-0.25, 0.25, 0.02], message: "Carry me", payload: 1},
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
+            {type: circle, coords:[-0.25, 0.25, 0.02], message: "Carry me", payload: 1},
         ],
         isComplete: function(){
             for (let collectable of this.objects){
@@ -113,17 +113,17 @@ const levels = [
         name: "Unlock",
         startCoords: {x: -0.25, y: 0},
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[0.5, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords: [-0.02, -0.5, 0.04, 0.4]},
-            {type: shapes.rectangle, coords: [-0.02, 0.1, 0.04, 0.4]},
+            {type: rectangle, coords:[-1, -1, 2, 0.5]},
+            {type: rectangle, coords:[-1, 0.5, 2, 0.5]},
+            {type: rectangle, coords:[-1, -0.5, 0.5, 1]},
+            {type: rectangle, coords:[0.5, -0.5, 0.5, 1]},
+            {type: rectangle, coords: [-0.02, -0.5, 0.04, 0.4]},
+            {type: rectangle, coords: [-0.02, 0.1, 0.04, 0.4]},
         ],
         objects: [
-            {type: shapes.rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false},
-            {type: shapes.triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
-            {type: shapes.rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", message: "Unlocked"}
+            {type: rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false},
+            {type: triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
+            {type: rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", message: "Unlocked"}
         ],
         isComplete: function(){
             // If you can reach the landing pad then that's all there is to it.
@@ -134,19 +134,19 @@ const levels = [
         name: "Tight Squeeze",
         startCoords: {x:-0.4, y:0},
         ground: [
-            {type: shapes.rectangle, coords:[-1, -0.85, 1, 0.8]},
-            {type: shapes.rectangle, coords:[-1, 0.05, 3, 1]},
-            {type: shapes.rectangle, coords:[0.05, -0.75, 0.5, 0.8]},
-            {type: shapes.rectangle, coords:[-1, -1.05, 2.5, 0.2]},
-            {type: shapes.rectangle, coords:[0.6, -1, 0.1, 0.95]},
-            {type: shapes.rectangle, coords:[1.2, -1, 1, 1.25]}
+            {type: rectangle, coords:[-1, -0.85, 1, 0.8]},
+            {type: rectangle, coords:[-1, 0.05, 3, 1]},
+            {type: rectangle, coords:[0.05, -0.75, 0.5, 0.8]},
+            {type: rectangle, coords:[-1, -1.05, 2.5, 0.2]},
+            {type: rectangle, coords:[0.6, -1, 0.1, 0.95]},
+            {type: rectangle, coords:[1.2, -1, 1, 1.25]}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true},
-            {type: shapes.triangle, coords:[0.95, -0.45, 0.945, -0.425, 0.955, -0.425], key: "A"},
-            {type:shapes.circle, coords:[0.95, -0.3, 0.025], fuel:100},
-            {type:shapes.circle, coords:[-0.4, 0, 0.025], fuel:100},
-            {type: shapes.rectangle, coords:[-0.375, -0.1, 0.05, 0.2], needsKey: "A"}
+            {type: rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true},
+            {type: triangle, coords:[0.95, -0.45, 0.945, -0.425, 0.955, -0.425], key: "A"},
+            {type: circle, coords:[0.95, -0.3, 0.025], fuel:100},
+            {type: circle, coords:[-0.4, 0, 0.025], fuel:100},
+            {type: rectangle, coords:[-0.375, -0.1, 0.05, 0.2], needsKey: "A"}
         ],
         isComplete: function(){
             return true
@@ -155,15 +155,15 @@ const levels = [
     {
         name: "Level x",
         ground: [
-            {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
-            {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
-            {type: shapes.quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
+            {type: triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
+            {type: quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
         ],
         objects: [
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.01], landingPad: true},
-            {type: shapes.circle, coords:[-0.1, 0.1, 0.01], fuel: 25, message: "Fuel"},
-            {type: shapes.circle, coords:[-0.2, 0.1, 0.01], health: 50, message: "Undamage"}
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.01], landingPad: true},
+            {type: circle, coords:[-0.1, 0.1, 0.01], fuel: 25, message: "Fuel"},
+            {type: circle, coords:[-0.2, 0.1, 0.01], health: 50, message: "Undamage"}
         ],
         isComplete: function(){
             // Has the ship landed?
@@ -176,15 +176,15 @@ const levels = [
     {
         name: "Level y",
         ground: [
-            {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
-            {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
-            {type: shapes.quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
+            {type: triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
+            {type: quadrilateral, coords:[-0.5, -0.4, -0.3, -0.3, -0.4, 0.4, -0.6, 0.45]},
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
         ],
         objects: [
-            {type: shapes.rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
-            {type: shapes.circle, coords:[-0.1, 0.1, 0.01], fuel: 25},
-            {type: shapes.circle, coords:[-0.2, 0.1, 0.01], health: 50}
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: circle, coords:[-0.1, 0.1, 0.01], fuel: 25},
+            {type: circle, coords:[-0.2, 0.1, 0.01], health: 50}
         ],
         isComplete: function(){
             return false
@@ -209,6 +209,7 @@ export function getLevel(levelNum){
             }
 }
 
+// TODO. Now that shapes has been refactored, check if structuredClone would work fine here.
 function cloneGroundOrObjects(originalArray){
     return originalArray.map((e)=>{
         let copy=clone(e)
@@ -237,7 +238,7 @@ function groundBlocksToRectangles(blockInfo){
             let thisChar = blocks[row][col]
             if (thisChar != " "){
                 rectangles.push({
-                    type: shapes.rectangle,
+                    type: rectangle,
                     coords: [size.x * col/numCols - size.x/2, size.y * row/numRows - size.y/2, size.x/numCols, size.y/numRows]
                 })
             }

@@ -7,6 +7,7 @@ import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
+import {unscale} from './shapes.js'
 
 let ship
 let backdrop
@@ -18,7 +19,7 @@ let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
 let maxLives = 3
 let livesRemaining
-let devMode = false
+let devMode = true
 
 initP5((p5)=>{
     p5.setup = setup
@@ -71,7 +72,8 @@ function setup(){
     })
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     if (devMode){
-        gui.addElement("Co-ordinates   :  ", ()=>{return ship.position.x/p5.windowWidth+","+ship.position.y/p5.windowHeight})
+        gui.addElement("Co-ordinates: ", ()=>{return "("+unscale(ship.position.x).toFixed(3)+", "+unscale(ship.position.y).toFixed(3)+
+                       ") Speed: "+Math.floor(ship.velocity.mag())})
     }
     prepareLevel()
     stateMachine.start("new")

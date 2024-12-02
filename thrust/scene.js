@@ -1,6 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
-import {scale} from './shapes.js'
+import {render, collision, scale, circle} from './shapes.js'
 
 export function newScene(level){
 
@@ -88,13 +88,13 @@ export function newScene(level){
         if (shape.colour){
             p5.fill(shape.colour)
         }
-        shape.type.render(coords)
+        render(shape.type, coords)
         p5.pop()
     }
 
     function collisionCheckShape(position, shape, collisionDiameter){
         let coords = scale(shape.coords)
-        if (shape.type.collision(position, coords, collisionDiameter)){
+        if (collision(circle, [position.x, position.y, scale(collisionDiameter)], shape.type, coords)){
             return shape
         }
     }
