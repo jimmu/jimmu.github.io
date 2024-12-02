@@ -62,10 +62,10 @@ export function newScene(level){
         for (let shape of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
             if (collisionCheckShape(position, shape, diameter)) {
                 if (onlyChecking){
-                    console.log("Detected a "+shape)
+                    //console.log("Detected a "+shape)
                 }
                 else {
-                    console.log("Collected a "+shape)
+                    //console.log("Collected a "+shape)
                     shape.collected = true
                     level.isComplete()  // Run this in case it has side effects such as enabling the landing pad when everything has been collected
                 }

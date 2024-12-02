@@ -5,6 +5,7 @@ import {newControls} from './controls.js'
 
 export function newShip(){
 
+    let devMode = false
     let controls = newControls()
     let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
@@ -20,8 +21,8 @@ export function newShip(){
     let velocity = p5.createVector(0, 0)
     let fuel = 100  // Percent
     let health = 100 // Percent. Undamagedness
-    let fuelPerSecondThrust = 8.5    // Percentage points per second TODO - make this optionally level specific
-    let damagePerSecond = 67
+    let fuelPerSecondThrust = devMode? 0 : 8.5    // Percentage points per second TODO - make this optionally level specific
+    let damagePerSecond = devMode? 0 : 67
     let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(thrust/5)
     let friction = 0.005
     let thrusting = false

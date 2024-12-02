@@ -5,11 +5,20 @@ const levels = [
     {
         name: "Land Carefully",
         scales: {x:1, y:1},
+        // GroundBlocks are a way to quickly express some version of background.
+        // An array of equal length strings, representing the full scene.
+        // So an array of 10 string of length 10 would be a 100 pixel version of the background.
+        // Treat each character as a rectangle. No properties set on any of them.
+        // Can optimise later be merging the rectangles in to a smaller number of larger shapes.
+        groundBlocks: {
+            size: {x:3, y:3},   // Optional. How many screens wide/high do these blocks cover?
+            blocks: [
+            "###",
+            "# #",
+            "###"
+            ]
+        },
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[0.5, -0.5, 0.5, 1]},
             {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
         ],
         objects: [
@@ -22,11 +31,15 @@ const levels = [
     {
         name: "Collect",
         scales: {x:1, y:1},
+        groundBlocks: {
+            size: {x:3, y:3},
+            blocks: [
+            "###",
+            "# #",
+            "###"
+            ]
+        },
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[0.5, -0.5, 0.5, 1]},
             {type: shapes.rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
         ],
         objects: [
@@ -47,17 +60,22 @@ const levels = [
     {
         name: "Refuel",
         scales: {x:1, y:1}, // Wide
-        startCoords: {x:-0.3, y:-0.25},    //TODO. When these are passed to the ship, they use the ship's scaling, but I want them to use the _level_/scene scaling.
+        startCoords: {x:-3, y:-0.25},    //TODO. When these are passed to the ship, they use the ship's scaling, but I want them to use the _level_/scene scaling.
+        groundBlocks: {
+            size: {x:6, y:2},
+            blocks: [
+            "############",
+            "#          #",
+            "########## #",
+            "#          #",
+            "############"
+            ]
+        },
         ground: [
-            {type: shapes.rectangle, coords:[-1, -1, 4, 0.5]},
-            {type: shapes.rectangle, coords:[-1, 0.5, 4, 0.5]},
-            {type: shapes.rectangle, coords:[-0.5, -0.1, 2.5, 0.2]},
-            {type: shapes.rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[2.5, -0.5, 0.5, 1]},
-            {type: shapes.rectangle, coords:[-0.3, 0.35, 0.1, 0.05], landingPad: true}
+            {type: shapes.rectangle, coords:[-2.25, 0.5, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: shapes.rectangle, coords:[-0.3, 0.35, 0.1, 0.01], landingPad: true, disabled: true},
+            {type: shapes.rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true},
             {type: shapes.circle, coords:[2.35, 0, 0.08], fuel: 75, message: "Fuel"},
         ],
         isComplete: function(){
@@ -194,7 +212,7 @@ export function getLevel(levelNum){
     return {name: level.name,
             scales: level.scales,
             startCoords,
-            ground: cloneGroundOrObjects(level.ground),
+            ground: cloneGroundOrObjects(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
             objects: cloneGroundOrObjects(level.objects),
             isComplete: level.isComplete
             }
@@ -212,4 +230,27 @@ function clone(original){
     let copy = JSON.parse(JSON.stringify(original))
     copy.type = original.type
     return copy
+}
+
+function groundBlocksToRectangles(blockInfo){
+    let size = blockInfo.size || {x:1, y:1}
+    let blocks = blockInfo.blocks || []
+    if (!blocks || blocks.length == 0){
+        return []
+    }
+    let rectangles = []
+    let numRows = blocks.length
+    let numCols = blocks[0].length
+    for (let row=0; row < blocks.length; row++){
+        for (let col=0; col < blocks[row].length; col++){
+            let thisChar = blocks[row][col]
+            if (thisChar != " "){
+                rectangles.push({
+                    type: shapes.rectangle,
+                    coords: [size.x * col/numCols - size.x/2, size.y * row/numRows - size.y/2, size.x/numCols, size.y/numRows]
+                })
+            }
+        }
+    }
+    return rectangles
 }
