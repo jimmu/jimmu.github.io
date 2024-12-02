@@ -1,5 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
+import {scale} from './shapes.js'
 
 export function newScene(level){
 
@@ -98,7 +99,4 @@ export function newScene(level){
         }
     }
 
-    function scale(coords){
-        return coords.map((e,i)=>{return e * (i%2==0 ? p5.windowWidth * level.scales.x : p5.windowHeight * level.scales.y)})
-    }
 }

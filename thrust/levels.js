@@ -4,7 +4,6 @@ import {shapes} from './shapes.js'
 const levels = [
     {
         name: "Land Carefully",
-        scales: {x:1, y:1},
         // GroundBlocks are a way to quickly express some version of background.
         // An array of equal length strings, representing the full scene.
         // So an array of 10 string of length 10 would be a 100 pixel version of the background.
@@ -30,7 +29,6 @@ const levels = [
     },
     {
         name: "Collect",
-        scales: {x:1, y:1},
         groundBlocks: {
             size: {x:3, y:3},
             blocks: [
@@ -59,8 +57,7 @@ const levels = [
     },
     {
         name: "Refuel",
-        scales: {x:1, y:1}, // Wide
-        startCoords: {x:-3, y:-0.25},    //TODO. When these are passed to the ship, they use the ship's scaling, but I want them to use the _level_/scene scaling.
+        startCoords: {x:-2.25, y:-0.25},
         groundBlocks: {
             size: {x:6, y:2},
             blocks: [
@@ -91,7 +88,6 @@ const levels = [
     },
     {
         name: "Carry",
-        scales: {x:1, y:1},
         ground: [
             {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
             {type: shapes.rectangle, coords:[-1, 0.5, 2, 0.5]},
@@ -115,7 +111,6 @@ const levels = [
     },
     {
         name: "Unlock",
-        scales: {x:1, y:1},
         startCoords: {x: -0.25, y: 0},
         ground: [
             {type: shapes.rectangle, coords:[-1, -1, 2, 0.5]},
@@ -137,7 +132,6 @@ const levels = [
     },
     {
         name: "Tight Squeeze",
-        scales: {x:1, y:1},
         startCoords: {x:-0.4, y:0},
         ground: [
             {type: shapes.rectangle, coords:[-1, -0.85, 1, 0.8]},
@@ -160,7 +154,6 @@ const levels = [
     },
     {
         name: "Level x",
-        scales: {x:2, y:1},
         ground: [
             {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
             {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
@@ -182,7 +175,6 @@ const levels = [
     },
     {
         name: "Level y",
-        scales: {x:1, y:0.5},
         ground: [
             {type: shapes.triangle, coords:[-0.5, 0.4, 0, 0.3, 0.5, 0.5]},
             {type: shapes.triangle, coords:[0.5, -0.4, 0, -0.3, -0.5, -0.5]},
@@ -210,7 +202,6 @@ export function getLevel(levelNum){
     }
 
     return {name: level.name,
-            scales: level.scales,
             startCoords,
             ground: cloneGroundOrObjects(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
             objects: cloneGroundOrObjects(level.objects),

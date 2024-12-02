@@ -49,6 +49,11 @@ export const shapes = {
     }
 }
 
+export function scale(coords){
+    let scalingDimension = p5.windowWidth //Math.min(p5.windowWidth, p5.windowHeight) // Or the diagonal
+    return Array.isArray(coords)? coords.map((e)=>{return e * scalingDimension}) : coords * scalingDimension
+}
+
 function coordsToVertices(coords){
     let vertices = []
     for (let i=0; i<coords.length-1; i+=2){

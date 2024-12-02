@@ -1,9 +1,10 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
+import {scale} from './shapes.js'
 
 export function newBackdrop(){
 
-    const scales = {x:5, y:4}
+    const size = {x:5, y:4}
     let stars = []
     let depths = []
 
@@ -17,8 +18,8 @@ export function newBackdrop(){
             howManyStars = 500
         }
         for (let i=0; i<howManyStars; i++){
-            stars.push(Math.random()-0.5)   // x coord. Will be scaled to window width later
-            stars.push(Math.random()-0.5)   // y. likewise
+            stars.push(size.x * (Math.random()-0.5))   // x coord. Will be scaled to window width later
+            stars.push(size.y * (Math.random()-0.5))   // y. likewise
             depths.push(Math.random())  // Depth. Won't be scaled.
         }
     }
@@ -44,9 +45,4 @@ export function newBackdrop(){
         }
         p5.pop()
     }
-
-    function scale(coords){
-        return coords.map((e,i)=>{return e * (i%2==0 ? p5.windowWidth * scales.x: p5.windowHeight*scales.y)})
-    }
-
 }

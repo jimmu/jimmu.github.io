@@ -2,12 +2,13 @@
 import {p5instance as p5} from './lib.js'
 import {newInventory} from './inventory.js'
 import {newControls} from './controls.js'
+import {scale} from './shapes.js'
 
 export function newShip(){
 
     let devMode = false
     let controls = newControls()
-    let size = 0.04   // Fraction of the screen width or height (whichever is smaller)
+    let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
     let rotationSpeed = 3   // Radians per second
     let thrust = 0.2
     const maxLandingSpeed = 50
@@ -48,13 +49,13 @@ export function newShip(){
         grab,
         nearAnObject,
         carrying,
-        collisionShape: {position, size: scale([size])[0]},
-        grabberShape: {position: grabberPosition, size: scale([grabberSize])[0]},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
-        grabberZoneShape: {position: grabberPosition, size: scale([grabberZoneSize])[0]},
-        payloadCollisionShape: {position: payloadPosition, size: scale([payloadSize])[0]},
+        collisionShape: {position, size: scale(size)},
+        grabberShape: {position: grabberPosition, size: scale(grabberSize)},   //TODO. Make the size a function so that its value is recalcualted if the screensize changes?
+        grabberZoneShape: {position: grabberPosition, size: scale(grabberZoneSize)},
+        payloadCollisionShape: {position: payloadPosition, size: scale(payloadSize)},
         fuelPercent,
         healthPercent,
-        setPos: (x, y)=>{position.set(scale([x])[0], scale([y])[0])},
+        setPos: (x, y)=>{position.set(scale(x), scale(y))},
         slowEnoughToLand,
         inventory
     }
@@ -185,7 +186,7 @@ export function newShip(){
             payloadPosition.add(moveIncrement)
             // That's the payload drifting an falling.
             // Now is it tugging on the string?
-            let scaledRopeLength = scale([payloadRopeLength])[0]
+            let scaledRopeLength = scale(payloadRopeLength)
             let shipToPayload = p5.constructor.Vector.sub(payloadPosition, position)
             if (shipToPayload.mag() > scaledRopeLength){
                 // Constrain the payload to stay near enough the ship
@@ -205,7 +206,7 @@ export function newShip(){
         position.add(moveIncrement)
         // Now update the grabber position. It's at the back of the ship, so it depends on the ship's position and angle.
         let grabberOffset = p5.constructor.Vector.fromAngle(angle+Math.PI)
-        grabberOffset.mult(...scale([size*0.75]))
+        grabberOffset.mult(scale(size*0.75))
         grabberPosition.set(position.x, position.y)
         grabberPosition.add(grabberOffset)
     }
@@ -284,11 +285,5 @@ export function newShip(){
 
     function quad(...coords){
         p5.quad(...scale(coords))
-    }
-
-    // Note that this scaling is not quite the same as is used for the landscape, where widths and heights scale separately
-    function scale(coords){
-        let scalingDimension = Math.min(p5.windowWidth, p5.windowHeight)
-        return coords.map((e)=>{return e * scalingDimension})
     }
 }

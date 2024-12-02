@@ -3,7 +3,6 @@ import {p5instance as p5} from './lib.js'
 
 export function newGui(){
 
-    const scales = {x:1, y:1}
     const textSize = 1/80   // Fraction of the screen width
     const elements = []
     let splashMessage
@@ -21,7 +20,7 @@ export function newGui(){
 
     function draw(){
         p5.push()
-        let characterSize = Math.ceil(p5.windowWidth * textSize * scales.x)
+        let characterSize = Math.ceil(p5.windowWidth * textSize)
         p5.translate(characterSize, characterSize)
         p5.noStroke()
         p5.fill(200)
