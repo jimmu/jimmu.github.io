@@ -2,22 +2,37 @@
 import {p5instance as p5} from './lib.js'
 import {newInventory} from './inventory.js'
 import {newControls} from './controls.js'
-import {scale} from './shapes.js'
+import {quadrilateral, render, rotate, line, circle} from './shapes.js'
+
+export const devMode = false
 
 export function newShip(){
     //TODO. Vapour trail
-    //TODO. Body collision detection
-    //TODO. Grabber collision detection
-    let devMode = false
     let controls = newControls()
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
+    let shipShape = {type: quadrilateral,
+                    coords: [size*0.66, 0,
+                            -size*0.33, -size/3,
+                            -size*0.5, 0,
+                            -size*0.33, size/3]}
+    // Landing legs collision mask. Must match the actual drawn legs shape reasonably.
+    let landingLegsShape = {type: quadrilateral,
+                    coords: [-size, -size*0.35,
+                             -size, size*0.35,
+                             -size*0.4, size*0.2,
+                             -size*0.4, -size*0.2]}
+    // Zone in which to trigger the lowering of the landing legs
+    let landerZoneShape = {type: circle, coords: [-size * 1.5, 0, size * 3]}
+    let payloadSize = size * 0.75
+    let payloadShape = {type: circle, coords: [0, 0, payloadSize]}
     let rotationSpeed = 3   // Radians per second
-    let thrust = 0.2
-    const maxLandingSpeed = 50
+    let thrust = 0.2/1000
+    const upwards = Math.PI * 1.5
+    const maxLandingSpeed = 50/1000
     const maxLandingAngle = Math.PI/6
-    const maxSpeed = 600   // Coordinate units per second.
+    const maxSpeed = 600/1000   // Coordinate units per second.
     let position = p5.createVector(0, 0)
-    let angle = -Math.PI/2
+    let angle = Math.PI * 1.5
     let grabberPosition = p5.createVector(0, 0)
     let grabberSize = size/2
     let grabberZoneSize = size  // Near enough the grabber to show some visual indication
@@ -32,7 +47,6 @@ export function newShip(){
     let colliding = false
     let grabbing = false
     let grabAdjacent
-    let payloadSize = size*0.75
     let payloadRopeLength = size * 3
     let payload // Shall we consider this to be a mass?
     let payloadPosition = p5.createVector(0, 0)
@@ -42,22 +56,21 @@ export function newShip(){
     return {
         setup,
         draw,
-        drawGrabber,
-        drawGrabberZone,
         update,
         position,
         velocity,
+        angle,
         hit,
         grab,
         nearAnObject,
         carrying,
-        collisionShape: {position, size},
-        grabberShape: {position: grabberPosition, size: grabberSize},
-        grabberZoneShape: {position: grabberPosition, size: grabberZoneSize},
-        payloadCollisionShape: {position: payloadPosition, size: payloadSize},
+        collisionShape: {position, shape: shipShape},
+        landingLegsCollisionShape: {position, shape: landingLegsShape},
+        landerZoneCollisionShape: {position, shape: landerZoneShape},
+        payloadCollisionShape: {position: payloadPosition, shape: payloadShape},
         fuelPercent,
         healthPercent,
-        setPos: (x, y)=>{position.set(scale(x), scale(y))},
+        setPos: (x, y)=>{position.set(x, y)},
         slowEnoughToLand,
         inventory
     }
@@ -77,9 +90,9 @@ export function newShip(){
             drawPayload()
         }
 
-        if (colliding){
-            outlineCircle()
-        }
+//        if (colliding){
+//            drawCollisionShape()
+//        }
         p5.pop()
     }
 
@@ -90,79 +103,70 @@ export function newShip(){
         p5.fill(30)
 
         p5.rotate(angle)
-        quad(size*0.66, 0,
-            -size*0.33, -size/3,
-            -size*0.5, 0,
-            -size*0.33, size/3)
+        render(shipShape.type, shipShape.coords)
         if (slowEnoughToLand()){
             // Draw landing legs
-            line(-size, 0, -size*0.4, 0)
-            line(-size, -size*0.05, -size, size*0.05)
-            line(-size, -size*0.3, -size*0.4, -size*0.2)
-            line(-size, -size*0.35, -size, -size*0.25)
-            line(-size, size*0.3, -size*0.4, size*0.2)
-            line(-size, size*0.25, -size, size*0.35)
+            render(line, [-size, 0, -size*0.4, 0])
+            render(line, [-size, -size*0.05, -size, size*0.05])
+            render(line, [-size, -size*0.3, -size*0.4, -size*0.2])
+            render(line, [-size, -size*0.35, -size, -size*0.25])
+            render(line, [-size, size*0.3, -size*0.4, size*0.2])
+            render(line, [-size, size*0.25, -size, size*0.35])
         }
 
         p5.noFill()
         if (thrusting && !grabbing){
-            circle(-size*0.32, -size/7, size*0.1)
-            circle(-size*0.32, size/7, size*0.1)
+            render(circle, [-size*0.32, -size/7, size*0.1])
+            render(circle, [-size*0.32, size/7, size*0.1])
             p5.strokeWeight(0.5)
             p5.rotate(Math.PI/10)
-            line(-size*0.85, 0, -size*0.6, 0)
+            render(line, [-size*0.85, 0, -size*0.6, 0])
             p5.rotate(-Math.PI/10)
-            line(-size*0.85, 0, -size*0.6, 0)
+            render(line, [-size*0.85, 0, -size*0.6, 0])
             p5.rotate(-Math.PI/10)
-            line(-size*0.85, 0, -size*0.6, 0)
+            render(line, [-size*0.85, 0, -size*0.6, 0])
+            p5.rotate(Math.PI/10)
         }
         p5.pop()
     }
 
     function drawPayload(){
         p5.push()
-        // The canvas will have been moved so that the ship will be at 0,0
-        // So the coordinates for the payload depend on the difference between the ships and payloads positions.
+        // Because the canvas will already have been moved to put the ship at the centre,
+        // the coordinates for the payload depend on the difference between the ships and payloads positions.
+        // If we want to allow the ship to wander around the screen a bit, we need some notional camera
+        // object which knows where the canvas/view is. In that case the method here would (more intuitively)
+        // just draw a line between the ship position and the payload position.
+        // TODO - that.
         p5.stroke(100)
         p5.strokeWeight(0.3)
-        // Using p5.line instead of line to _avoid_ scaling the coords here.
-        p5.line(0,0, payloadPosition.x - position.x, payloadPosition.y - position.y)
-        p5.translate(payloadPosition.x - position.x, payloadPosition.y - position.y)
+        render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])
         p5.fill(150)
         p5.noStroke()
-        circle(0,0, payloadSize)
+        render(circle, [payloadPosition.x - position.x, payloadPosition.y - position.y, payloadSize])
         p5.pop()
     }
 
-    function drawGrabber(){
-        p5.push()
-        p5.strokeWeight(1)
-        p5.stroke(200)
-        p5.noFill()
-        p5.rotate(angle)
-        circle(-size*0.75, 0, grabberSize)
-        p5.pop()
-    }
-
-    function drawGrabberZone(){
-        p5.push()
-        p5.strokeWeight(0.5)
-        p5.stroke(200)
-        p5.noFill()
-        p5.rotate(angle)
-        quad(-size*1.25, -grabberZoneSize/2,
-            grabberZoneSize-size, -grabberZoneSize/2,
-            grabberZoneSize-size, grabberZoneSize/2,
-            -size*1.25, grabberZoneSize/2
-            )
-        p5.pop()
-    }
+//    function drawLandingZone(){
+//        p5.push()
+//        p5.strokeWeight(0.5)
+//        p5.stroke(200)
+//        p5.noFill()
+//        render(landerZoneShape.type, landerZoneShape.coords)
+//        p5.pop()
+//    }
 
     function checkControls(){
         let elapsedSeconds = p5.deltaTime/1000
         let directions = controls.directions()
         let leftOrRight = directions.right - directions.left
         angle += (leftOrRight * elapsedSeconds * rotationSpeed)
+        if (angle >= 2 * Math.PI){
+            angle = angle - (2 * Math.PI)
+        }
+        else if (angle < 0){
+            angle = angle + (2 * Math.PI)
+        }
         thrusting = (directions.up + directions.down) > 0 && fuel>0
         if (thrusting){
             // Change the velocity based on the direction and the amount of thrust
@@ -188,17 +192,21 @@ export function newShip(){
             payloadPosition.add(moveIncrement)
             // That's the payload drifting an falling.
             // Now is it tugging on the string?
-            let scaledRopeLength = scale(payloadRopeLength)
             let shipToPayload = p5.constructor.Vector.sub(payloadPosition, position)
-            if (shipToPayload.mag() > scaledRopeLength){
+            if (shipToPayload.mag() > payloadRopeLength){
                 // Constrain the payload to stay near enough the ship
-                shipToPayload.normalize().mult(scaledRopeLength)   // or use limit.
+                shipToPayload.normalize().mult(payloadRopeLength)   // or use limit.
                 payloadPosition.set(position.x+shipToPayload.x, position.y+shipToPayload.y)
                 // Give the velocity of the payload and the ship a tug too.
-                // These should really be in proportion to the masses of the ship (1) and the payload.
-                payloadVelocity.sub(p5.constructor.Vector.mult(shipToPayload, 0.75))
+                // We need the component of the ship velocity that is away from the payload
+                // plus the component of the payload velocity that is away from the ship.
+                // Which we can get by just subtracting one vector from the other.
+                let velocityDiff = p5.constructor.Vector.sub(payloadVelocity, velocity).mag()
+                let howHardToTugPayload = velocityDiff * 0.75
+                let howHardToTugShip = velocityDiff * 0.25
+                payloadVelocity.sub(p5.constructor.Vector.mult(shipToPayload, howHardToTugPayload))
                 // And tug the ship too
-                velocity.add(p5.constructor.Vector.mult(shipToPayload, 0.25))
+                velocity.add(p5.constructor.Vector.mult(shipToPayload, howHardToTugShip))
             }
         }
         velocity.mult(1-friction)
@@ -208,7 +216,7 @@ export function newShip(){
         position.add(moveIncrement)
         // Now update the grabber position. It's at the back of the ship, so it depends on the ship's position and angle.
         let grabberOffset = p5.constructor.Vector.fromAngle(angle+Math.PI)
-        grabberOffset.mult(scale(size*0.75))
+        grabberOffset.mult(size*0.75)
         grabberPosition.set(position.x, position.y)
         grabberPosition.add(grabberOffset)
     }
@@ -261,31 +269,19 @@ export function newShip(){
         return Math.ceil(health)
     }
 
-    function outlineCircle(){
+    function drawCollisionShape(){
         p5.push()
         p5.strokeWeight(0.25)
-        p5.stroke(200)
+        p5.stroke("red")
         p5.noFill()
-        circle(0, 0, size)
+        render(shipShape.type, rotate(angle, shipShape.coords.map((n)=>{return n*1.3})))
         p5.pop()
     }
 
     function slowEnoughToLand(){
         return velocity.mag() <= maxLandingSpeed &&
-                angle <= maxLandingAngle - Math.PI/2 &&
-                angle >= -Math.PI/2 - maxLandingAngle &&
+                angle <= (upwards + maxLandingAngle) &&
+                angle >= (upwards - maxLandingAngle) &&
                 grabAdjacent && grabAdjacent.landingPad
-    }
-
-    function line(...coords){
-        p5.line(...scale(coords))
-    }
-
-    function circle(...coords){
-        p5.circle(...scale(coords))
-    }
-
-    function quad(...coords){
-        p5.quad(...scale(coords))
     }
 }

@@ -1,6 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
-import {render, collision, scale, circle} from './shapes.js'
+import {render, collision, circle} from './shapes.js'
 
 export function newScene(level){
 
@@ -45,32 +45,31 @@ export function newScene(level){
         p5.pop()
     }
 
-    function collisionCheck(position, diameter){
-        // Have these coords collided with the ground?
+    function collisionCheck(collisionShape){
+        // Has this shape, at these coords collided with the ground?
         // Maybe check the front of the ship separately from the back. In case we want to detect landings.
         // First off just check every shape in turn.
         // Could do something more fancy to cull shapes far out of view if need be.
-        for (let shape of level.ground){
-            if (collisionCheckShape(position, shape, diameter)) {
+        for (let groundShape of level.ground){
+            if (collisionCheckShape(collisionShape, groundShape)) {
                 return true
             }
         }
         return false
     }
 
-    function collectionCheck(position, diameter, onlyChecking){
+    function collectionCheck(collisionShape, onlyChecking){
         // Only check things which have not already been collected
-        for (let shape of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
-            if (collisionCheckShape(position, shape, diameter)) {
+        for (let collectableObject of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
+            if (collisionCheckShape(collisionShape, collectableObject)) {
                 if (onlyChecking){
                     //console.log("Detected a "+shape)
                 }
                 else {
-                    //console.log("Collected a "+shape)
-                    shape.collected = true
+                    collectableObject.collected = true
                     level.isComplete()  // Run this in case it has side effects such as enabling the landing pad when everything has been collected
                 }
-                return shape
+                return collectableObject
             }
         }
         return false
@@ -84,17 +83,16 @@ export function newScene(level){
 
     function drawShape(shape){
         p5.push()
-        let coords = scale(shape.coords)
         if (shape.colour){
             p5.fill(shape.colour)
         }
-        render(shape.type, coords)
+        render(shape.type, shape.coords)
         p5.pop()
     }
 
-    function collisionCheckShape(position, shape, collisionDiameter){
-        let coords = scale(shape.coords)
-        if (collision(circle, [position.x, position.y, scale(collisionDiameter)], shape.type, coords)){
+    // Check if the shapes collided. If they did, return the second one.
+    function collisionCheckShape(collisionMask, shape){
+        if (collision(collisionMask.type, collisionMask.coords, shape.type, shape.coords)){
             return shape
         }
     }

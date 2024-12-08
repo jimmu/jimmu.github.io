@@ -1,13 +1,13 @@
 "use strict";
 import {initP5, p5instance as p5} from './lib.js'
-import {newShip} from './ship.js'
+import {newShip, devMode} from './ship.js'
 import {newScene} from './scene.js'
 import {newGui} from './gui.js'
 import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
-import {unscale} from './shapes.js'
+import {centreScreen, translateScreen, rotate, translate} from './shapes.js'
 
 let ship
 let backdrop
@@ -19,7 +19,6 @@ let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
 let maxLives = 3
 let livesRemaining
-let devMode = true
 
 initP5((p5)=>{
     p5.setup = setup
@@ -72,8 +71,9 @@ function setup(){
     })
     gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     if (devMode){
-        gui.addElement("Co-ordinates: ", ()=>{return "("+unscale(ship.position.x).toFixed(3)+", "+unscale(ship.position.y).toFixed(3)+
+        gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
                        ") Speed: "+Math.floor(ship.velocity.mag())})
+        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.position.x.toFixed(3)+", "+ship.payloadCollisionShape.position.y.toFixed(3)+") shape: "+ship.payloadCollisionShape.shape.coords})
     }
     prepareLevel()
     stateMachine.start("new")
@@ -98,15 +98,31 @@ function draw(){
 
 function collisionChecks(){
     // Did the ship hit the ground?
-    ship.hit(scene.collisionCheck(ship.collisionShape.position, ship.collisionShape.size))
-    // Has the payload hit the ground?
+    let bumpedInto = oneCollisionCheck(ship.collisionShape, scene.collisionCheck)
+    ship.hit(bumpedInto)
+    // If we're carrying something, did the payload hit the ground?
     if (ship.carrying() && !ship.hit()){
-        ship.hit(scene.collisionCheck(ship.payloadCollisionShape.position, ship.payloadCollisionShape.size))
+        let payloadBumpedInto = oneCollisionCheck(ship.payloadCollisionShape, scene.collisionCheck, 0)
+        if (payloadBumpedInto){
+            ship.hit(payloadBumpedInto)
+        }
     }
-    // Now check the collectable objects
-    ship.nearAnObject(scene.collectionCheck(ship.grabberZoneShape.position, ship.grabberZoneShape.size, true))
-    let collectedObject = scene.collectionCheck(ship.grabberShape.position, ship.grabberShape.size)
+    // Did the ship hit any game objects?
+    let collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck)
     ship.grab(collectedObject)
+    // Are we near a landing pad?
+    let nearbyObject = oneCollisionCheck(ship.landerZoneCollisionShape, (s)=>{return scene.collectionCheck(s, true)})    // True for just looking
+    ship.nearAnObject(nearbyObject)
+    // If the legs are extended then check if they hit anything.
+    if (ship.slowEnoughToLand()){
+        let legsHitThis = oneCollisionCheck(ship.landingLegsCollisionShape, scene.collectionCheck)
+        if (legsHitThis){
+            ship.grab(legsHitThis)
+            collectedObject = legsHitThis
+        }
+    }
+
+    // Now check the collectable objects
     if (collectedObject && collectedObject.message){
         gui.splash(collectedObject.message)
     }
@@ -133,7 +149,6 @@ function collisionChecks(){
         }
     }
     if (collectedObject && collectedObject.key){
-        // Key is a number. Disable any objects with "needsKey" equal to that number.
         // Add the key to the ship's inventory
         ship.inventory.add("keys", collectedObject.key)
     }
@@ -156,6 +171,15 @@ function collisionChecks(){
     }
 }
 
+// TODO. Consider moving this into the ship rather than exposing all those collider shape details.
+function oneCollisionCheck(thing, collider, angle){
+    let collisionPos = thing.position
+    let collisionShape = thing.shape
+    let rotatedCoords = rotate(angle? angle : ship.angle, collisionShape.coords)
+    let translatedCoords = translate(collisionPos.x, collisionPos.y, rotatedCoords)
+    return collider({type: collisionShape.type, coords: translatedCoords})
+}
+
 function prepareLevel(){
     scene = newScene(getLevel(levelNumber))
     scene.setup()
@@ -167,7 +191,7 @@ function prepareLevel(){
 function drawBackdrop(){
     p5.push()
     // Put the origin in the centre.
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
+    centreScreen()
     //p5.translate()
     backdrop.draw(groundXOffset(), groundYOffset())
     p5.pop()
@@ -176,8 +200,8 @@ function drawBackdrop(){
 function drawScene(){
     p5.push()
     // Put the origin in the centre.
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
-    p5.translate(groundXOffset(), groundYOffset())  // TODO. Scale these coords? And agree on scaling between ship and scene. Use the length of the window diagonal?
+    centreScreen()
+    translateScreen(groundXOffset(), groundYOffset())
     scene.draw()
     p5.pop()
 }
@@ -185,23 +209,17 @@ function drawScene(){
 function drawShip(){
     p5.push()
     // Put the origin in the centre.
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
-    p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
+    centreScreen()
+    translateScreen(shipXOffset(), shipYOffset())
     ship.draw()
-    //    if (ship.grab()){
-    //        ship.drawGrabber()
-    //    }
-    if (ship.nearAnObject()){
-        ship.drawGrabberZone()
-    }
     p5.pop()
 }
 
 function drawExplosion(){
     p5.push()
     // Put the origin in the centre.
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
-    p5.translate(shipXOffset(), shipYOffset())  // TODO. Scale these coords?
+    centreScreen()
+    translateScreen(shipXOffset(), shipYOffset())
     explosion.draw()
     p5.pop()
 }

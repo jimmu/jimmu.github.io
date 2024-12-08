@@ -195,33 +195,14 @@ const levels = [
 export function getLevel(levelNum){
     let level = levels[levelNum % levels.length]
     // Return a copy of it, because some state in it gets mutated during play.
-    // Can't use structuredClone because of the type fields which contain functions.
-    let startCoords = {x:0, y:0}
-    if (level.startCoords){
-        startCoords = level.startCoords
-    }
+    // Can't use structuredClone because of the fields which contain functions.
 
     return {name: level.name,
-            startCoords,
-            ground: cloneGroundOrObjects(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
-            objects: cloneGroundOrObjects(level.objects),
+            startCoords: level.startCoords || {x:0, y:0},
+            ground: structuredClone(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
+            objects: structuredClone(level.objects),
             isComplete: level.isComplete
             }
-}
-
-// TODO. Now that shapes has been refactored, check if structuredClone would work fine here.
-function cloneGroundOrObjects(originalArray){
-    return originalArray.map((e)=>{
-        let copy=clone(e)
-        copy.type = e.type
-        return copy
-    })
-}
-
-function clone(original){
-    let copy = JSON.parse(JSON.stringify(original))
-    copy.type = original.type
-    return copy
 }
 
 function groundBlocksToRectangles(blockInfo){
