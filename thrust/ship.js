@@ -3,7 +3,7 @@ import {p5instance as p5} from './lib.js'
 import {newInventory} from './inventory.js'
 import {newControls} from './controls.js'
 import {quadrilateral, render, rotate, line, circle} from './shapes.js'
-
+import {newVapourTrail} from './vapour.js'
 export const devMode = false
 
 export function newShip(){
@@ -52,6 +52,7 @@ export function newShip(){
     let payloadPosition = p5.createVector(0, 0)
     let payloadVelocity = p5.createVector(0, 0)
     let inventory = newInventory()
+    let trail = newVapourTrail()
 
     return {
         setup,
@@ -128,6 +129,7 @@ export function newShip(){
             p5.rotate(Math.PI/10)
         }
         p5.pop()
+        trail.draw()
     }
 
     function drawPayload(){
@@ -171,6 +173,9 @@ export function newShip(){
             velocity.add(velocityChange)
             velocity.limit(maxSpeed)
             fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds * directions.up))
+            trail.add(angle + Math.PI)
+            trail.add(angle + Math.PI - 0.04)
+            trail.add(angle + Math.PI + 0.04)
         }
     }
 
