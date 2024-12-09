@@ -132,7 +132,7 @@ const levels = [
     },
     {
         name: "Tight Squeeze",
-        startCoords: {x:-0.4, y:0},
+        startCoords: {x:-0.2, y:0},
         ground: [
             {type: rectangle, coords:[-1, -0.85, 1, 0.8]},
             {type: rectangle, coords:[-1, 0.05, 3, 1]},

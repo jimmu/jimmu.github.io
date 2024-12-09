@@ -38,8 +38,13 @@ function setup(){
         .addTransition("new", "tapOrKeyPress", "preLevel")
         .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
         .addTransition("inLevel", "lose", "lostLevel", ()=>{
-            gui.splash("Ungood", 1)
             explosion = newExplosion(p5.windowWidth, 0.75)//seconds to reach most of the final size
+            if (livesRemaining == 0){
+                gui.splash("Insert Coin", 3)
+            }
+            else{
+                gui.splash("Ungood", 1)
+            }
         })
         .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Good")})
         .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
@@ -155,11 +160,9 @@ function collisionChecks(){
     if (collectedObject.landingPad){
         if (scene.isComplete()){
             if (ship.slowEnoughToLand()){
-                gui.splash("Touchdown")
                 stateMachine.trigger("win")
             }
             else {
-                gui.splash("Ouch")
                 stateMachine.trigger("lose")
             }
         }
