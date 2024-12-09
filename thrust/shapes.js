@@ -36,6 +36,9 @@ export function render(shapeType, unscaledCoords){
     }
 }
 
+// TODO. Collision detection can be a bit out, still.
+// Make make the ship's collision mask smaller than the ship when checking the ground,
+// and larger when checking the objects?
 export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, unscaledShapeTwoCoords){
     // The below checks _could_ use scaled or unscaled coordinates - so long as they agree.
     // But in reality, when using unscaled coordinates, too much precision is lost.
@@ -143,9 +146,6 @@ export function translate(xAmount, yAmount, coords){
 }
 
 export function translateScreen(xAmount, yAmount){
-    p5.translate(scale(xAmount), scale(yAmount))
-}
-
-export function centreScreen(){
-    p5.translate(p5.windowWidth/2, p5.windowHeight/2)
+    // Scale the given coords _and_ move (0, 0) to the centre of the canvas
+    p5.translate(scale(xAmount) + p5.width/2, scale(yAmount) + p5.height/2)
 }

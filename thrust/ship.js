@@ -134,10 +134,6 @@ export function newShip(){
         p5.push()
         // Because the canvas will already have been moved to put the ship at the centre,
         // the coordinates for the payload depend on the difference between the ships and payloads positions.
-        // If we want to allow the ship to wander around the screen a bit, we need some notional camera
-        // object which knows where the canvas/view is. In that case the method here would (more intuitively)
-        // just draw a line between the ship position and the payload position.
-        // TODO - that.
         p5.stroke(100)
         p5.strokeWeight(0.3)
         render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])

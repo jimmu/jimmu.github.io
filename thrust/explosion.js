@@ -7,7 +7,7 @@ export function newExplosion(size, durationSeconds){
     let durationMillis = durationSeconds * 1000
     const minSizeFactor = 0.0125
     const shrapnelCount = 24
-    const maxShrapnelSize = p5.windowWidth*0.15
+    const maxShrapnelSize = p5.width*0.15
 
     return{
         draw

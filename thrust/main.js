@@ -7,15 +7,16 @@ import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
-import {centreScreen, translateScreen, rotate, translate} from './shapes.js'
+import {translateScreen, rotate, translate} from './shapes.js'
+import {newCamera} from './camera.js'
 
 let ship
 let backdrop
 let scene
 let gui
+let camera
 let explosion
 let levelNumber = 0
-let minMargin   // How close can the ship go to the edge of the screen?
 let stateMachine
 let maxLives = 3
 let livesRemaining
@@ -32,13 +33,12 @@ function setup(){
     p5.windowResized = function(){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
     }
-    minMargin = Math.min(p5.windowWidth, p5.windowHeight)/4
     livesRemaining = maxLives
     stateMachine = newStateMachine()
         .addTransition("new", "tapOrKeyPress", "preLevel")
         .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
         .addTransition("inLevel", "lose", "lostLevel", ()=>{
-            explosion = newExplosion(p5.windowWidth, 0.75)//seconds to reach most of the final size
+            explosion = newExplosion(p5.width, 0.75)//seconds to reach most of the final size
             if (livesRemaining == 0){
                 gui.splash("Insert Coin", 3)
             }
@@ -85,12 +85,12 @@ function setup(){
 }
 
 function draw(){
-    let startTime = Date.now()
     p5.push()
     if (stateMachine.state() == "inLevel"){
         ship.update()
         collisionChecks()
     }
+    camera.keepTargetInFrame(ship.position)
     drawBackdrop()
     drawScene()
     if (stateMachine.state() == "lostLevel"){
@@ -189,30 +189,26 @@ function prepareLevel(){
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)
+    camera = newCamera(ship.position)
 }
 
 function drawBackdrop(){
     p5.push()
     // Put the origin in the centre.
-    centreScreen()
     //p5.translate()
-    backdrop.draw(groundXOffset(), groundYOffset())
+    backdrop.draw(-camera.centreOfView().x, -camera.centreOfView().y)
     p5.pop()
 }
 
 function drawScene(){
     p5.push()
-    // Put the origin in the centre.
-    centreScreen()
-    translateScreen(groundXOffset(), groundYOffset())
+    translateScreen(-camera.centreOfView().x, -camera.centreOfView().y)
     scene.draw()
     p5.pop()
 }
 
 function drawShip(){
     p5.push()
-    // Put the origin in the centre.
-    centreScreen()
     translateScreen(shipXOffset(), shipYOffset())
     ship.draw()
     p5.pop()
@@ -221,7 +217,6 @@ function drawShip(){
 function drawExplosion(){
     p5.push()
     // Put the origin in the centre.
-    centreScreen()
     translateScreen(shipXOffset(), shipYOffset())
     explosion.draw()
     p5.pop()
@@ -232,13 +227,11 @@ function drawGui(){
 }
 
 function shipYOffset(){
-    // For the camera/wiggle room behaviour we need more info than just the position of the ship.
-    // It depends where the virtual camera has moved to already and the direction the ship is moving now.
-    return 0
+    return ship.position.y - camera.centreOfView().y
 }
 
 function shipXOffset(){
-    return 0
+    return ship.position.x - camera.centreOfView().x
 }
 
 function groundYOffset(){
