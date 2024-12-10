@@ -7,7 +7,6 @@ import {newVapourTrail} from './vapour.js'
 export const devMode = false
 
 export function newShip(){
-    //TODO. Vapour trail
     let controls = newControls()
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
     let shipShape = {type: quadrilateral,
@@ -127,6 +126,9 @@ export function newShip(){
             p5.rotate(-Math.PI/10)
             render(line, [-size*0.85, 0, -size*0.6, 0])
             p5.rotate(Math.PI/10)
+            trail.add(angle + Math.PI)
+            trail.add(angle + Math.PI - Math.PI/10)
+            trail.add(angle + Math.PI + Math.PI/10)
         }
         p5.pop()
         trail.draw()
@@ -173,9 +175,6 @@ export function newShip(){
             velocity.add(velocityChange)
             velocity.limit(maxSpeed)
             fuel = Math.max(0, fuel - (fuelPerSecondThrust * elapsedSeconds * directions.up))
-            trail.add(angle + Math.PI)
-            trail.add(angle + Math.PI - 0.04)
-            trail.add(angle + Math.PI + 0.04)
         }
     }
 

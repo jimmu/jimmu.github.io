@@ -37,8 +37,7 @@ export function render(shapeType, unscaledCoords){
 }
 
 // TODO. Collision detection can be a bit out, still.
-// Make make the ship's collision mask smaller than the ship when checking the ground,
-// and larger when checking the objects?
+// Rounding error with the small range of coordinate values?
 export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, unscaledShapeTwoCoords){
     // The below checks _could_ use scaled or unscaled coordinates - so long as they agree.
     // But in reality, when using unscaled coordinates, too much precision is lost.
