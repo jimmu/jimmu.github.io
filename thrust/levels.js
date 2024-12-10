@@ -73,7 +73,7 @@ const levels = [
         ],
         objects: [
             {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: circle, coords:[2.35, 0, 0.08], fuel: 75, message: "Fuel"},
+            {type: circle, coords:[2.35, 0, 0.08], fuel: 100, message: "Fuel"},
         ],
         isComplete: function(){
             for (let collectable of this.objects){
@@ -127,6 +127,43 @@ const levels = [
         ],
         isComplete: function(){
             // If you can reach the landing pad then that's all there is to it.
+            return true
+        }
+    },
+    {
+        name: "Slight Squeeze",
+        groundBlocks: {
+            size: {x:2, y:1.5},
+            blocks: [
+            "##################################",
+            "##################################",
+            "##################################",
+            "#######                 ##########",
+            "####### ############### ##########",
+            "####### ############### ##########",
+            "####### ############### ##########",
+            "####### ###########     ##########",
+            "####### ########### ##############",
+            "####### ##### f     ##############",
+            "####### ######## ## ######  K  ###",
+            "####### ########g## ######  F  ###",  // This f is the name of an object which will be fully defined in the objects array.
+            "###LD . ###########            ###",  // This . is the start point. L will be the landing pad. D the door. K the key
+            "##################################",
+            "##################################",
+            "##################################",
+            ]
+        },
+        ground: [],
+        objects: [
+            {label: "L", type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true},    // When a shape has a label then its coordinates are relative to the centre of its character block. And sizes are in units of the character size.
+            {label: "K", type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"},
+            {label: "F", type: circle, coords:[0, 0, 0.5], fuel:100},
+            {label: "f", type: circle, coords:[0, 0, 0.3], fuel:50},
+            {label: "g", type: circle, coords:[0, 0, 0.3], fuel:50},
+            {label: "L", type: circle, coords:[0.5, 0, 0.5], fuel:100},
+            {label: "D", type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}
+        ],
+        isComplete: function(){
             return true
         }
     },
@@ -196,11 +233,13 @@ export function getLevel(levelNum){
     let level = levels[levelNum % levels.length]
     // Return a copy of it, because some state in it gets mutated during play.
     // Can't use structuredClone because of the fields which contain functions.
+    let objects = structuredClone(level.objects)
+    groundBlocksToObjectPositions(level.groundBlocks, objects)
 
     return {name: level.name,
-            startCoords: level.startCoords || {x:0, y:0},
+            startCoords: level.startCoords || groundBlocksToStartPosition(level.groundBlocks) || {x:0, y:0},
             ground: structuredClone(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
-            objects: structuredClone(level.objects),
+            objects,
             isComplete: level.isComplete
             }
 }
@@ -217,7 +256,7 @@ function groundBlocksToRectangles(blockInfo){
     for (let row=0; row < blocks.length; row++){
         for (let col=0; col < blocks[row].length; col++){
             let thisChar = blocks[row][col]
-            if (thisChar != " "){
+            if (thisChar == "#"){
                 rectangles.push({
                     type: rectangle,
                     coords: [size.x * col/numCols - size.x/2, size.y * row/numRows - size.y/2, size.x/numCols, size.y/numRows]
@@ -226,4 +265,83 @@ function groundBlocksToRectangles(blockInfo){
         }
     }
     return rectangles
+}
+
+function groundBlocksToObjectPositions(blockInfo, objects){
+    // Find characters which are not ground and set the position of the related objects.
+    if (!blockInfo){
+        return
+    }
+    let blocks = blockInfo.blocks || []
+    if (!blocks || blocks.length == 0){
+        return
+    }
+    let size = blockInfo.size || {x:1, y:1}
+    let startPos = null
+    let numRows = blocks.length
+    let numCols = blocks[0].length
+    let oneCharSize = {x: size.x/numCols, y: size.y/numRows}
+    for (let row=0; row < blocks.length; row++){
+        for (let col=0; col < blocks[row].length; col++){
+            let thisChar = blocks[row][col]
+            if (thisChar != "#" && thisChar != "."){
+                // Find any object with a label matching this character.
+                // Set its position to the middle of this box.
+                let boxPosX = ((col+0.5) * oneCharSize.x) - size.x/2
+                let boxPosY = ((row+0.5) * oneCharSize.y) - size.y/2
+                for (let object of objects){
+                    if (thisChar == object.label){
+                        // What we do with the coords depends on the type of object.
+                        if (object.type == circle) {
+                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
+                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
+                            object.coords[2] *= oneCharSize.x
+                        }
+                        if (object.type == rectangle){
+                            // The given coordinates are in units of 1 box size.
+                            // And that the coordinates are relative.
+                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
+                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
+                            object.coords[2] *= oneCharSize.x
+                            object.coords[3] *= oneCharSize.y
+                        }
+                        if (object.type == triangle){
+                            // The given coordinates are in units of 1 box size.
+                            // And that the coordinates are relative.
+                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
+                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
+                            object.coords[2] = object.coords[2]*oneCharSize.x + boxPosX
+                            object.coords[3] = object.coords[3]*oneCharSize.y + boxPosY
+                            object.coords[4] = object.coords[4]*oneCharSize.x + boxPosX
+                            object.coords[5] = object.coords[5]*oneCharSize.y + boxPosY
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function groundBlocksToStartPosition(blockInfo){
+    if (!blockInfo){
+        return
+    }
+    let size = blockInfo.size || {x:1, y:1}
+    let blocks = blockInfo.blocks || []
+    if (!blocks || blocks.length == 0){
+        return null
+    }
+    let startPos = null
+    let numRows = blocks.length
+    let numCols = blocks[0].length
+    for (let row=0; row < blocks.length; row++){
+        for (let col=0; col < blocks[row].length; col++){
+            let thisChar = blocks[row][col]
+            if (thisChar == "."){
+                // Return the coordinates of the middle of this box.
+                return {x: size.x * (col+0.5)/numCols - size.x/2, y: size.y * (row+0.5)/numRows - size.y/2}
+            }
+        }
+    }
+    return null
 }
