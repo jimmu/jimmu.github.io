@@ -148,6 +148,38 @@ const levels = [
         }
     },
     {
+        name: "Repair",
+        groundBlocks: {
+            size: {x:1, y:1},
+            blocks: [
+            "##################################",
+            "##################################",
+            "######   ##############       ####",
+            "######                   ##  #####",
+            "######  ###     #######  ##  #####",
+            "######   #####  ######  ###  #####",
+            "###### h #####  ###### H ##h######",
+            "######   #####  ###     ###  #####",
+            "#######  #####  ### #######  #####",
+            "######   ####  h    #######  #####",
+            "######  ######   #   #####     ###",
+            "####    ######ff###  #####     ###",
+            "## .    ######  ###        LL  ###",
+            "############### ##################",
+            "##################################",
+            "##################################",
+            ]
+        },
+        ground: [],
+        objectTypes: new Map([
+            ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
+            ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
+        ]),
+        isComplete: function(){
+            return true
+        }
+    },
+    {
         name: "Slight Squeeze",
         groundBlocks: {
             size: {x:2, y:1.5},
@@ -293,13 +325,6 @@ function processGroundBlocks(level){
                     newObject = structuredClone(newObject)
                     level.objects.push(newObject)
                 }
-
-//                for (let object of standardObjectTypes.concat(level.objectTypes || [])){
-//                    if (thisChar == object.label){
-//                        newObject = structuredClone(object)
-//                        level.objects.push(newObject)
-//                    }
-//                }
                 // Set its position to the middle of this box.
                 if (newObject){
                     // What we do with the coords depends on the type of object.
