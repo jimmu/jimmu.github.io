@@ -12,7 +12,8 @@ export function newScene(level){
         isComplete: ()=>{return level.isComplete()},
         greeting: level.name,
         startCoords: level.startCoords,
-        useKey
+        useKey,
+        isOutOfBounds
     }
 
     function setup(){
@@ -95,6 +96,10 @@ export function newScene(level){
         if (collision(collisionMask.type, collisionMask.coords, shape.type, shape.coords)){
             return shape
         }
+    }
+
+    function isOutOfBounds(position){
+        return position.mag() > 6    // TODO. Work this out from the level size.
     }
 
 }

@@ -172,6 +172,10 @@ function collisionChecks(){
     if (ship.healthPercent() == 0){
         stateMachine.trigger("lose")
     }
+    // Are we drifting in the Abyss?
+    if (scene.isOutOfBounds(ship.position)){
+        stateMachine.trigger("lose")
+    }
 }
 
 // TODO. Consider moving this into the ship rather than exposing all those collider shape details.
