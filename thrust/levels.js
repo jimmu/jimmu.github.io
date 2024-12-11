@@ -1,6 +1,20 @@
 "use strict";
 import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
 
+const standardObjectTypes = new Map([
+    // Landing pad
+    ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true}],
+    // Full fuel
+    ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel"}],
+    // Half fuel
+    ["f", {type: circle, coords:[0, 0, 0.3], fuel:50, message: "50 Fuel"}],
+    // Full health
+    ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage"}],
+    // Half health
+    ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage"}],
+]);
+
+// TODO. Think about using character based coordinates for all of the ground stuff.
 const levels = [
     {
         name: "Land Carefully",
@@ -63,7 +77,7 @@ const levels = [
             blocks: [
             "############",
             "#          #",
-            "########## #",
+            "##########F#",
             "#          #",
             "############"
             ]
@@ -72,9 +86,12 @@ const levels = [
             {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: circle, coords:[2.35, 0, 0.08], fuel: 100, message: "Fuel"},
+            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true}
         ],
+        objectTypes: new Map([
+            // Override the standard big fuel
+            ["F", {type: circle, coords:[0, 0, 0.2], fuel:100, message: "100 Fuel"}],
+        ]),
         isComplete: function(){
             for (let collectable of this.objects){
                 if (!collectable.landingPad && !collectable.collected){
@@ -146,23 +163,18 @@ const levels = [
             "####### ########### ##############",
             "####### ##### f     ##############",
             "####### ######## ## ######  K  ###",
-            "####### ########g## ######  F  ###",  // This f is the name of an object which will be fully defined in the objects array.
-            "###LD . ###########            ###",  // This . is the start point. L will be the landing pad. D the door. K the key
+            "####### ########f## ######  F  ###",  // This f is the name of an object which will be fully defined in the object types array.
+            "##LfD . ###########            ###",  // This . is the start point. L will be the landing pad. D the door. K the key
             "##################################",
             "##################################",
             "##################################",
             ]
         },
         ground: [],
-        objects: [
-            {label: "L", type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true},    // When a shape has a label then its coordinates are relative to the centre of its character block. And sizes are in units of the character size.
-            {label: "K", type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"},
-            {label: "F", type: circle, coords:[0, 0, 0.5], fuel:100},
-            {label: "f", type: circle, coords:[0, 0, 0.3], fuel:50},
-            {label: "g", type: circle, coords:[0, 0, 0.3], fuel:50},
-            {label: "L", type: circle, coords:[0.5, 0, 0.5], fuel:100},
-            {label: "D", type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}
-        ],
+        objectTypes: new Map([
+            ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
+            ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
+        ]),
         isComplete: function(){
             return true
         }
@@ -231,117 +243,91 @@ const levels = [
 
 export function getLevel(levelNum){
     let level = levels[levelNum % levels.length]
-    // Return a copy of it, because some state in it gets mutated during play.
+    // Return a copy of it, because some state in it gets mutated during play
+    // and we want the level to be replayable.
     // Can't use structuredClone because of the fields which contain functions.
-    let objects = structuredClone(level.objects)
-    groundBlocksToObjectPositions(level.groundBlocks, objects)
-
-    return {name: level.name,
-            startCoords: level.startCoords || groundBlocksToStartPosition(level.groundBlocks) || {x:0, y:0},
-            ground: structuredClone(level.ground).concat(groundBlocksToRectangles(level.groundBlocks || {})),
-            objects,
-            isComplete: level.isComplete
-            }
+    let levelCopy = {
+        name: level.name,
+        startCoords: level.startCoords || {x:0, y:0}, // || groundBlocksToStartPosition(level.groundBlocks) || {x:0, y:0},
+        groundBlocks: level.groundBlocks,
+        ground: structuredClone(level.ground), //.concat(groundBlocksToRectangles(level.groundBlocks || {})),
+        objects: structuredClone(level.objects || []),
+        objectTypes: structuredClone(level.objectTypes|| new Map()),
+        isComplete: level.isComplete
+    }
+    processGroundBlocks(levelCopy)
+    return levelCopy
 }
 
-function groundBlocksToRectangles(blockInfo){
-    let size = blockInfo.size || {x:1, y:1}
-    let blocks = blockInfo.blocks || []
-    if (!blocks || blocks.length == 0){
+function processGroundBlocks(level){
+    if (!level.groundBlocks || !level.groundBlocks.blocks){
         return []
     }
-    let rectangles = []
-    let numRows = blocks.length
-    let numCols = blocks[0].length
-    for (let row=0; row < blocks.length; row++){
-        for (let col=0; col < blocks[row].length; col++){
-            let thisChar = blocks[row][col]
-            if (thisChar == "#"){
-                rectangles.push({
-                    type: rectangle,
-                    coords: [size.x * col/numCols - size.x/2, size.y * row/numRows - size.y/2, size.x/numCols, size.y/numRows]
-                })
-            }
-        }
-    }
-    return rectangles
-}
-
-function groundBlocksToObjectPositions(blockInfo, objects){
-    // Find characters which are not ground and set the position of the related objects.
-    if (!blockInfo){
-        return
-    }
-    let blocks = blockInfo.blocks || []
-    if (!blocks || blocks.length == 0){
-        return
-    }
+    let blockInfo = level.groundBlocks
+    let blocks = level.groundBlocks.blocks
     let size = blockInfo.size || {x:1, y:1}
-    let startPos = null
     let numRows = blocks.length
     let numCols = blocks[0].length
     let oneCharSize = {x: size.x/numCols, y: size.y/numRows}
     for (let row=0; row < blocks.length; row++){
         for (let col=0; col < blocks[row].length; col++){
             let thisChar = blocks[row][col]
-            if (thisChar != "#" && thisChar != "."){
-                // Find any object with a label matching this character.
+            let boxTopLeft = {x: col * oneCharSize.x - size.x/2,
+                              y: row * oneCharSize.y - size.y/2}
+            let boxCentre = {x: boxTopLeft.x + oneCharSize.x/2,
+                             y: boxTopLeft.y + oneCharSize.y/2}
+            if (thisChar == "#"){
+                level.ground.push({
+                    type: rectangle,
+                    coords: [boxTopLeft.x, boxTopLeft.y, oneCharSize.x, oneCharSize.y]
+                })
+            }
+            else if (thisChar == "."){
+                // Return the coordinates of the middle of this box.
+                level.startCoords = {x: boxCentre.x, y: boxCentre.y}
+            }
+            else {
+                // If there's an object type with this label, make a copy of it into the level's objects.
+                let newObject = level.objectTypes.get(thisChar) || standardObjectTypes.get(thisChar)
+                if (newObject){
+                    newObject = structuredClone(newObject)
+                    level.objects.push(newObject)
+                }
+
+//                for (let object of standardObjectTypes.concat(level.objectTypes || [])){
+//                    if (thisChar == object.label){
+//                        newObject = structuredClone(object)
+//                        level.objects.push(newObject)
+//                    }
+//                }
                 // Set its position to the middle of this box.
-                let boxPosX = ((col+0.5) * oneCharSize.x) - size.x/2
-                let boxPosY = ((row+0.5) * oneCharSize.y) - size.y/2
-                for (let object of objects){
-                    if (thisChar == object.label){
-                        // What we do with the coords depends on the type of object.
-                        if (object.type == circle) {
-                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
-                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
-                            object.coords[2] *= oneCharSize.x
-                        }
-                        if (object.type == rectangle){
-                            // The given coordinates are in units of 1 box size.
-                            // And that the coordinates are relative.
-                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
-                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
-                            object.coords[2] *= oneCharSize.x
-                            object.coords[3] *= oneCharSize.y
-                        }
-                        if (object.type == triangle){
-                            // The given coordinates are in units of 1 box size.
-                            // And that the coordinates are relative.
-                            object.coords[0] = object.coords[0]*oneCharSize.x + boxPosX
-                            object.coords[1] = object.coords[1]*oneCharSize.y + boxPosY
-                            object.coords[2] = object.coords[2]*oneCharSize.x + boxPosX
-                            object.coords[3] = object.coords[3]*oneCharSize.y + boxPosY
-                            object.coords[4] = object.coords[4]*oneCharSize.x + boxPosX
-                            object.coords[5] = object.coords[5]*oneCharSize.y + boxPosY
-                        }
+                if (newObject){
+                    // What we do with the coords depends on the type of object.
+                    if (newObject.type == circle) {
+                        newObject.coords[0] = newObject.coords[0]*oneCharSize.x + boxCentre.x
+                        newObject.coords[1] = newObject.coords[1]*oneCharSize.y + boxCentre.y
+                        newObject.coords[2] *= oneCharSize.x
+                    }
+                    else if (newObject.type == rectangle){
+                        // The given coordinates are in units of 1 box size.
+                        // And that the coordinates are relative.
+                        newObject.coords[0] = newObject.coords[0]*oneCharSize.x + boxCentre.x
+                        newObject.coords[1] = newObject.coords[1]*oneCharSize.y + boxCentre.y
+                        newObject.coords[2] *= oneCharSize.x
+                        newObject.coords[3] *= oneCharSize.y
+                    }
+                    else if (newObject.type == triangle){
+                        // The given coordinates are in units of 1 box size.
+                        // And that the coordinates are relative.
+                        newObject.coords[0] = newObject.coords[0]*oneCharSize.x + boxCentre.x
+                        newObject.coords[1] = newObject.coords[1]*oneCharSize.y + boxCentre.y
+                        newObject.coords[2] = newObject.coords[2]*oneCharSize.x + boxCentre.x
+                        newObject.coords[3] = newObject.coords[3]*oneCharSize.y + boxCentre.y
+                        newObject.coords[4] = newObject.coords[4]*oneCharSize.x + boxCentre.x
+                        newObject.coords[5] = newObject.coords[5]*oneCharSize.y + boxCentre.y
                     }
                 }
             }
         }
     }
-}
-
-function groundBlocksToStartPosition(blockInfo){
-    if (!blockInfo){
-        return
-    }
-    let size = blockInfo.size || {x:1, y:1}
-    let blocks = blockInfo.blocks || []
-    if (!blocks || blocks.length == 0){
-        return null
-    }
-    let startPos = null
-    let numRows = blocks.length
-    let numCols = blocks[0].length
-    for (let row=0; row < blocks.length; row++){
-        for (let col=0; col < blocks[row].length; col++){
-            let thisChar = blocks[row][col]
-            if (thisChar == "."){
-                // Return the coordinates of the middle of this box.
-                return {x: size.x * (col+0.5)/numCols - size.x/2, y: size.y * (row+0.5)/numRows - size.y/2}
-            }
-        }
-    }
-    return null
 }
