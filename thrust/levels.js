@@ -315,15 +315,17 @@ function processGroundBlocks(level){
                     rectangleInProgress.width++
                 }
                 else {
-                    rectangleInProgress = {col, width: 1}
+                    rectangleInProgress = {row, col, width: 1}
                 }
             }
             if (thisChar != "#" || col == blocks[row].length-1) {
-                //TODO.Put these rectangles in a separate array temporarily.
                 // If we had a rectangle in progress, we now know its size. add it to the list now.
                 if (rectangleInProgress){
+                    //TODO. Keep the coordinates as the integer row,col for now
+                    //So that consolidating vertically doesn't break down due to rounding errors.
+                    //Do the final sizing after that consolidation.
                     let topLeft = {x: rectangleInProgress.col * oneCharSize.x - size.x/2,
-                                   y: row * oneCharSize.y - size.y/2}
+                                   y: rectangleInProgress.row * oneCharSize.y - size.y/2}
                     blockRectangles.push({
                         type: rectangle,
                         coords: [topLeft.x, topLeft.y, rectangleInProgress.width * oneCharSize.x, oneCharSize.y]

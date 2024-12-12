@@ -16,8 +16,9 @@ export function newCamera(targetPosition){
         keepTargetInFrame: function(targetPosition){
             // First - slowly drift back towards having the target be at the centre
             // by averaging the view centre towards the target pos.
-            cameraCentre.x = (19 * cameraCentre.x + targetPosition.x)/20
-            cameraCentre.y = (19 * cameraCentre.y + targetPosition.y)/20
+            let driftiness = 80 // Higher numbers let the ship drift further from the screen centre
+            cameraCentre.x = (driftiness * cameraCentre.x + targetPosition.x)/(driftiness + 1)
+            cameraCentre.y = (driftiness * cameraCentre.y + targetPosition.y)/(driftiness + 1)
 
             // If that wasn't drastic enough, move the camera to keep
             // the target further than the fixed margin amount from the edge.
