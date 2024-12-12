@@ -26,7 +26,7 @@ initP5((p5)=>{
     p5.draw = draw
     p5.keyPressed = keyPressed
     p5.touchStarted = touchStarted
-    p5.pixelDensity(1)
+    p5.pixelDensity(1)  // This stops the thing running very slowly in portrait mode on Chrome on mobile!
 })
 
 function setup(){

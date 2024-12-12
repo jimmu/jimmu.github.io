@@ -315,23 +315,17 @@ function processGroundBlocks(level){
                     rectangleInProgress.width++
                 }
                 else {
-                    rectangleInProgress = {row, col, width: 1}
+                    rectangleInProgress = {row, col, width: 1, height: 1}
                 }
             }
             if (thisChar != "#" || col == blocks[row].length-1) {
                 // If we had a rectangle in progress, we now know its size. add it to the list now.
                 if (rectangleInProgress){
-                    //TODO. Keep the coordinates as the integer row,col for now
+                    //Keep the coordinates as the integer row,col for now
                     //So that consolidating vertically doesn't break down due to rounding errors.
-                    //Do the final sizing after that consolidation.
-                    let topLeft = {x: rectangleInProgress.col * oneCharSize.x - size.x/2,
-                                   y: rectangleInProgress.row * oneCharSize.y - size.y/2}
-                    blockRectangles.push({
-                        type: rectangle,
-                        coords: [topLeft.x, topLeft.y, rectangleInProgress.width * oneCharSize.x, oneCharSize.y]
-                    })
+                    blockRectangles.push(structuredClone(rectangleInProgress))
+                    rectangleInProgress = null  // Start a new one.
                 }
-                rectangleInProgress = null  // Start a new one.
             }
             if (thisChar == "."){
                 // Return the coordinates of the middle of this box.
@@ -374,11 +368,41 @@ function processGroundBlocks(level){
             }
         }
     }
-    //console.log(JSON.stringify(blockRectangles))
-    level.ground = level.ground.concat(blockRectangles)
+    level.ground = level.ground.concat(consolidateBlocks(size, oneCharSize, blockRectangles))
 }
 
-function consolidateBlocks(rectangles){
+function consolidateBlocks(size, oneCharSize, blockRectangles){
     // First consolidate horizontally.
     // Look for adjacent rectangles where the neighbouring one has the same height and the left/rights match.
+    let rectangles = []
+    // We have consolidated blocks horizontally into long rectangles already.
+    // Now see if any match ones directly below them too.
+    for (let i=0; i < blockRectangles.length; i++){
+        let thisBlock = blockRectangles[i]
+        // Look ahead for another rectangle with the same start column and width but on the next row.
+        for (let j=i+1; j < blockRectangles.length; j++){
+            let candidateBlock = blockRectangles[j]
+            if (candidateBlock.row == thisBlock.row + thisBlock.height &&
+                candidateBlock.col == thisBlock.col &&
+                candidateBlock.width == thisBlock.width) {
+                // We have a match. Expand the current block.
+                thisBlock.height++
+                // And scrap the candidate one. Can't remove it from the array as we're iterating over that currently.
+                candidateBlock.row = -1
+                candidateBlock.col = -1
+                candidateBlock.width = 0
+            }
+        }
+    }
+
+    // Convert to real coordinates, from character positions
+    for (let blockRectangle of blockRectangles.filter((r)=>{return r.width > 0})){
+        let topLeft = {x: blockRectangle.col * oneCharSize.x - size.x/2,
+                       y: blockRectangle.row * oneCharSize.y - size.y/2}
+        rectangles.push({
+            type: rectangle,
+            coords: [topLeft.x, topLeft.y, blockRectangle.width * oneCharSize.x, blockRectangle.height * oneCharSize.y]
+        })
+    }
+    return rectangles
 }
