@@ -44,10 +44,10 @@ function setup(){
                 gui.splash("Insert Coin", 3)
             }
             else{
-                gui.splash("Ungood", 1)
+                gui.splash("Ungood", 2)
             }
         })
-        .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Good")})
+        .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Goal In", 2)})
         .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
             levelNumber++
             prepareLevel()
@@ -199,8 +199,6 @@ function prepareLevel(){
 
 function drawBackdrop(){
     p5.push()
-    // Put the origin in the centre.
-    //p5.translate()
     backdrop.draw(-camera.centreOfView().x, -camera.centreOfView().y)
     p5.pop()
 }
@@ -221,7 +219,6 @@ function drawShip(){
 
 function drawExplosion(){
     p5.push()
-    // Put the origin in the centre.
     translateScreen(shipXOffset(), shipYOffset())
     explosion.draw()
     p5.pop()
