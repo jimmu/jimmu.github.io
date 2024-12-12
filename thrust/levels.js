@@ -399,10 +399,20 @@ function consolidateBlocks(size, oneCharSize, blockRectangles){
     for (let blockRectangle of blockRectangles.filter((r)=>{return r.width > 0})){
         let topLeft = {x: blockRectangle.col * oneCharSize.x - size.x/2,
                        y: blockRectangle.row * oneCharSize.y - size.y/2}
+        // Testing collision thing: Yes, this does at least in the short term fix the ground-blocks collision thing.
+        // By using a quadrilateral instead of a rectangle, we get a shape where the is-fully-inside check works.
         rectangles.push({
-            type: rectangle,
-            coords: [topLeft.x, topLeft.y, blockRectangle.width * oneCharSize.x, blockRectangle.height * oneCharSize.y]
+            type: quadrilateral, coords: [
+                topLeft.x, topLeft.y,
+                topLeft.x + blockRectangle.width * oneCharSize.x, topLeft.y,
+                topLeft.x + blockRectangle.width * oneCharSize.x, topLeft.y + blockRectangle.height * oneCharSize.y,
+                topLeft.x, topLeft.y + blockRectangle.height * oneCharSize.y
+            ]
         })
+        //        rectangles.push({
+        //            type: rectangle,
+        //            coords: [topLeft.x, topLeft.y, blockRectangle.width * oneCharSize.x, blockRectangle.height * oneCharSize.y]
+        //        })
     }
     return rectangles
 }
