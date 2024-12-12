@@ -280,9 +280,9 @@ export function getLevel(levelNum){
     // Can't use structuredClone because of the fields which contain functions.
     let levelCopy = {
         name: level.name,
-        startCoords: level.startCoords || {x:0, y:0}, // || groundBlocksToStartPosition(level.groundBlocks) || {x:0, y:0},
+        startCoords: level.startCoords || {x:0, y:0},
         groundBlocks: level.groundBlocks,
-        ground: structuredClone(level.ground), //.concat(groundBlocksToRectangles(level.groundBlocks || {})),
+        ground: structuredClone(level.ground || []),
         objects: structuredClone(level.objects || []),
         objectTypes: structuredClone(level.objectTypes|| new Map()),
         isComplete: level.isComplete
