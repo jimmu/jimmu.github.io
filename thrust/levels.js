@@ -297,11 +297,13 @@ function processGroundBlocks(level){
     }
     let blockInfo = level.groundBlocks
     let blocks = level.groundBlocks.blocks
-    let size = blockInfo.size || {x:1, y:1}
-    let numRows = blocks.length
-    let numCols = blocks[0].length
-    let oneCharSize = {x: size.x/numCols, y: size.y/numRows}
+    const size = blockInfo.size || {x:1, y:1}
+    const numRows = blocks.length
+    const numCols = blocks[0].length
+    const oneCharSize = {x: size.x/numCols, y: size.y/numRows}
+    let blockRectangles = []
     for (let row=0; row < blocks.length; row++){
+        let rectangleInProgress = null
         for (let col=0; col < blocks[row].length; col++){
             let thisChar = blocks[row][col]
             let boxTopLeft = {x: col * oneCharSize.x - size.x/2,
@@ -309,12 +311,27 @@ function processGroundBlocks(level){
             let boxCentre = {x: boxTopLeft.x + oneCharSize.x/2,
                              y: boxTopLeft.y + oneCharSize.y/2}
             if (thisChar == "#"){
-                level.ground.push({
-                    type: rectangle,
-                    coords: [boxTopLeft.x, boxTopLeft.y, oneCharSize.x, oneCharSize.y]
-                })
+                if (rectangleInProgress != null){
+                    rectangleInProgress.width++
+                }
+                else {
+                    rectangleInProgress = {col, width: 1}
+                }
             }
-            else if (thisChar == "."){
+            if (thisChar != "#" || col == blocks[row].length-1) {
+                //TODO.Put these rectangles in a separate array temporarily.
+                // If we had a rectangle in progress, we now know its size. add it to the list now.
+                if (rectangleInProgress){
+                    let topLeft = {x: rectangleInProgress.col * oneCharSize.x - size.x/2,
+                                   y: row * oneCharSize.y - size.y/2}
+                    blockRectangles.push({
+                        type: rectangle,
+                        coords: [topLeft.x, topLeft.y, rectangleInProgress.width * oneCharSize.x, oneCharSize.y]
+                    })
+                }
+                rectangleInProgress = null  // Start a new one.
+            }
+            if (thisChar == "."){
                 // Return the coordinates of the middle of this box.
                 level.startCoords = {x: boxCentre.x, y: boxCentre.y}
             }
@@ -355,4 +372,11 @@ function processGroundBlocks(level){
             }
         }
     }
+    //console.log(JSON.stringify(blockRectangles))
+    level.ground = level.ground.concat(blockRectangles)
+}
+
+function consolidateBlocks(rectangles){
+    // First consolidate horizontally.
+    // Look for adjacent rectangles where the neighbouring one has the same height and the left/rights match.
 }

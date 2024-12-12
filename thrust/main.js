@@ -26,6 +26,7 @@ initP5((p5)=>{
     p5.draw = draw
     p5.keyPressed = keyPressed
     p5.touchStarted = touchStarted
+    p5.pixelDensity(1)
 })
 
 function setup(){
