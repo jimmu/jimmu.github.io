@@ -19,11 +19,19 @@ const standardObjectTypes = new Map([
 ]);
 
 const standardGroundTypes = new Map([
-    // Triangle top left, to be used as ground. Note this label is more than one character, so can't be referenced directly from the block map.
+    // Triangles to be used as ground.
+    // All triangles are referenced as "/" in the map.
+    // Which kind gets used depends on whether there is ground above/below/left/right of the triangle.
+    // TODO. Extra option of using ^, v, >, < for bottom, top, left, right triangles
     ["ttl", {type: triangle, coords:[-0.5, -0.5, 0.5, -0.5, -0.5, 0.5]}],
     ["tbr", {type: triangle, coords:[0.5, -0.5, 0.5, 0.5, -0.5, 0.5]}],  // bottom right
     ["tbl", {type: triangle, coords:[-0.5, -0.5, 0.5, 0.5, -0.5, 0.5]}], // bottom left
     ["ttr", {type: triangle, coords:[-0.5, -0.5, 0.5, -0.5, 0.5, 0.5]}], // top right
+    ["tl",  {type: triangle, coords:[-0.5, -0.5, 0.5, 0, -0.5, 0.5]}], // left
+    ["tr",  {type: triangle, coords:[0.5, -0.5, 0.5, 0.5, -0.5, 0]}], // right
+    ["tt",  {type: triangle, coords:[-0.5, -0.5, 0.5, -0.5, 0, 0.5]}], // top
+    ["tb",  {type: triangle, coords:[-0.5, 0.5, 0, -0.5, 0.5, 0.5]}], // bottom
+    ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
 
 // TODO. Think about using character based coordinates for all of the ground stuff.
@@ -116,6 +124,27 @@ const levels = [
         }
     },
     {
+        name: "Steer",
+        groundBlocks: {
+            size: {x:1.75, y:1},
+            blocks: [
+            "#############################",
+            "#############################",
+            "#############################",
+            "###/    //    //    //   /###",
+            "###  //    //    //       ###",
+            "### .//    //    //       ###",
+            "###/    //    //    //LLL/###",
+            "#############################",
+            "#############################",
+            "#############################",
+            ]
+        },
+        isComplete: function(){
+            return true
+        }
+    },
+    {
         name: "Carry",
         groundBlocks: {
             size: {x:1, y:1},
@@ -124,7 +153,7 @@ const levels = [
             "#/   //   /#",
             "#     . L  #",
             "#/    //  /#",
-            "### ########",
+            "##/ /#######",
             "#/        /#",
             "#F     p   #",
             "#/  //    /#",
@@ -349,10 +378,42 @@ function processGroundBlocks(level){
                 // Is this a standard ground type block?
                 if (thisChar == "/" || thisChar == "?"){
                     // We'll make a block to add to the ground rather than the objects
-                    let groundToTheLeft = (col > 0 && groundChars.includes(blocks[row][col-1]))
-                    let groundAbove = (row > 0 && groundChars.includes(blocks[row-1][col]))
-                    let triangleType = groundAbove? (groundToTheLeft ? "ttl" : "ttr") :
-                                       groundToTheLeft? "tbl" : "tbr"
+                    let groundToTheLeft = (col > 0 && groundChars.includes(blocks[row][col - 1]))
+                    let groundToTheRight = (col < blocks[row].length - 1 && groundChars.includes(blocks[row][col + 1]))
+                    let groundAbove = (row > 0 && groundChars.includes(blocks[row - 1][col]))
+                    let groundBelow = (row < blocks.length - 1 && groundChars.includes(blocks[row + 1][col]))
+                    let triangleType = "t"
+                    if (groundAbove && ! groundBelow){
+                        if (groundToTheLeft && !groundToTheRight){
+                            triangleType = "ttl"
+                        }
+                        else if (groundToTheRight && !groundToTheLeft){
+                            triangleType = "ttr"
+                        }
+                        else {
+                            triangleType = "tt"
+                        }
+                    }
+                    else if (groundBelow && !groundAbove){
+                        if (groundToTheLeft && !groundToTheRight){
+                            triangleType = "tbl"
+                        }
+                        else if (groundToTheRight && !groundToTheLeft){
+                            triangleType = "tbr"
+                        }
+                        else {
+                            triangleType = "tb"
+                        }
+                    }
+                    else if (groundToTheLeft && ! groundToTheRight){
+                        triangleType = "tl"
+                    }
+                    else if (groundToTheRight && ! groundToTheLeft){
+                        triangleType = "tr"
+                    }
+
+//                    let triangleType = groundAbove? (groundToTheLeft ? "ttl" : "ttr") :
+//                                       groundToTheLeft? "tbl" : "tbr"
                     let newGround = standardGroundTypes.get(triangleType)
                     newGround = structuredClone(newGround)
                     newGround.coords[0] = newGround.coords[0]*oneCharSize.x + boxCentre.x
