@@ -16,7 +16,7 @@ let scene
 let gui
 let camera
 let explosion
-let levelNumber = 0
+let levelNumber = 5
 let stateMachine
 let maxLives = 3
 let livesRemaining
