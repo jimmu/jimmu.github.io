@@ -1,7 +1,7 @@
 "use strict";
 import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
 
-const groundChars = "#/?"
+const groundChars = "#/"
 
 const standardObjectTypes = new Map([
     // Landing pad
@@ -14,6 +14,8 @@ const standardObjectTypes = new Map([
     ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage"}],
     // Half health
     ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage"}],
+    // Payload
+    ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me"}],
 ]);
 
 const standardGroundTypes = new Map([
@@ -115,24 +117,26 @@ const levels = [
     },
     {
         name: "Carry",
-        ground: [
-            {type: rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: rectangle, coords:[0.5, -0.5, 0.5, 1]}
-        ],
-        objects: [
-            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: circle, coords:[-0.25, 0.25, 0.02], message: "Carry me", payload: 1},
-        ],
+        groundBlocks: {
+            size: {x:1, y:1},
+            blocks: [
+            "############",
+            "#/        /#",
+            "#     . L  #",
+            "#/        /#",
+            "### ########",
+            "#/        /#",
+            "#F     p   #",
+            "#/        /#",
+            "############"
+            ]
+        },
         isComplete: function(){
             for (let collectable of this.objects){
                 if (!collectable.landingPad && !collectable.collected){
                     return false
                 }
             }
-            // Everything has been collected. Enable the landing pad.
-            this.objects[0].disabled = false    // Assumes the landing pad is first object. Rather than scanning for it.
             return true
         }
     },
@@ -164,17 +168,17 @@ const levels = [
             blocks: [
             "##################################",
             "##################################",
-            "######/ ?##############/    ?#####",
-            "######                   /?  #####",
-            "######  /##?    /###### /##  #####",
-            "######  ?####?  ######/ ### /#####",
+            "######/ /##############/    /#####",
+            "######                   //  #####",
+            "######  /##/    /#####/ /##  #####",
+            "######  /####/  ######/ ### /#####",
             "###### h #####  #####/ H ##h######",
-            "######?  #####  ###/   /### ?#####",
-            "#######  #####  ?#/ /######  #####",
-            "######/ /####  h    #######  ?####",
-            "#####/  ######  /#? ?#####/   ?###",
-            "####/   ######ff###  ?###/     ###",
-            "## .   /######? ###?       LL /###",
+            "######/  #####  ###/   /### /#####",
+            "#######  #####  /#/ /######  #####",
+            "######/ /####  h    #######  /####",
+            "#####/  ######  /#/ /#####/   /###",
+            "###/    ######ff###  /###/     ###",
+            "## .   /######/ ###/       LL /###",
             "############### ##################",
             "##################################",
             "##################################",
