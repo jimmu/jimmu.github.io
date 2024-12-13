@@ -15,7 +15,7 @@ const standardObjectTypes = new Map([
     // Half health
     ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage"}],
     // Payload
-    ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me"}],
+    ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me", mandatory: true}],
 ]);
 
 const standardGroundTypes = new Map([
@@ -133,7 +133,7 @@ const levels = [
         },
         isComplete: function(){
             for (let collectable of this.objects){
-                if (!collectable.landingPad && !collectable.collected){
+                if (collectable.mandatory && !collectable.collected){ //} !collectable.landingPad && !collectable.collected){
                     return false
                 }
             }
