@@ -21,4 +21,5 @@ button {
 }
 canvas {
   display: block;
+  cursor: none;
 }
