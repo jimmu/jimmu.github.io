@@ -35,6 +35,7 @@ const standardGroundTypes = new Map([
 ])
 
 // TODO. Think about using character based coordinates for all of the ground stuff.
+// TODO. The unlock level is borked.
 const levels = [
     {
         name: "Land Carefully",
