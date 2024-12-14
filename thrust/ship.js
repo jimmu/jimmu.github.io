@@ -250,7 +250,14 @@ export function newShip(){
             return payload
         }
         payload = thing
-        payloadPosition.set(grabberPosition.x, grabberPosition.y)
+        if (thing.type == circle){
+            payloadPosition.set(thing.coords[0], thing.coords[1])
+            payloadSize = thing.coords[2]
+        }
+        else {
+            // Just in case.
+            payloadPosition.set(grabberPosition.x, grabberPosition.y)
+        }
     }
 
     function fuelPercent(percentage){

@@ -116,6 +116,21 @@ function collisionChecks(){
     // Did the ship hit any game objects?
     let collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck)
     ship.grab(collectedObject)
+    if (!collectedObject){
+        // Start by pretending we're only checking.
+        // Because we don't want the level to end if the payload hits the landing pad.
+        collectedObject = oneCollisionCheck(ship.payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)})
+        if (collectedObject){
+            if (collectedObject.landingPad){
+                // Be generous and ignore the payload hitting the landing pad.
+                collectedObject = false
+            }
+            else {
+                collectedObject.collected = true
+                ship.grab(collectedObject)
+            }
+        }
+    }
     // Are we near a landing pad?
     let nearbyObject = oneCollisionCheck(ship.landerZoneCollisionShape, (s)=>{return scene.collectionCheck(s, true)})    // True for just looking
     ship.nearAnObject(nearbyObject)
