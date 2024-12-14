@@ -132,8 +132,8 @@ const levels = [
             "#############################",
             "#############################",
             "###/    //    //    //   /###",
-            "###  //    //    //       ###",
-            "### .//    //    //       ###",
+            "###  ///  ///    ///      ###",
+            "### .///  ///    ///      ###",
             "###/    //    //    //LLL/###",
             "#############################",
             "#############################",
@@ -376,53 +376,35 @@ function processGroundBlocks(level){
             }
             else {
                 // Is this a standard ground type block?
-                if (thisChar == "/" || thisChar == "?"){
+                if (thisChar == "/"){   // Automagic triangles.
                     // We'll make a block to add to the ground rather than the objects
                     let groundToTheLeft = (col > 0 && groundChars.includes(blocks[row][col - 1]))
                     let groundToTheRight = (col < blocks[row].length - 1 && groundChars.includes(blocks[row][col + 1]))
                     let groundAbove = (row > 0 && groundChars.includes(blocks[row - 1][col]))
                     let groundBelow = (row < blocks.length - 1 && groundChars.includes(blocks[row + 1][col]))
-                    let triangleType = "t"
-                    if (groundAbove && ! groundBelow){
-                        if (groundToTheLeft && !groundToTheRight){
-                            triangleType = "ttl"
-                        }
-                        else if (groundToTheRight && !groundToTheLeft){
-                            triangleType = "ttr"
-                        }
-                        else {
-                            triangleType = "tt"
-                        }
+                    // Make a bit mask representing where there are ground blocks.
+                    let lrtb = (groundToTheLeft ? 8 : 0) |
+                               (groundToTheRight ? 4 : 0) |
+                               (groundAbove ? 2 : 0) |
+                               (groundBelow ? 1 : 0)
+                    let triangleType = ["t", "tb", "tt", "#",
+                                        "tr", "tbr", "ttr", "#",
+                                        "tl", "tbl", "ttl", "#",
+                                        "#", "#", "#", "#"][lrtb]
+                    if (triangleType == "#"){
+                        blockRectangles.push({row, col, width:1, height:1})
                     }
-                    else if (groundBelow && !groundAbove){
-                        if (groundToTheLeft && !groundToTheRight){
-                            triangleType = "tbl"
-                        }
-                        else if (groundToTheRight && !groundToTheLeft){
-                            triangleType = "tbr"
-                        }
-                        else {
-                            triangleType = "tb"
-                        }
+                    else {
+                        let newGround = standardGroundTypes.get(triangleType)
+                        newGround = structuredClone(newGround)
+                        newGround.coords[0] = newGround.coords[0]*oneCharSize.x + boxCentre.x
+                        newGround.coords[1] = newGround.coords[1]*oneCharSize.y + boxCentre.y
+                        newGround.coords[2] = newGround.coords[2]*oneCharSize.x + boxCentre.x
+                        newGround.coords[3] = newGround.coords[3]*oneCharSize.y + boxCentre.y
+                        newGround.coords[4] = newGround.coords[4]*oneCharSize.x + boxCentre.x
+                        newGround.coords[5] = newGround.coords[5]*oneCharSize.y + boxCentre.y
+                        level.ground.push(newGround)
                     }
-                    else if (groundToTheLeft && ! groundToTheRight){
-                        triangleType = "tl"
-                    }
-                    else if (groundToTheRight && ! groundToTheLeft){
-                        triangleType = "tr"
-                    }
-
-//                    let triangleType = groundAbove? (groundToTheLeft ? "ttl" : "ttr") :
-//                                       groundToTheLeft? "tbl" : "tbr"
-                    let newGround = standardGroundTypes.get(triangleType)
-                    newGround = structuredClone(newGround)
-                    newGround.coords[0] = newGround.coords[0]*oneCharSize.x + boxCentre.x
-                    newGround.coords[1] = newGround.coords[1]*oneCharSize.y + boxCentre.y
-                    newGround.coords[2] = newGround.coords[2]*oneCharSize.x + boxCentre.x
-                    newGround.coords[3] = newGround.coords[3]*oneCharSize.y + boxCentre.y
-                    newGround.coords[4] = newGround.coords[4]*oneCharSize.x + boxCentre.x
-                    newGround.coords[5] = newGround.coords[5]*oneCharSize.y + boxCentre.y
-                    level.ground.push(newGround)
                 }
                 else {
                     // If there's an object type with this label, make a copy of it into the level's objects.
