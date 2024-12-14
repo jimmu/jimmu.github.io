@@ -128,16 +128,16 @@ const levels = [
         groundBlocks: {
             size: {x:1.75, y:1},
             blocks: [
-            "#############################",
-            "#############################",
-            "#############################",
-            "###/    //    //    //   /###",
-            "###  ///  ///    ///      ###",
-            "### .///  ///    ///      ###",
-            "###/    //    //    //LLL/###",
-            "#############################",
-            "#############################",
-            "#############################",
+            "################################",
+            "################################",
+            "################################",
+            "###/     //     //      ///#####",
+            "###  ///    ///    ///   /######",
+            "### .///    ///    ///     /####",
+            "###/     //     //     //LLL/###",
+            "################################",
+            "################################",
+            "################################",
             ]
         },
         isComplete: function(){
@@ -346,7 +346,6 @@ function processGroundBlocks(level){
     const oneCharSize = {x: size.x/numCols, y: size.y/numRows}
     let blockRectangles = []
     for (let row=0; row < blocks.length; row++){
-        let rectangleInProgress = null
         for (let col=0; col < blocks[row].length; col++){
             let thisChar = blocks[row][col]
             let boxTopLeft = {x: col * oneCharSize.x - size.x/2,
@@ -354,21 +353,7 @@ function processGroundBlocks(level){
             let boxCentre = {x: boxTopLeft.x + oneCharSize.x/2,
                              y: boxTopLeft.y + oneCharSize.y/2}
             if (thisChar == "#"){
-                if (rectangleInProgress != null){
-                    rectangleInProgress.width++
-                }
-                else {
-                    rectangleInProgress = {row, col, width: 1, height: 1}
-                }
-            }
-            if (thisChar != "#" || col == blocks[row].length-1) {
-                // If we had a rectangle in progress, we now know its size. add it to the list now.
-                if (rectangleInProgress){
-                    //Keep the coordinates as the integer row,col for now
-                    //So that consolidating vertically doesn't break down due to rounding errors.
-                    blockRectangles.push(structuredClone(rectangleInProgress))
-                    rectangleInProgress = null  // Start a new one.
-                }
+                blockRectangles.push({row, col, width: 1, height: 1})
             }
             if (thisChar == "."){
                 // Return the coordinates of the middle of this box.
@@ -450,6 +435,23 @@ function processGroundBlocks(level){
 function consolidateBlocks(size, oneCharSize, blockRectangles){
     // First consolidate horizontally.
     // Look for adjacent rectangles where the neighbouring one has the same height and the left/rights match.
+    for (let i=0; i < blockRectangles.length; i++){
+        let thisBlock = blockRectangles[i]
+        // Look ahead for another rectangle with the same start column and width but on the next column.
+        for (let j=i+1; j < blockRectangles.length; j++){
+            let candidateBlock = blockRectangles[j]
+            if (candidateBlock.row == thisBlock.row &&
+                candidateBlock.col == thisBlock.col + thisBlock.width) {
+                // We have a match. Expand the candidate block.
+                candidateBlock.width = thisBlock.width + candidateBlock.width
+                candidateBlock.col = thisBlock.col
+                // And scrap the current one. Can't remove it from the array as we're iterating over that currently.
+                thisBlock.row = -1
+                thisBlock.col = -1
+                thisBlock.width = 0
+            }
+        }
+    }
     let rectangles = []
     // We have consolidated blocks horizontally into long rectangles already.
     // Now see if any match ones directly below them too.
@@ -461,12 +463,14 @@ function consolidateBlocks(size, oneCharSize, blockRectangles){
             if (candidateBlock.row == thisBlock.row + thisBlock.height &&
                 candidateBlock.col == thisBlock.col &&
                 candidateBlock.width == thisBlock.width) {
-                // We have a match. Expand the current block.
-                thisBlock.height++
-                // And scrap the candidate one. Can't remove it from the array as we're iterating over that currently.
-                candidateBlock.row = -1
-                candidateBlock.col = -1
-                candidateBlock.width = 0
+                // We have a match. Expand the candidate block.
+                candidateBlock.height = candidateBlock.height + thisBlock.height
+                candidateBlock.row = thisBlock.row
+                //thisBlock.height++
+                // And scrap the current one. Can't remove it from the array as we're iterating over that currently.
+                thisBlock.row = -1
+                thisBlock.col = -1
+                thisBlock.width = 0
             }
         }
     }
@@ -485,10 +489,6 @@ function consolidateBlocks(size, oneCharSize, blockRectangles){
                 topLeft.x, topLeft.y + blockRectangle.height * oneCharSize.y
             ]
         })
-        //        rectangles.push({
-        //            type: rectangle,
-        //            coords: [topLeft.x, topLeft.y, blockRectangle.width * oneCharSize.x, blockRectangle.height * oneCharSize.y]
-        //        })
     }
     return rectangles
 }
