@@ -59,7 +59,7 @@ export function newShip(){
         update,
         position,
         velocity,
-        angle,
+        getAngle,
         hit,
         grab,
         nearAnObject,
@@ -73,6 +73,10 @@ export function newShip(){
         setPos: (x, y)=>{position.set(x, y)},
         slowEnoughToLand,
         inventory
+    }
+
+    function getAngle(){
+        return angle
     }
 
     function setup(){

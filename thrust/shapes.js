@@ -36,8 +36,6 @@ export function render(shapeType, unscaledCoords){
     }
 }
 
-// TODO. Collision detection can be a bit out, still.
-// Rounding error with the small range of coordinate values?
 export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, unscaledShapeTwoCoords){
     // The below checks _could_ use scaled or unscaled coordinates - so long as they agree.
     // But in reality, when using unscaled coordinates, too much precision is lost.
