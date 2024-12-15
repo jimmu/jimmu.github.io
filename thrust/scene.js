@@ -13,6 +13,7 @@ export function newScene(level){
         greeting: level.name,
         startCoords: level.startCoords,
         useKey,
+        toggleSwitchableObjects,
         isOutOfBounds
     }
 
@@ -79,6 +80,12 @@ export function newScene(level){
     function useKey(key){
         for (let shape of level.objects.filter((s)=>{return s.needsKey == key})){
             shape.disabled = true
+        }
+    }
+
+    function toggleSwitchableObjects(switchName){
+        for (let shape of level.objects.filter((s)=>{return s.switchedBy && s.switchedBy.includes(switchName)})){
+            shape.disabled = !shape.disabled
         }
     }
 

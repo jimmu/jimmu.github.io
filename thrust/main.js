@@ -166,12 +166,17 @@ function collisionChecks(){
             // What to do. Bump off the object?
             ship.velocity.mult(-1)
             collectedObject.collected = false
-            gui.splash("Lock "+collectedObject.needsKey)
+            if (!collectedObject.message){
+                gui.splash("Lock "+collectedObject.needsKey)
+            }
         }
     }
     if (collectedObject && collectedObject.key){
         // Add the key to the ship's inventory
         ship.inventory.add("keys", collectedObject.key)
+    }
+    if (collectedObject && collectedObject.isSwitch){
+        scene.toggleSwitchableObjects(collectedObject.isSwitch)
     }
     if (collectedObject.landingPad){
         if (scene.isComplete()){

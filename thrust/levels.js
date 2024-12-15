@@ -36,6 +36,10 @@ const standardGroundTypes = new Map([
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
 
+function makeSwitch(switchName, message){
+    return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0"}
+}
+
 function defaultCompleteness(){
     for (let collectable of this.objects){
         if (collectable.mandatory && !collectable.collected){
@@ -232,6 +236,29 @@ const levels = [
         isComplete: function(){
             return true
         }
+    },
+    {
+        name: "Switch",
+        groundBlocks: {
+            size: {x:1, y:1},
+            blocks: [
+            "#############",
+            "#############",
+            "##   sa  L###",
+            "##.   #######",
+            "##    btdcu##",
+            "#############",
+            "#############"
+            ]
+        },
+        objectTypes: new Map([
+            ["s", makeSwitch("a", "click")],
+            ["t", makeSwitch("a", "click")],
+            ["u", makeSwitch("b", "click")],
+            ["a", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope"}],
+            ["b", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a", "b"], disabled: false, needsKey: "-", message: "Nope"}],
+            ["d", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope"}],
+        ])
     },
     {
         name: "Gotta Catch All Of Them",
