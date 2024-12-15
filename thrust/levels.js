@@ -7,17 +7,17 @@ const standardObjectTypes = new Map([
     // Landing pad
     ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true}],
     // Full fuel
-    ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel"}],
+    ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel", colour: "#2060a0"}],
     // Half fuel
-    ["f", {type: circle, coords:[0, 0, 0.3], fuel:50, message: "50 Fuel"}],
+    ["f", {type: circle, coords:[0, 0, 0.3], fuel:50, message: "50 Fuel", colour: "#2060a0"}],
     // Full health
-    ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage"}],
+    ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage", colour: "#f04040"}],
     // Half health
-    ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage"}],
+    ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage", colour: "#f04040"}],
     // Payload
     ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me", mandatory: true}],
     // Collectable / Coin
-    ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true}],
+    ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: "#ffc010"}],
 ]);
 
 const standardGroundTypes = new Map([

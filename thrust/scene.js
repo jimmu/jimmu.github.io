@@ -86,6 +86,7 @@ export function newScene(level){
         p5.push()
         if (shape.colour){
             p5.fill(shape.colour)
+            p5.stroke(shape.colour)
         }
         render(shape.type, shape.coords)
         p5.pop()
