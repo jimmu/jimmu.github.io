@@ -16,6 +16,8 @@ const standardObjectTypes = new Map([
     ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage"}],
     // Payload
     ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me", mandatory: true}],
+    // Collectable / Coin
+    ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true}],
 ]);
 
 const standardGroundTypes = new Map([
@@ -33,6 +35,15 @@ const standardGroundTypes = new Map([
     ["tb",  {type: triangle, coords:[-0.5, 0.5, 0, -0.5, 0.5, 0.5]}], // bottom
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
+
+function defaultCompleteness(){
+    for (let collectable of this.objects){
+        if (collectable.mandatory && !collectable.collected){
+            return false
+        }
+    }
+    return true
+}
 
 // TODO. Think about using character based coordinates for all of the ground stuff.
 const levels = [
@@ -162,7 +173,7 @@ const levels = [
         },
         isComplete: function(){
             for (let collectable of this.objects){
-                if (collectable.mandatory && !collectable.collected){ //} !collectable.landingPad && !collectable.collected){
+                if (collectable.mandatory && !collectable.collected){
                     return false
                 }
             }
@@ -220,6 +231,27 @@ const levels = [
         ]),
         isComplete: function(){
             return true
+        }
+    },
+    {
+        name: "Gotta Catch All Of Them",
+        groundBlocks: {
+            size: {x:1.5, y:1},
+            blocks: [
+                "#///////////////#",
+                "/////////////////",
+                "//fcccccccccccf//",
+                "//c///c///c///c//",
+                "//c///c///c///c//",
+                "//c///c///c///c//",
+                "//fccc.cccccccf//",
+                "//c///c///ccccc//",
+                "//c///c///ccccc//",
+                "//c///c///ccccc//",
+                "//fcccccccLLLLL//",
+                "/////////////////",
+                "#///////////////#",
+            ]
         }
     },
     {
@@ -328,7 +360,7 @@ export function getLevel(levelNum){
         ground: structuredClone(level.ground || []),
         objects: structuredClone(level.objects || []),
         objectTypes: structuredClone(level.objectTypes|| new Map()),
-        isComplete: level.isComplete
+        isComplete: level.isComplete || defaultCompleteness
     }
     processGroundBlocks(levelCopy)
     return levelCopy
