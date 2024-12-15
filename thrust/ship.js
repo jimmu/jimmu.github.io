@@ -232,6 +232,9 @@ export function newShip(){
         colliding = hit
         if (colliding){
             health = Math.max(0, health - (p5.deltaTime/1000 * damagePerSecond))
+            if (health == 0){
+                thrusting = false
+            }
         }
     }
 
