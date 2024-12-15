@@ -75,7 +75,7 @@ function setup(){
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
     })
-    gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
+    //gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     if (devMode){
         gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
                        ") Speed: "+Math.floor(ship.velocity.mag())})

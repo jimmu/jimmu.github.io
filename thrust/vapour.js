@@ -4,8 +4,9 @@ import {circle, render} from './shapes.js'
 
 export function newVapourTrail(){
 
+    let pulseCount = 0
     let vapourPoints = []
-    const speed = 0.02
+    const speed = 0.004
     const lifetime = 30 // Frames.
     const maxSize = 0.03
 
@@ -17,15 +18,19 @@ export function newVapourTrail(){
     function add(direction){
         let speedPulses = [0, 1, 2, 3, 4, 4, 4, 5, 4, 4, 3, 2, 1, 1, 1, 1]
         let velocity = p5.constructor.Vector.fromAngle(direction)
-        let pulse = speedPulses[p5.frameCount % speedPulses.length]
+        pulseCount = (pulseCount + 1) % speedPulses.length
+        let pulse = speedPulses[pulseCount]
         velocity.mult(speed + pulse/1500)
-        vapourPoints.push({position: p5.createVector(0, 0), velocity, age: 0, colour: 65+pulse*10})
+        let position = p5.createVector(0, 0)    // That's the middle of the ship. Move to the back.
+        position.add(velocity)
+        position.add(velocity)
+        position.add(velocity)
+        vapourPoints.push({position, velocity, age: 0, colour: 65+pulse*10})
     }
 
     function draw(){
         p5.push()
-        let nonExpired = vapourPoints.filter((p)=>{return p.age < lifetime})
-        vapourPoints = nonExpired
+        vapourPoints = vapourPoints.filter((p)=>{return p.age < lifetime})
         update()
         p5.noFill()
         for (let vapourPoint of vapourPoints){
