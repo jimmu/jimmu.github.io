@@ -122,7 +122,9 @@ const levels = [
             "########################",
             "########################"
             ]
-        }
+        },
+        usePatternFill: true,
+        backgroundColour: "#506050"
     },
     {
         name: "Steer",
@@ -221,6 +223,7 @@ const levels = [
             ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
             ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
         ]),
+        usePatternFill: true,
         isComplete: function(){
             return true
         }
@@ -376,7 +379,8 @@ export function getLevel(levelNum){
         objects: structuredClone(level.objects || []),
         objectTypes: structuredClone(level.objectTypes|| new Map()),
         isComplete: level.isComplete || defaultCompleteness,
-        backgroundColour: level.backgroundColour || "gray"
+        backgroundColour: level.backgroundColour || "gray",
+        usePatternFill: level.usePatternFill || false
     }
     processGroundBlocks(levelCopy)
     return levelCopy
