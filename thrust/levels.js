@@ -110,36 +110,18 @@ const levels = [
     },
     {
         name: "Refuel",
-        startCoords: {x:-2.25, y:-0.25},
         groundBlocks: {
             size: {x:6, y:2},
             blocks: [
-            "############",
-            "#          #",
-            "##########F#",
-            "#          #",
-            "############"
+            "########################",
+            "########################",
+            "#.                    /#",
+            "#####################/ #",
+            "#####################/F#",
+            "#L                    /#",
+            "########################",
+            "########################"
             ]
-        },
-        ground: [
-            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.05], landingPad: true}
-        ],
-        objects: [
-            {type: rectangle, coords:[-2.25, 0.5, 0.1, 0.01], landingPad: true, disabled: true}
-        ],
-        objectTypes: new Map([
-            // Override the standard big fuel
-            ["F", {type: circle, coords:[0, 0, 0.2], fuel:100, message: "100 Fuel"}],
-        ]),
-        isComplete: function(){
-            for (let collectable of this.objects){
-                if (!collectable.landingPad && !collectable.collected){
-                    return false
-                }
-            }
-            // Everything has been collected. Enable the landing pad.
-            this.objects[0].disabled = false    // Assumes the landing pad is first object. Rather than scanning for it.
-            return true
         }
     },
     {
