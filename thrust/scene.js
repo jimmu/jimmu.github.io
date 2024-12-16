@@ -86,7 +86,12 @@ export function newScene(level){
                     //console.log("Detected a "+shape)
                 }
                 else {
-                    collectableObject.collected = true
+                    if (collectableObject.permanent){
+                        // Don't mark it as collected. This must be a switch or something which doesn't go away.
+                    }
+                    else {
+                        collectableObject.collected = true
+                    }
                     level.isComplete()  // Run this in case it has side effects such as enabling the landing pad when everything has been collected
                 }
                 return collectableObject

@@ -40,7 +40,7 @@ const standardGroundTypes = new Map([
 
 // TODO. Make switches reusable
 function makeSwitch(switchName, message){
-    return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0"}
+    return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0", permanent: true}
 }
 
 function defaultCompleteness(){
@@ -83,30 +83,18 @@ const levels = [
         name: "Collect",
         backgroundColour: "#595c00",    // Dark drab olive
         groundBlocks: {
-            size: {x:3, y:3},
+            size: {x:2, y:1.5},
             blocks: [
-            "###",
-            "# #",
-            "###"
+            "##############",
+            "##############",
+            "###        ###",
+            "###   c    ###",
+            "###      . ###",
+            "### L      ###",
+            "##############",
+            "##############",
             ]
         },
-        ground: [
-            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
-        ],
-        objects: [
-            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, disabled: true},
-            {type: circle, coords:[-0.25, 0.25, 0.05], message: "Nom"},
-        ],
-        isComplete: function(){
-            for (let collectable of this.objects){
-                if (!collectable.landingPad && !collectable.collected){
-                    return false
-                }
-            }
-            // Everything has been collected. Enable the landing pad.
-            this.objects[0].disabled = false    // Assumes the landing pad is first object. Rather than scanning for it.
-            return true
-        }
     },
     {
         name: "Refuel",
@@ -132,20 +120,17 @@ const levels = [
         groundBlocks: {
             size: {x:1.75, y:1},
             blocks: [
-            "################################",
-            "################################",
-            "################################",
-            "###/     //     //      ///#####",
-            "###  ///    ///    ///   /######",
-            "### .///    ///    ///    /#####",
-            "###/     //     //     //LL/####",
-            "################################",
-            "################################",
-            "################################",
+            "###############################",
+            "###############################",
+            "###############################",
+            "###/     //     //      ///####",
+            "###  ///    ///    ///   /#####",
+            "### .///    ///    ///    /####",
+            "###/     //     //     //LL/###",
+            "###############################",
+            "###############################",
+            "###############################",
             ]
-        },
-        isComplete: function(){
-            return true
         }
     },
     {
