@@ -4,6 +4,9 @@ import {render, collision, circle} from './shapes.js'
 
 export function newScene(level){
 
+    const usePatternFill = true
+    let pattern
+
     return {
         setup,
         draw,
@@ -18,6 +21,18 @@ export function newScene(level){
     }
 
     function setup(){
+        if (usePatternFill){
+            let patternCanvas = p5.createGraphics(10, 10)
+            patternCanvas.pixelDensity(1)
+            patternCanvas.background(30)
+            patternCanvas.noFill()
+            patternCanvas.stroke(level.backgroundColour)
+            patternCanvas.strokeWeight(5)
+            patternCanvas.point(5,5)
+            //patternCanvas.line(0,1,10,1)
+            //patternCanvas.line(0,0,10,10)
+            pattern = p5.drawingContext.createPattern(patternCanvas.canvas, 'repeat')
+        }
     }
 
     function draw(){
@@ -30,6 +45,10 @@ export function newScene(level){
         p5.strokeWeight(1)
         p5.stroke(level.backgroundColour)
         p5.fill(level.backgroundColour)
+        if (usePatternFill){  // Experimental use of patterned fill.
+            p5.noStroke()
+            p5._renderer._setFill(pattern)
+        }
         for (let shape of level.ground){
             drawShape(shape)
         }
