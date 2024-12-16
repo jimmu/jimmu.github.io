@@ -3,6 +3,8 @@ import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
 
 const groundChars = "#/"
 
+//TODO. Moving objects.
+//TODO. Objects which boost speed, change ship size, teleport?
 const standardObjectTypes = new Map([
     // Landing pad
     ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true}],
@@ -36,6 +38,7 @@ const standardGroundTypes = new Map([
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
 
+// TODO. Make switches reusable
 function makeSwitch(switchName, message){
     return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0"}
 }
@@ -78,6 +81,7 @@ const levels = [
     },
     {
         name: "Collect",
+        backgroundColour: "#595c00",    // Dark drab olive
         groundBlocks: {
             size: {x:3, y:3},
             blocks: [
@@ -140,6 +144,7 @@ const levels = [
     },
     {
         name: "Steer",
+        backgroundColour: "darkOrange",
         groundBlocks: {
             size: {x:1.75, y:1},
             blocks: [
@@ -148,8 +153,8 @@ const levels = [
             "################################",
             "###/     //     //      ///#####",
             "###  ///    ///    ///   /######",
-            "### .///    ///    ///     /####",
-            "###/     //     //     //LLL/###",
+            "### .///    ///    ///    /#####",
+            "###/     //     //     //LL/####",
             "################################",
             "################################",
             "################################",
@@ -161,6 +166,7 @@ const levels = [
     },
     {
         name: "Carry",
+        backgroundColour: "darkBlue",
         groundBlocks: {
             size: {x:1, y:1},
             blocks: [
@@ -387,7 +393,8 @@ export function getLevel(levelNum){
         ground: structuredClone(level.ground || []),
         objects: structuredClone(level.objects || []),
         objectTypes: structuredClone(level.objectTypes|| new Map()),
-        isComplete: level.isComplete || defaultCompleteness
+        isComplete: level.isComplete || defaultCompleteness,
+        backgroundColour: level.backgroundColour || "gray"
     }
     processGroundBlocks(levelCopy)
     return levelCopy

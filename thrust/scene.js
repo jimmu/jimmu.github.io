@@ -28,8 +28,8 @@ export function newScene(level){
     function drawGround(){
         p5.push()
         p5.strokeWeight(1)
-        p5.stroke(100)
-        p5.fill(100)
+        p5.stroke(level.backgroundColour)
+        p5.fill(level.backgroundColour)
         for (let shape of level.ground){
             drawShape(shape)
         }
