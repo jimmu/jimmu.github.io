@@ -272,5 +272,7 @@ function keyPressed(){
 
 function touchStarted(){
     stateMachine.trigger("tapOrKeyPress")
-    enableTouchControls()
+    if (p5.touches.length > 0){
+        enableTouchControls()
+    }
 }
