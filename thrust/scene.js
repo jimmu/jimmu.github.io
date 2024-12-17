@@ -143,7 +143,10 @@ export function newScene(level){
     }
 
     function isOutOfBounds(position){
-        return position.mag() > 6    // TODO. Work this out from the level size.
+        return position.x < level.limits.left ||
+               position.x > level.limits.right ||
+               position.y < level.limits.top ||
+               position.y > level.limits.bottom
     }
 
 }

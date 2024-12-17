@@ -373,6 +373,7 @@ export function getLevel(levelNum){
         generatePattern: level.generatePattern
     }
     processGroundBlocks(levelCopy)
+    findOuterLimits(levelCopy)
     return levelCopy
 }
 
@@ -533,4 +534,23 @@ function consolidateBlocks(size, oneCharSize, blockRectangles){
         })
     }
     return rectangles
+}
+
+function findOuterLimits(level){
+    let limits = {left: 0, right: 0, top: 0, bottom: 0}
+    for (let shape of level.ground.filter((s)=>{return s.type == rectangle})){
+        // Look at every rectangle and use those to find the leftmost, rightmost bounds etc.
+        limits.left = Math.min(limits.left, shape.coords[0])
+        limits.top = Math.min(limits.top, shape.coords[1])
+        limits.right = Math.max(limits.right, shape.coords[0]+shape.coords[2])
+        limits.bottom = Math.max(limits.bottom, shape.coords[1]+shape.coords[3])
+    }
+    for (let shape of level.ground.filter((s)=>{return s.type == quadrilateral})){
+        // Look at every quadrilateral and use those to find the leftmost, rightmost bounds etc.
+        limits.left = Math.min(limits.left, shape.coords[0], shape.coords[2], shape.coords[4], shape.coords[6])
+        limits.top = Math.min(limits.top, shape.coords[1], shape.coords[3], shape.coords[5], shape.coords[7])
+        limits.right = Math.max(limits.right, shape.coords[0], shape.coords[2], shape.coords[4], shape.coords[6])
+        limits.bottom = Math.max(limits.bottom, shape.coords[1], shape.coords[3], shape.coords[5], shape.coords[7])
+    }
+    level.limits = limits
 }

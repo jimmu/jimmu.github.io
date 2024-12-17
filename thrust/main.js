@@ -65,8 +65,6 @@ function setup(){
         })
         .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
         .onEventNamed("lose", ()=>{livesRemaining--})
-    backdrop = newBackdrop()
-    backdrop.setup()
     gui = newGui()
     gui.setup()
     gui.addElement("Lives : ", ()=>{return livesRemaining})
@@ -211,8 +209,11 @@ function oneCollisionCheck(thing, collider, angle){
 }
 
 function prepareLevel(){
-    scene = newScene(getLevel(levelNumber))
+    let level = getLevel(levelNumber)
+    scene = newScene(level)
     scene.setup()
+    backdrop = newBackdrop()
+    backdrop.setup(500, level.limits)
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)

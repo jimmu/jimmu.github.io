@@ -4,8 +4,6 @@ import {render, point} from './shapes.js'
 
 export function newBackdrop(){
 
-    // TODO. Take size arguments - maybe derived from the level size.
-    const size = {x:5, y:4}
     let stars = []
     let depths = []
     let colours = []
@@ -15,13 +13,15 @@ export function newBackdrop(){
         draw
     }
 
-    function setup(howManyStars){
+    function setup(howManyStars, limits){
         if (!howManyStars){
             howManyStars = 500
         }
+        let width = limits.right - limits.left
+        let height = limits.bottom - limits.top
         for (let i=0; i<howManyStars; i++){
-            stars.push(size.x * (Math.random()-0.5))   // x coord. Will be scaled to window width later
-            stars.push(size.y * (Math.random()-0.5))   // y. likewise
+            stars.push(limits.left + (width * Math.random()))   // x coord. Will be scaled to window width later
+            stars.push(limits.top + (height * Math.random()))   // y. likewise
             depths.push(Math.random())  // Depth. Won't be scaled.
             let randomColour = Math.random()
             // Some reddish and some blueish.
