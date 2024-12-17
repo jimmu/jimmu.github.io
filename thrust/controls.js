@@ -18,12 +18,25 @@ export function enableTouch(){
 export function draw(){
     if (touchEnabled){
         p5.push()
-        p5.fill(50)
-        p5.noStroke()
+        p5.noFill()
+//        p5.stroke(40)
+//        p5.strokeWeight(0.5)
         let coords = getButtonCoords()
-        p5.rect(coords.left.x, coords.left.y, coords.left.width, coords.left.height)
-        p5.rect(coords.right.x, coords.right.y, coords.right.width, coords.right.height)
-        p5.rect(coords.up.x, coords.up.y, coords.up.width, coords.up.height)
+//        p5.rect(coords.left.x, coords.left.y, coords.left.width, coords.left.height)
+//        p5.rect(coords.right.x, coords.right.y, coords.right.width, coords.right.height)
+//        p5.rect(coords.up.x, coords.up.y, coords.up.width, coords.up.height)
+        p5.stroke(80)
+        p5.strokeWeight(1)
+        let centreX = (coords.left.x + coords.left.x + coords.left.width)/2
+        let centreY = (coords.left.y + coords.left.y + coords.left.height)/2
+        p5.triangle(centreX - coords.left.width * 0.4, centreY, centreX + coords.left.width * 0.4, centreY - coords.left.height * 0.4, centreX + coords.left.width * 0.4, centreY + coords.left.height * 0.4)
+        centreX = (coords.right.x + coords.right.x + coords.right.width)/2
+        centreY = (coords.right.y + coords.right.y + coords.right.height)/2
+        p5.triangle(centreX + coords.right.width * 0.4, centreY, centreX - coords.right.width * 0.4, centreY - coords.right.height * 0.4, centreX - coords.right.width * 0.4, centreY + coords.right.height * 0.4)
+        centreX = (coords.up.x + coords.up.x + coords.up.width)/2
+        centreY = (coords.up.y + coords.up.y + coords.up.height)/2
+        p5.triangle(centreX, centreY - coords.up.height * 0.4, centreX - coords.up.width * 0.4, centreY + coords.up.height * 0.4, centreX + coords.up.width * 0.4, centreY + coords.up.height * 0.4)
+        //p5.arc((coords.left.x, coords.left.x + coords.left.width)/2, (coords.left.y + p5.height*2)/3, coords.left.width*0.8, coords.left.height, Math.PI*1.1, -Math.PI*0.1)
         p5.pop()
     }
 }
