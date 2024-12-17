@@ -1,13 +1,12 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
 import {newInventory} from './inventory.js'
-import {newControls} from './controls.js'
+import {directions as getDirections} from './controls.js'
 import {quadrilateral, render, rotate, line, circle} from './shapes.js'
 import {newVapourTrail} from './vapour.js'
 export const devMode = false
 
 export function newShip(){
-    let controls = newControls()
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
     let shipShape = {type: quadrilateral,
                     coords: [size*0.66, 0,
@@ -162,7 +161,7 @@ export function newShip(){
 
     function checkControls(){
         let elapsedSeconds = p5.deltaTime/1000
-        let directions = controls.directions()
+        let directions = getDirections()
         let leftOrRight = directions.right - directions.left
         angle += (leftOrRight * elapsedSeconds * rotationSpeed)
         if (angle >= 2 * Math.PI){

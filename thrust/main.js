@@ -9,6 +9,7 @@ import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
 import {translateScreen, rotate, translate} from './shapes.js'
 import {newCamera} from './camera.js'
+import {draw as drawControls} from './controls.js'
 
 let ship
 let backdrop
@@ -99,6 +100,7 @@ function draw(){
     }
     drawShip()
     drawGui()
+    drawControls()
     p5.pop()
 }
 
