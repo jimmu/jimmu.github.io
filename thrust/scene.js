@@ -21,14 +21,17 @@ export function newScene(level){
 
     function setup(){
         if (level.usePatternFill){
-            let patternCanvas = p5.createGraphics(10, 10)
+            let patternCanvas = p5.createGraphics(8, 8)
             patternCanvas.pixelDensity(1)
             patternCanvas.background(30)
             patternCanvas.noFill()
             patternCanvas.stroke(level.backgroundColour)
-            patternCanvas.strokeWeight(5)
-            patternCanvas.point(5,5)
-            //patternCanvas.line(0,1,10,1)
+            patternCanvas.strokeWeight(1)
+            //patternCanvas.rotate(Math.PI/4)
+            //patternCanvas.point(4, 4)
+            //patternCanvas.rect(0, 0, 8, 8)
+            patternCanvas.line(0,0,8,8)
+            patternCanvas.line(0,8,8,0)
             //patternCanvas.line(0,0,10,10)
             pattern = p5.drawingContext.createPattern(patternCanvas.canvas, 'repeat')
         }

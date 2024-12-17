@@ -77,7 +77,6 @@ export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, un
                 case triangle:
                     return p5.collidePolyPoly(coordsToVertices(shapeOneCoords), coordsToVertices(shapeTwoCoords), includeFullyInside)
                 case rectangle:
-                    // TODO.
                     // When used for the ship being the quad, and the rectangle being the ground, the fully-inside check doesn't work.
                     // This could be because of the order we pass the two shapes.
                     // So the inside check would be for the rectangle being inside the ship.
