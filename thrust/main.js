@@ -9,7 +9,7 @@ import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
 import {translateScreen, rotate, translate} from './shapes.js'
 import {newCamera} from './camera.js'
-import {draw as drawControls} from './controls.js'
+import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
 
 let ship
 let backdrop
@@ -272,4 +272,5 @@ function keyPressed(){
 
 function touchStarted(){
     stateMachine.trigger("tapOrKeyPress")
+    enableTouchControls()
 }

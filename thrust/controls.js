@@ -6,34 +6,26 @@ const rightKey="s".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
 const upKey="p".toUpperCase().charCodeAt(0)
 const downKey="l".toUpperCase().charCodeAt(0)
 
-// TODO. Different touch controls.
-// L/R buttons on the left. Thrust button on the right
-// Visible buttons on the GUI layer? Only shown after a touch is detected?
-//export function newControls(){
-//    return {
-//        directions,
-//        setup,
-//        draw
-//    }
+let touchEnabled = false
 
 export function setup(){
-        // draw the area where we'll look for
-//        let leftRightContainer = p5.createElement("div")
-//        let left = p5.createElement("span", "Left")
-//        let right = p5.createElement("span", "Right")
-//        leftRightContainer.child(left)
-//        leftRightContainer.child(right)
+}
+
+export function enableTouch(){
+    touchEnabled = true
 }
 
 export function draw(){
-    // TODO. Only draw the controls if touch is being used.
-    p5.push()
-    p5.fill(50)
-    p5.noStroke()
-    p5.rect(0, p5.height - 100, 100, 100)
-    p5.rect(120, p5.height - 100, 100, 100)
-    p5.rect(p5.width-220, p5.height-100, 220, 100)
-    p5.pop()
+    if (touchEnabled){
+        p5.push()
+        p5.fill(50)
+        p5.noStroke()
+        let coords = getButtonCoords()
+        p5.rect(coords.left.x, coords.left.y, coords.left.width, coords.left.height)
+        p5.rect(coords.right.x, coords.right.y, coords.right.width, coords.right.height)
+        p5.rect(coords.up.x, coords.up.y, coords.up.width, coords.up.height)
+        p5.pop()
+    }
 }
 
 // Return a single direction object containing left/right/up/down as values from 0 to 1?
@@ -65,34 +57,36 @@ function downPressed(){
 
 function checkTouches(){
     let directions = {left: 0, right: 0, up: 0, down: 0}
-    for (let touch of p5.touches){
-        // Touch.x/y are relative to the top left of the canvas.
-        // Touch.winX/Y are relative to the browser
-        // Either way, let's divide the space into left quarter and right quarter
-        // and the middle half into top and bottom
-        if (touch.y > p5.height - 100){
-            if (touch.x < 100){
-                directions.left = 1
-            }
-            else if (touch.x > 120 && touch.x < 220){
-                directions.right = 1
-            }
-            else if (touch.x > p5.width - 220){
-                directions.up = 1
+    if (touchEnabled){
+        let coords = getButtonCoords()
+        for (let touch of p5.touches){
+            // Touch.x/y are relative to the top left of the canvas.
+            // Touch.winX/Y are relative to the browser
+            // Either way, let's divide the space into left quarter and right quarter
+            // and the middle half into top and bottom
+            if (touch.y > coords.left.y){   // All buttons have the same y coord.
+                if (touch.x > coords.left.x && touch.x < coords.left.x + coords.left.width){
+                    directions.left = 1
+                }
+                else if (touch.x > coords.right.x && touch.x < coords.right.x + coords.right.width){
+                    directions.right = 1
+                }
+                else if (touch.x > coords.up.x && touch.x < coords.up.x + coords.up.width){
+                    directions.up = 1
+                }
             }
         }
-//        if (touch.winX > p5.windowWidth * 0.75){
-//            directions.right = 1
-//        }
-//        else if (touch.winX < p5.windowWidth * 0.25){
-//            directions.left = 1
-//        }
-//        else if (touch.winY < p5.windowHeight/2){
-//            directions.up = 1
-//        }
-//        else if (touch.winY > p5.windowHeight/2){
-//            directions.down = 1
-//        }
     }
     return directions
+}
+
+function getButtonCoords(){
+    let smallButtonWidth = p5.width/5
+    let height = p5.height/5
+    let y = p5.height - height
+    return {
+        left: {x:0, y, width: smallButtonWidth, height},
+        right: {x: smallButtonWidth, y, width: smallButtonWidth, height},
+        up: {x: smallButtonWidth*3, y, width: smallButtonWidth*2, height}
+    }
 }
