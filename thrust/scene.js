@@ -106,10 +106,15 @@ export function newScene(level){
         }
     }
 
-    function toggleSwitchableObjects(switchName){
+    function toggleSwitchableObjects(switchObject){
+        let switchName = switchObject.isSwitch
         for (let shape of level.objects.filter((s)=>{return s.switchedBy && s.switchedBy.includes(switchName)})){
             shape.disabled = !shape.disabled
         }
+        // Flick the switch. This could be changing its appearance rather than hiding it entirely
+        switchObject.disabled = true
+        // Set it to come back on soon.
+        setTimeout(()=>{switchObject.disabled = false}, 2000)
     }
 
     function drawShape(shape){

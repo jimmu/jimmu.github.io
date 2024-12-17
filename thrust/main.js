@@ -176,13 +176,7 @@ function collisionChecks(){
         ship.inventory.add("keys", collectedObject.key)
     }
     if (collectedObject && collectedObject.isSwitch){
-        // Was this switch already used very recently?
-        // Don't activate the switch more than once per (second or two?)
-        if (collectedObject.lastSwitchedOnFrame && collectedObject.lastSwitchedOnFrame > p5.frameCount - 100){
-            return
-        }
-        scene.toggleSwitchableObjects(collectedObject.isSwitch)
-        collectedObject.lastSwitchedOnFrame = p5.frameCount
+        scene.toggleSwitchableObjects(collectedObject)
     }
     if (collectedObject.landingPad){
         if (scene.isComplete()){

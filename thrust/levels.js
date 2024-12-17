@@ -38,7 +38,6 @@ const standardGroundTypes = new Map([
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
 
-// TODO. Make switches reusable
 function makeSwitch(switchName, message){
     return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0", permanent: true}
 }
