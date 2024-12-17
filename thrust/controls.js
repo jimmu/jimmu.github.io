@@ -6,6 +6,9 @@ const rightKey="s".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
 const upKey="p".toUpperCase().charCodeAt(0)
 const downKey="l".toUpperCase().charCodeAt(0)
 
+// TODO. Different touch controls.
+// L/R buttons on the left. Thrust button on the right
+// Visible buttons on the GUI layer? Only shown after a touch is detected?
 export function newControls(){
     return {
         directions
