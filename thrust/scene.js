@@ -27,12 +27,17 @@ export function newScene(level){
             patternCanvas.noFill()
             patternCanvas.stroke(level.backgroundColour)
             patternCanvas.strokeWeight(1)
-            //patternCanvas.rotate(Math.PI/4)
-            //patternCanvas.point(4, 4)
-            //patternCanvas.rect(0, 0, 8, 8)
-            patternCanvas.line(0,0,8,8)
-            patternCanvas.line(0,8,8,0)
-            //patternCanvas.line(0,0,10,10)
+            if (level.generatePattern) {
+                level.generatePattern(patternCanvas)
+            }
+            else {
+                //patternCanvas.rotate(Math.PI/4)
+                //patternCanvas.point(4, 4)
+                //patternCanvas.rect(0, 0, 8, 8)
+                patternCanvas.line(0,0,8,8)
+                patternCanvas.line(0,8,8,0)
+                //patternCanvas.line(0,0,10,10)
+            }
             pattern = p5.drawingContext.createPattern(patternCanvas.canvas, 'repeat')
         }
     }

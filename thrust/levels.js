@@ -76,6 +76,11 @@ const levels = [
         ],
         isComplete: function(){
             return true
+        },
+        usePatternFill: false,
+        generatePattern: (canvas)=>{
+            // TODO. Canvas is 8x8, but how do we know that and can we specify the dimensions
+            canvas.point(4,4)
         }
     },
     {
@@ -364,7 +369,8 @@ export function getLevel(levelNum){
         objectTypes: structuredClone(level.objectTypes|| new Map()),
         isComplete: level.isComplete || defaultCompleteness,
         backgroundColour: level.backgroundColour || "gray",
-        usePatternFill: level.usePatternFill || false
+        usePatternFill: level.usePatternFill || false,
+        generatePattern: level.generatePattern
     }
     processGroundBlocks(levelCopy)
     return levelCopy
