@@ -4,6 +4,7 @@ import {render, point, translateScreen} from './shapes.js'
 
 export function newBackdrop(){
 
+    const density = 50
     let stars = []
     let depths = []
     let colours = []
@@ -13,12 +14,13 @@ export function newBackdrop(){
         draw
     }
 
-    function setup(howManyStars, limits){
-        if (!howManyStars){
-            howManyStars = 500
-        }
+    function setup(limits){
         let width = limits.right - limits.left
         let height = limits.bottom - limits.top
+        // We'll produce stars at some given density. A number per unit area. But also limit it.
+        let area = width * height
+        let howManyStars = Math.min(density * area, 1000)
+        console.log("Width = "+width.toFixed(2)+", Height = "+height.toFixed(2)+"- Generating "+howManyStars+" stars")
         for (let i=0; i<howManyStars; i++){
             stars.push(limits.left + (width * Math.random()))   // x coord. Will be scaled to window width later
             stars.push(limits.top + (height * Math.random()))   // y. likewise

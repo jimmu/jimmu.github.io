@@ -213,7 +213,7 @@ function prepareLevel(){
     scene = newScene(level)
     scene.setup()
     backdrop = newBackdrop()
-    backdrop.setup(500, level.limits)
+    backdrop.setup(level.limits)
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)
