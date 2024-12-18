@@ -6,6 +6,9 @@ export function newBackdrop(){
 
     const density = 50
     const maxStars = 1000
+    const reddish = {r: 220, g: 100, b: 100}
+    const blueish = {r: 100, g: 100, b: 220}
+    const white = {r: 200, g: 200, b: 200}
     let stars = []
     let depths = []
     let colours = []
@@ -27,13 +30,13 @@ export function newBackdrop(){
             let randomColour = Math.random()
             // Some reddish and some blueish.
             if (randomColour > 0.9){
-                colours.push({r: 220, g: 100, b: 100})
+                colours.push(reddish)
             }
             else if (randomColour > 0.8){
-                colours.push({r: 100, g: 100, b: 220})
+                colours.push(blueish)
             }
             else {
-                colours.push({r: 200, g: 200, b: 200})
+                colours.push(white)
             }
         }
     }

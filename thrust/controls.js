@@ -19,12 +19,7 @@ export function draw(){
     if (touchEnabled){
         p5.push()
         p5.noFill()
-//        p5.stroke(40)
-//        p5.strokeWeight(0.5)
         let coords = getButtonCoords()
-//        p5.rect(coords.left.x, coords.left.y, coords.left.width, coords.left.height)
-//        p5.rect(coords.right.x, coords.right.y, coords.right.width, coords.right.height)
-//        p5.rect(coords.up.x, coords.up.y, coords.up.width, coords.up.height)
         p5.stroke(80)
         p5.strokeWeight(1)
         let centreX = (coords.left.x + coords.left.x + coords.left.width)/2
@@ -98,8 +93,8 @@ function getButtonCoords(){
     let height = p5.height/5
     let y = p5.height - height
     return {
-        left: {x:0, y, width: smallButtonWidth, height},
-        right: {x: smallButtonWidth, y, width: smallButtonWidth, height},
-        up: {x: smallButtonWidth*3, y, width: smallButtonWidth*2, height}
+        left: {x: 0, y, width: smallButtonWidth, height},
+        right: {x: smallButtonWidth * 1.5, y, width: smallButtonWidth, height},
+        up: {x: smallButtonWidth * 3, y, width: smallButtonWidth * 2, height}
     }
 }
