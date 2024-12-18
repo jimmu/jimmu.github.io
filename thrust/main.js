@@ -178,6 +178,9 @@ function collisionChecks(){
     if (collectedObject && collectedObject.isSwitch){
         scene.toggleSwitchableObjects(collectedObject)
     }
+    if (collectedObject && collectedObject.extraLife){
+        livesRemaining++
+    }
     if (collectedObject.landingPad){
         if (scene.isComplete()){
             if (ship.slowEnoughToLand()){

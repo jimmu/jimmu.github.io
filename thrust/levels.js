@@ -20,6 +20,8 @@ const standardObjectTypes = new Map([
     ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me", mandatory: true}],
     // Collectable / Coin
     ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: "#ffc010"}],
+    // Extra life
+    ["E", {type: quadrilateral, coords:[0, -0.25, 0.25, 0, 0, 0.25, -0.25, 0], extraLife: true, message: "Extra Life!", colour: "#800080"}],
 ]);
 
 const standardGroundTypes = new Map([
@@ -466,6 +468,18 @@ function processGroundBlocks(level){
                             newObject.coords[3] = newObject.coords[3]*oneCharSize.y + boxCentre.y
                             newObject.coords[4] = newObject.coords[4]*oneCharSize.x + boxCentre.x
                             newObject.coords[5] = newObject.coords[5]*oneCharSize.y + boxCentre.y
+                        }
+                        else if (newObject.type == quadrilateral){
+                            // The given coordinates are in units of 1 box size.
+                            // And that the coordinates are relative.
+                            newObject.coords[0] = newObject.coords[0]*oneCharSize.x + boxCentre.x
+                            newObject.coords[1] = newObject.coords[1]*oneCharSize.y + boxCentre.y
+                            newObject.coords[2] = newObject.coords[2]*oneCharSize.x + boxCentre.x
+                            newObject.coords[3] = newObject.coords[3]*oneCharSize.y + boxCentre.y
+                            newObject.coords[4] = newObject.coords[4]*oneCharSize.x + boxCentre.x
+                            newObject.coords[5] = newObject.coords[5]*oneCharSize.y + boxCentre.y
+                            newObject.coords[6] = newObject.coords[6]*oneCharSize.x + boxCentre.x
+                            newObject.coords[7] = newObject.coords[7]*oneCharSize.y + boxCentre.y
                         }
                     }
                 }
