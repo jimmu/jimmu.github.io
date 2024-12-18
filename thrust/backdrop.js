@@ -1,6 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
-import {render, point} from './shapes.js'
+import {render, point, translateScreen} from './shapes.js'
 
 export function newBackdrop(){
 
@@ -39,6 +39,7 @@ export function newBackdrop(){
 
     function draw(groundOffsetX, groundOffsetY){
         p5.push()
+        translateScreen(0, 0)   // Put the origin in the centre
         p5.background(30)
         for (let i=0; i < depths.length; i++){
             let scaleForDepth = depths[i]
