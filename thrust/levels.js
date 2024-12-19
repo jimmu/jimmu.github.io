@@ -22,6 +22,12 @@ const standardObjectTypes = new Map([
     ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: "#ffc010"}],
     // Extra life
     ["E", {type: quadrilateral, coords:[0, -0.25, 0.25, 0, 0, 0.25, -0.25, 0], extraLife: true, message: "Extra Life!", colour: "#800080"}],
+    // Key. Can override the needsKey value if need be
+    ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
+    // Door. Vertical. Can override the needsKey value if need be
+    // Could do automagic detection of whether to use vertical or horizontal door.
+    ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
+
 ]);
 
 const standardGroundTypes = new Map([
@@ -39,6 +45,15 @@ const standardGroundTypes = new Map([
     ["tb",  {type: triangle, coords:[-0.5, 0.5, 0, -0.5, 0.5, 0.5]}], // bottom
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
 ])
+
+function decorate(objectType, decoration){
+    let baseObject = standardObjectTypes.get(objectType)
+    if (!baseObject) {
+        baseObject = standardGroundTypes.get(objectType)
+    }
+    // Merge the properties of the two objects. Decoration will override matching properties in the base object.
+    return {...baseObject, ...decoration}
+}
 
 function makeSwitch(switchName, message){
     return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0", permanent: true}
@@ -118,7 +133,10 @@ const levels = [
             ]
         },
         usePatternFill: true,
-        backgroundColour: "#506050"
+        backgroundColour: "#506050",
+        objectTypes: new Map([
+            ["F", decorate("F", {coords:[0, -0.5, 0.25]})]    // Overriding the position and size of the fuel object.
+        ])
     },
     {
         name: "Steer",
@@ -132,12 +150,15 @@ const levels = [
             "###/     //     //      ///####",
             "###  ///    ///    ///   /#####",
             "### .///    ///    ///    /####",
-            "###/     //     //     //LL/###",
+            "###/     //     //     //L /###",
             "###############################",
             "###############################",
             "###############################",
             ]
-        }
+        },
+        objectTypes: new Map([
+            ["L", decorate("L", {coords:[-0.5, 0.4, 2, 0.1]})]    // Overriding the width of the landing pad
+        ])
     },
     {
         name: "Carry",
@@ -287,10 +308,6 @@ const levels = [
             ]
         },
         ground: [],
-        objectTypes: new Map([
-            ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
-            ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
-        ]),
         isComplete: function(){
             return true
         }
