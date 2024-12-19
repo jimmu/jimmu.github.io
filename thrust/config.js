@@ -1,3 +1,3 @@
 "use strict";
 
-export const devMode = false
+export const devMode = true

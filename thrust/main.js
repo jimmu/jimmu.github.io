@@ -7,10 +7,11 @@ import {getLevel} from './levels.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
-import {translateScreen, rotate, translate} from './shapes.js'
+import {translateScreen} from './shapes.js'
 import {newCamera} from './camera.js'
 import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
 import {devMode} from './config.js'
+import {oneCollisionCheck} from './collisions.js'
 
 let ship
 let backdrop
@@ -104,9 +105,13 @@ function draw(){
     p5.pop()
 }
 
+// TODO - Move this method into the scene.
+// Pass it the ship or the payload - whatever is to be checked for collisions.
+// Have one method for the ground and one for the collectable objects.
+// The scene itself may delegate the work to methods in the collisions.js file.
 function collisionChecks(){
     // Did the ship hit the ground?
-    let bumpedInto = oneCollisionCheck(ship.collisionShape, scene.collisionCheck)
+    let bumpedInto = oneCollisionCheck(ship.collisionShape, scene.collisionCheck, ship.getAngle())
     ship.hit(bumpedInto)
     // If we're carrying something, did the payload hit the ground?
     if (ship.carrying() && !ship.hit()){
@@ -116,12 +121,12 @@ function collisionChecks(){
         }
     }
     // Did the ship hit any game objects?
-    let collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck)
+    let collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck, ship.getAngle())
     ship.grab(collectedObject)
     if (!collectedObject && ship.carrying()){
         // Start by pretending we're only checking.
         // Because we don't want the level to end if the payload hits the landing pad.
-        collectedObject = oneCollisionCheck(ship.payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)})
+        collectedObject = oneCollisionCheck(ship.payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
         if (collectedObject){
             if (collectedObject.landingPad){
                 // Be generous and ignore the payload hitting the landing pad.
@@ -134,11 +139,11 @@ function collisionChecks(){
         }
     }
     // Are we near a landing pad?
-    let nearbyObject = oneCollisionCheck(ship.landerZoneCollisionShape, (s)=>{return scene.collectionCheck(s, true)})    // True for just looking
+    let nearbyObject = oneCollisionCheck(ship.landerZoneCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())    // True for just looking
     ship.nearAnObject(nearbyObject)
     // If the legs are extended then check if they hit anything.
     if (ship.slowEnoughToLand()){
-        let legsHitThis = oneCollisionCheck(ship.landingLegsCollisionShape, scene.collectionCheck)
+        let legsHitThis = oneCollisionCheck(ship.landingLegsCollisionShape, scene.collectionCheck, ship.getAngle())
         if (legsHitThis){
             ship.grab(legsHitThis)
             collectedObject = legsHitThis
@@ -205,13 +210,6 @@ function collisionChecks(){
 }
 
 // TODO. Consider moving this into the ship rather than exposing all those collider shape details.
-function oneCollisionCheck(thing, collider, angle){
-    let collisionPos = thing.position
-    let collisionShape = thing.shape
-    let rotatedCoords = rotate(angle? angle : ship.getAngle(), collisionShape.coords)
-    let translatedCoords = translate(collisionPos.x, collisionPos.y, rotatedCoords)
-    return collider({type: collisionShape.type, coords: translatedCoords})
-}
 
 function prepareLevel(){
     let level = getLevel(levelNumber)

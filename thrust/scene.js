@@ -78,6 +78,9 @@ export function newScene(level){
         level.updateDynamicObjects?.(level.objects)
     }
 
+    function checkGroundCollisions(collisionShape){
+    }
+
     function collisionCheck(collisionShape){
         // Has this shape, at these coords collided with the ground?
         // Maybe check the front of the ship separately from the back. In case we want to detect landings.

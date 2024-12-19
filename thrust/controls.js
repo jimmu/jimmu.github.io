@@ -31,7 +31,6 @@ export function draw(){
         centreX = (coords.up.x + coords.up.x + coords.up.width)/2
         centreY = (coords.up.y + coords.up.y + coords.up.height)/2
         p5.triangle(centreX, centreY - coords.up.height * 0.4, centreX - coords.up.width * 0.4, centreY + coords.up.height * 0.4, centreX + coords.up.width * 0.4, centreY + coords.up.height * 0.4)
-        //p5.arc((coords.left.x, coords.left.x + coords.left.width)/2, (coords.left.y + p5.height*2)/3, coords.left.width*0.8, coords.left.height, Math.PI*1.1, -Math.PI*0.1)
         p5.pop()
     }
 }

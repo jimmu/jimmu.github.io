@@ -92,10 +92,9 @@ export function newShip(){
         if (payload){
             drawPayload()
         }
-
-//        if (colliding){
-//            drawCollisionShape()
-//        }
+        if (devMode && colliding){
+            drawCollisionShape()
+        }
         p5.pop()
     }
 
@@ -284,10 +283,10 @@ export function newShip(){
 
     function drawCollisionShape(){
         p5.push()
-        p5.strokeWeight(0.25)
+        p5.strokeWeight(0.75)
         p5.stroke("red")
         p5.noFill()
-        render(shipShape.type, rotate(angle, shipShape.coords.map((n)=>{return n*1.3})))
+        render(shipShape.type, rotate(angle, shipShape.coords))
         p5.pop()
     }
 
