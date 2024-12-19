@@ -7,7 +7,7 @@ const groundChars = "#/"
 //TODO. Objects which boost speed, change ship size, teleport?
 const standardObjectTypes = new Map([
     // Landing pad
-    ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true}],
+    ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true, permanent: true}],
     // Full fuel
     ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel", colour: "#2060a0"}],
     // Half fuel
@@ -74,7 +74,7 @@ const levels = [
             {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.05], landingPad: true}
         ],
         objects: [
-            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true},
+            {type: rectangle, coords:[-0.05, 0.25, 0.1, 0.01], landingPad: true, permanent: true},
         ],
         isComplete: function(){
             return true
@@ -177,7 +177,7 @@ const levels = [
             {type: rectangle, coords: [-0.02, 0.1, 0.04, 0.4]},
         ],
         objects: [
-            {type: rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false},
+            {type: rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false, permanent: true},
             {type: triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
             {type: rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", message: "Unlocked"}
         ],
@@ -352,7 +352,7 @@ const levels = [
             {type: rectangle, coords:[1.2, -1, 1, 1.25]}
         ],
         objects: [
-            {type: rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true},
+            {type: rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true, permanent: true},
             {type: triangle, coords:[0.95, -0.45, 0.945, -0.425, 0.955, -0.425], key: "A"},
             {type: circle, coords:[0.95, -0.3, 0.025], fuel:100},
             {type: circle, coords:[-0.4, 0, 0.025], fuel:100},
@@ -371,7 +371,7 @@ const levels = [
             {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
         ],
         objects: [
-            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.01], landingPad: true},
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.01], landingPad: true, permanent: true},
             {type: circle, coords:[-0.1, 0.1, 0.01], fuel: 25, message: "Fuel"},
             {type: circle, coords:[-0.2, 0.1, 0.01], health: 50, message: "Undamage"}
         ],
@@ -392,7 +392,7 @@ const levels = [
             {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
         ],
         objects: [
-            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true},
+            {type: rectangle, coords:[0.2, 0.1, 0.1, 0.05], landingPad: true, permanent: true},
             {type: circle, coords:[-0.1, 0.1, 0.01], fuel: 25},
             {type: circle, coords:[-0.2, 0.1, 0.01], health: 50}
         ],

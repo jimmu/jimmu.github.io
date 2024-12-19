@@ -38,50 +38,8 @@ function setup(){
         p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
     }
     livesRemaining = maxLives
-    stateMachine = newStateMachine()
-        .addTransition("new", "tapOrKeyPress", "preLevel")
-        .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
-        .addTransition("inLevel", "lose", "lostLevel", ()=>{
-            explosion = newExplosion(p5.width, 0.75)//seconds to reach most of the final size
-            if (livesRemaining == 0){
-                gui.splash("Insert Coin", 3)
-            }
-            else{
-                gui.splash("Ungood", 2)
-            }
-        })
-        .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Goal In", 2)})
-        .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
-            levelNumber++
-            prepareLevel()
-        })
-        .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{
-            if (livesRemaining == 0){
-                levelNumber = 0
-                livesRemaining = maxLives
-            }
-            prepareLevel()
-        })
-        .onEnteringState("preLevel", ()=>{
-            gui.splash(levelNumber+":"+scene.greeting, 2)
-        })
-        .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
-        .onEventNamed("lose", ()=>{livesRemaining--})
-    gui = newGui()
-    gui.setup()
-    gui.addElement("Lives : ", ()=>{return livesRemaining})
-    gui.addElement("Fuel  : ", ()=>{
-        return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
-    })
-    gui.addElement("Damage: ", ()=>{
-        return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
-    })
-    //gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
-    if (devMode){
-        gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
-                       ") Speed: "+Math.floor(ship.velocity.mag())})
-        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.position.x.toFixed(3)+", "+ship.payloadCollisionShape.position.y.toFixed(3)+") shape: "+ship.payloadCollisionShape.shape.coords})
-    }
+    stateMachine = createStateMachine()
+    gui = createGui()
     prepareLevel()
     stateMachine.start("new")
 }
@@ -110,6 +68,18 @@ function draw(){
 // Have one method for the ground and one for the collectable objects.
 // The scene itself may delegate the work to methods in the collisions.js file.
 function collisionChecks(){
+    checkGroundCollision()
+    let collectedObject = checkObjectCollisions()
+    handleCollectedObject(collectedObject)
+    if (ship.healthPercent() == 0){
+        stateMachine.trigger("lose")
+    }
+    // Are we drifting in the Abyss?
+    if (scene.isOutOfBounds(ship.position)){
+        stateMachine.trigger("lose")
+    }
+}
+function checkGroundCollision(){
     // Did the ship hit the ground?
     let bumpedInto = oneCollisionCheck(ship.collisionShape, scene.collisionCheck, ship.getAngle())
     ship.hit(bumpedInto)
@@ -120,6 +90,9 @@ function collisionChecks(){
             ship.hit(payloadBumpedInto)
         }
     }
+}
+
+function checkObjectCollisions(){
     // Did the ship hit any game objects?
     let collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck, ship.getAngle())
     ship.grab(collectedObject)
@@ -138,10 +111,10 @@ function collisionChecks(){
             }
         }
     }
+    // If the legs are extended then check if they hit anything.
     // Are we near a landing pad?
     let nearbyObject = oneCollisionCheck(ship.landerZoneCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())    // True for just looking
     ship.nearAnObject(nearbyObject)
-    // If the legs are extended then check if they hit anything.
     if (ship.slowEnoughToLand()){
         let legsHitThis = oneCollisionCheck(ship.landingLegsCollisionShape, scene.collectionCheck, ship.getAngle())
         if (legsHitThis){
@@ -149,21 +122,30 @@ function collisionChecks(){
             collectedObject = legsHitThis
         }
     }
+    return collectedObject
+}
 
+function handleCollectedObject(collectedObject){
+    if (!collectedObject){
+        return
+    }
     // Now check the collectable objects
-    if (collectedObject && collectedObject.message){
+    if (collectedObject.message){
         gui.splash(collectedObject.message)
     }
-    if (collectedObject && collectedObject.fuel){
+    if (collectedObject.fuel){
         ship.fuelPercent(collectedObject.fuel)
     }
-    if (collectedObject && collectedObject.health){
+    if (collectedObject.health){
         ship.healthPercent(collectedObject.health)
     }
-    if (collectedObject && collectedObject.payload){
+    if (collectedObject.extraLife){
+        livesRemaining++
+    }
+    if (collectedObject.payload){
         ship.carrying(collectedObject)
     }
-    if (collectedObject && collectedObject.needsKey){
+    if (collectedObject.needsKey){
         // Check the ships inventory for this key.
         // Use it if it has it.
         if (ship.inventory.has("keys", collectedObject.needsKey)){
@@ -178,15 +160,12 @@ function collisionChecks(){
             }
         }
     }
-    if (collectedObject && collectedObject.key){
+    if (collectedObject.key){
         // Add the key to the ship's inventory
         ship.inventory.add("keys", collectedObject.key)
     }
-    if (collectedObject && collectedObject.isSwitch){
+    if (collectedObject.isSwitch){
         scene.toggleSwitchableObjects(collectedObject)
-    }
-    if (collectedObject && collectedObject.extraLife){
-        livesRemaining++
     }
     if (collectedObject.landingPad){
         if (scene.isComplete()){
@@ -197,19 +176,59 @@ function collisionChecks(){
                 stateMachine.trigger("lose")
             }
         }
-        // Mark landing pads as not collected as we don't want them to vanish.
-        collectedObject.collected = false   // We landed before the goals were complete.
-    }
-    if (ship.healthPercent() == 0){
-        stateMachine.trigger("lose")
-    }
-    // Are we drifting in the Abyss?
-    if (scene.isOutOfBounds(ship.position)){
-        stateMachine.trigger("lose")
     }
 }
 
-// TODO. Consider moving this into the ship rather than exposing all those collider shape details.
+function createStateMachine(){
+    return newStateMachine()
+            .addTransition("new", "tapOrKeyPress", "preLevel")
+            .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
+            .addTransition("inLevel", "lose", "lostLevel", ()=>{
+                explosion = newExplosion(p5.width, 0.75)//seconds to reach most of the final size
+                if (livesRemaining == 0){
+                    gui.splash("Insert Coin", 3)
+                }
+                else{
+                    gui.splash("Ungood", 2)
+                }
+            })
+            .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Goal In", 2)})
+            .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
+                levelNumber++
+                prepareLevel()
+            })
+            .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{
+                if (livesRemaining == 0){
+                    levelNumber = 0
+                    livesRemaining = maxLives
+                }
+                prepareLevel()
+            })
+            .onEnteringState("preLevel", ()=>{
+                gui.splash(levelNumber+":"+scene.greeting, 2)
+            })
+            .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
+            .onEventNamed("lose", ()=>{livesRemaining--})
+}
+
+function createGui(){
+    let gui = newGui()
+    gui.setup()
+    gui.addElement("Lives : ", ()=>{return livesRemaining})
+    gui.addElement("Fuel  : ", ()=>{
+        return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
+    })
+    gui.addElement("Damage: ", ()=>{
+        return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
+    })
+    //gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
+    if (devMode){
+        gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
+                       ") Speed: "+Math.floor(ship.velocity.mag())})
+        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.position.x.toFixed(3)+", "+ship.payloadCollisionShape.position.y.toFixed(3)+") shape: "+ship.payloadCollisionShape.shape.coords})
+    }
+    return gui
+}
 
 function prepareLevel(){
     let level = getLevel(levelNumber)
