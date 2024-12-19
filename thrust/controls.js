@@ -13,6 +13,7 @@ export function setup(){
 
 export function enableTouch(){
     touchEnabled = true
+    p5.fullscreen(true)
 }
 
 export function draw(){
