@@ -1,6 +1,6 @@
 "use strict";
 import {initP5, p5instance as p5} from './lib.js'
-import {newShip, devMode} from './ship.js'
+import {newShip} from './ship.js'
 import {newScene} from './scene.js'
 import {newGui} from './gui.js'
 import {getLevel} from './levels.js'
@@ -10,6 +10,7 @@ import {newExplosion} from './explosion.js'
 import {translateScreen, rotate, translate} from './shapes.js'
 import {newCamera} from './camera.js'
 import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
+import {devMode} from './config.js'
 
 let ship
 let backdrop
@@ -87,6 +88,7 @@ function setup(){
 function draw(){
     p5.push()
     if (stateMachine.state() == "inLevel"){
+        scene.updateDynamicObjects()
         ship.update()
         collisionChecks()
     }

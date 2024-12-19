@@ -4,7 +4,7 @@ import {newInventory} from './inventory.js'
 import {directions as getDirections} from './controls.js'
 import {quadrilateral, render, rotate, line, circle} from './shapes.js'
 import {newVapourTrail} from './vapour.js'
-export const devMode = false
+import {devMode} from './config.js'
 
 export function newShip(){
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)

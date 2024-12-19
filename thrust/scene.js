@@ -16,7 +16,8 @@ export function newScene(level){
         startCoords: level.startCoords,
         useKey,
         toggleSwitchableObjects,
-        isOutOfBounds
+        isOutOfBounds,
+        updateDynamicObjects
     }
 
     function setup(){
@@ -71,6 +72,10 @@ export function newScene(level){
             drawShape(shape)
         }
         p5.pop()
+    }
+
+    function updateDynamicObjects(){
+        level.updateDynamicObjects?.(level.objects)
     }
 
     function collisionCheck(collisionShape){

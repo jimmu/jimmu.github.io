@@ -93,13 +93,14 @@ export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, un
     }
 }
 
+// TODO. Instead of scaling coordinates, can we just call p5.scale() and then draw with the unscaled coords?
 function scale(coords){
-    let scalingDimension = p5.windowWidth
+    let scalingDimension = Math.max(p5.width, p5.height)    // TODO. Except the touch buttons, which we always want to scale by width
     return Array.isArray(coords)? coords.map((e)=>{return e * scalingDimension}) : coords * scalingDimension
 }
 
 function unscale(coords){
-    let scalingDimension = p5.windowWidth
+    let scalingDimension = Math.max(p5.width, p5.height)
     return Array.isArray(coords)? coords.map((e)=>{return e / scalingDimension}) : coords / scalingDimension
 }
 

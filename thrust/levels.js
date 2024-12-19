@@ -1,5 +1,5 @@
 "use strict";
-import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
+import {point, triangle, rectangle, quadrilateral, circle, rotate, translate} from './shapes.js'
 
 const groundChars = "#/"
 
@@ -296,6 +296,51 @@ const levels = [
         }
     },
     {
+        name: "Frogger",
+        backgroundColour: "#595c00",    // Dark drab olive
+        groundBlocks: {
+            size: {x:2, y:1.5},
+            blocks: [
+            "##############",
+            "##############",
+            "###mmm mmmm###",
+            "###nnn nnnn###",
+            "###ooo oooo###",
+            "###mmmmpppp###",
+            "###mmppmmpp###",
+            "###ppmmppmm###",
+            "### L     .###",
+            "##############",
+            "##############",
+            ]
+        },
+        // TODO. Add dynamic ground - not just dynamic objects
+        objectTypes: new Map([
+            ["m", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 0}],
+            ["n", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 0.77}],
+            ["o", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 1.57}],
+            ["p", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 3.14}],
+        ]),
+        updateDynamicObjects: (objects)=>{
+            let objNum = 0
+            for (let object of objects.filter((o)=>{return o.isDynamic})){
+                // Anything dynamic we can mess about with on the fly.
+                // But what we do with it?
+                // Lets offset its x coordinate by some varying amount.
+                if (!object.originalX){
+                    object.originalX = object.coords[0]
+                }
+                if (!object.phase){
+                    object.phase = 0
+                }
+                object.phase += Math.PI/314
+                let xOffset = Math.sin(object.phase) * object.maxOffset
+                object.coords[0] = object.originalX + xOffset
+                objNum++
+            }
+        },
+    },
+    {
         name: "Tight Squeeze",
         startCoords: {x:-0.2, y:0},
         ground: [
@@ -372,7 +417,8 @@ export function getLevel(levelNum){
         isComplete: level.isComplete || defaultCompleteness,
         backgroundColour: level.backgroundColour || "gray",
         usePatternFill: level.usePatternFill || false,
-        generatePattern: level.generatePattern
+        generatePattern: level.generatePattern,
+        updateDynamicObjects: level.updateDynamicObjects
     }
     processGroundBlocks(levelCopy)
     findOuterLimits(levelCopy)
