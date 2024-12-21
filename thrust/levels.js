@@ -44,6 +44,13 @@ const standardGroundTypes = new Map([
     ["tt",  {type: triangle, coords:[-0.5, -0.5, 0.5, -0.5, 0, 0.5]}], // top
     ["tb",  {type: triangle, coords:[-0.5, 0.5, 0, -0.5, 0.5, 0.5]}], // bottom
     ["t",   {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25]}], // middle
+    // A block. Maybe useful as dynamic ground
+    ["b",   {type: rectangle, coords:[-0.5, -0.5, 1, 1]}],
+])
+
+const movementFunctions = new Map([
+    ["sin", (object, propertyName, scale)=>{return Math.sin(object.phase) * object[propertyName] * scale}],
+    ["cos", (object, propertyName, scale)=>{return Math.cos(object.phase) * object[propertyName] * scale}],
 ])
 
 function decorate(objectType, decoration){
@@ -320,42 +327,22 @@ const levels = [
             blocks: [
             "##############",
             "##############",
-            "###mmm mmmm###",
-            "###nnn nnnn###",
-            "###ooo oooo###",
-            "###mmmmpppp###",
-            "###mmppmmpp###",
-            "###ppmmppmm###",
-            "### L     .###",
+            "###    b   ###",
+            "###   a    ###",
+            "###  b     ###",
+            "### a  .  b###",
+            "###b     a ###",
+            "###     b  ###",
+            "###    a   ###",
             "##############",
             "##############",
             ]
         },
         // TODO. Add dynamic ground - not just dynamic objects
         objectTypes: new Map([
-            ["m", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 0}],
-            ["n", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 0.77}],
-            ["o", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 1.57}],
-            ["p", {type: rectangle, coords:[-0.5, -0.25, 1, 0.25], permanent: true, isDynamic: true, maxOffset: 0.1, phase: 3.14}],
+            ["b", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 8, phase: 0, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 0.5]*/})],
+            ["a", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 8, phase: Math.PI, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 1]*/})],
         ]),
-        updateDynamicObjects: (objects)=>{
-            let objNum = 0
-            for (let object of objects.filter((o)=>{return o.isDynamic})){
-                // Anything dynamic we can mess about with on the fly.
-                // But what we do with it?
-                // Lets offset its x coordinate by some varying amount.
-                if (!object.originalX){
-                    object.originalX = object.coords[0]
-                }
-                if (!object.phase){
-                    object.phase = 0
-                }
-                object.phase += Math.PI/314
-                let xOffset = Math.sin(object.phase) * object.maxOffset
-                object.coords[0] = object.originalX + xOffset
-                objNum++
-            }
-        },
     },
     {
         name: "Tight Squeeze",
@@ -435,11 +422,47 @@ export function getLevel(levelNum){
         backgroundColour: level.backgroundColour || "gray",
         usePatternFill: level.usePatternFill || false,
         generatePattern: level.generatePattern,
-        updateDynamicObjects: level.updateDynamicObjects
+        updateDynamicObjects,
     }
     processGroundBlocks(levelCopy)
     findOuterLimits(levelCopy)
     return levelCopy
+}
+
+function updateDynamicObjects(objects){
+    let objNum = 0
+    for (let object of objects.filter((o)=>{return o.isDynamic})){
+        // Anything dynamic we can mess about with on the fly.
+        // But what we do with it?
+        // Lets offset its x coordinate by some varying amount.
+        if (object.originalX === undefined){
+            object.originalX = object.coords[0]
+            object.originalY = object.coords[1]
+            if (object.type == rectangle){
+                object.originalWidth = object.coords[2]
+                object.originalHeight = object.coords[3]
+                object.lastUpdated = Date.now()
+            }
+        }
+        if (!object.phase){
+            object.phase = 0
+        }
+        let now = Date.now()
+        let elapsedSeconds = (now - object.lastUpdated)/1000
+        object.lastUpdated = now
+        let periodSeconds = object.period || 1
+        object.phase += (elapsedSeconds * 2 * Math.PI / periodSeconds)
+        object.phase = object.phase % (2*Math.PI)
+        if (object.xOffsetFn){
+            let xOffset = movementFunctions.get(object.xOffsetFn[0])(object, ...object.xOffsetFn.slice(1))
+            object.coords[0] = object.originalX + xOffset
+        }
+        if (object.yOffsetFn){
+            let yOffset = movementFunctions.get(object.yOffsetFn[0])(object, ...object.yOffsetFn.slice(1))
+            object.coords[1] = object.originalY + yOffset
+        }
+        objNum++
+    }
 }
 
 function processGroundBlocks(level){
