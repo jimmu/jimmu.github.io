@@ -17,7 +17,9 @@ export function newScene(level){
         useKey,
         toggleSwitchableObjects,
         isOutOfBounds,
-        updateDynamicObjects
+        updateDynamicObjects,
+        mandatoryCount: level.howManyMandatory,
+        mandatoryCollected: ()=>{return level.howManyMandatoryCollected()}
     }
 
     function setup(){

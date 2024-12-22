@@ -302,9 +302,9 @@ const levels = [
                 "//c///c///c///c//",
                 "//c///c///c///c//",
                 "//fccc.cccccccf//",
-                "//c///c///ccccc//",
-                "//c///c///ccccc//",
-                "//c///c///ccccc//",
+                "//c///c///     //",
+                "//c///c///     //",
+                "//c///c///     //",
                 "//fcccccccLLLLL//",
                 "/////////////////",
                 "#///////////////#",
@@ -449,6 +449,8 @@ export function getLevel(levelNum){
     }
     processGroundBlocks(levelCopy)
     findOuterLimits(levelCopy)
+    levelCopy.howManyMandatory = (levelCopy.objects||[]).filter((o)=>{return o.mandatory}).length
+    levelCopy.howManyMandatoryCollected = ()=>{return (levelCopy.objects||[]).filter((o)=>{return o.mandatory && o.collected}).length}
     return levelCopy
 }
 

@@ -39,8 +39,8 @@ function setup(){
     }
     livesRemaining = maxLives
     stateMachine = createStateMachine()
-    gui = createGui()
     prepareLevel()
+    gui = createGui()
     stateMachine.start("new")
 }
 
@@ -223,6 +223,12 @@ function createGui(){
     })
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
+    })
+    gui.addElement("", ()=>{
+        if (scene.mandatoryCount == 0){
+            return ""
+        }
+        return  "Collected: "+scene.mandatoryCollected() + " of " + scene.mandatoryCount
     })
     //gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     if (devMode){
