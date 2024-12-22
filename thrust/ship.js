@@ -4,10 +4,13 @@ import {newInventory} from './inventory.js'
 import {directions as getDirections} from './controls.js'
 import {quadrilateral, render, rotate, line, circle} from './shapes.js'
 import {newVapourTrail} from './vapour.js'
-import {devMode, colours} from './config.js'
+import {devMode, colours, shipSize as size,
+        shipRotationSpeed as rotationSpeed,
+        shipThrust as thrust,
+        maxSpeed, gravityStrength, friction,
+        maxLandingSpeed, maxLandingAngle} from './config.js'
 
 export function newShip(){
-    let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
     let shipShape = {type: quadrilateral,
                     coords: [size*0.66, 0,
                             -size*0.33, -size/3,
@@ -23,12 +26,7 @@ export function newShip(){
     let landerZoneShape = {type: circle, coords: [-size * 1.5, 0, size * 3]}
     let payloadSize = size * 0.75
     let payloadShape = {type: circle, coords: [0, 0, payloadSize]}
-    let rotationSpeed = 3   // Radians per second
-    let thrust = 0.2/1000
     const upwards = Math.PI * 1.5
-    const maxLandingSpeed = 50/1000
-    const maxLandingAngle = Math.PI/6
-    const maxSpeed = 600/1000   // Coordinate units per second.
     let position = p5.createVector(0, 0)
     let angle = Math.PI * 1.5
     let grabberPosition = p5.createVector(0, 0)
@@ -39,8 +37,7 @@ export function newShip(){
     let health = 100 // Percent. Undamagedness
     let fuelPerSecondThrust = devMode? 0 : 8.5    // Percentage points per second TODO - make this optionally level specific
     let damagePerSecond = devMode? 0 : 67
-    let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(thrust/5)
-    let friction = 0.005
+    let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(gravityStrength)
     let thrusting = false
     let colliding = false
     let grabbing = false
