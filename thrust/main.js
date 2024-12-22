@@ -10,7 +10,7 @@ import {newExplosion} from './explosion.js'
 import {translateScreen} from './shapes.js'
 import {newCamera} from './camera.js'
 import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
-import {devMode, startLevel} from './config.js'
+import {devMode, startLevel, messages} from './config.js'
 import {oneCollisionCheck} from './collisions.js'
 
 let ship
@@ -79,6 +79,7 @@ function collisionChecks(){
         stateMachine.trigger("lose")
     }
 }
+
 function checkGroundCollision(){
     // Did the ship hit the ground?
     let bumpedInto = oneCollisionCheck(ship.collisionShape, scene.collisionCheck, ship.getAngle())
@@ -185,17 +186,17 @@ function handleCollectedObject(collectedObject){
 function createStateMachine(){
     return newStateMachine()
             .addTransition("new", "tapOrKeyPress", "preLevel")
-            .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash("Go", 1)})
+            .addTransition("preLevel", "tapOrKeyPress", "inLevel", ()=>{gui.splash(messages.startOfLevel, 1)})
             .addTransition("inLevel", "lose", "lostLevel", ()=>{
                 explosion = newExplosion(p5.width, 0.75)//seconds to reach most of the final size
                 if (livesRemaining == 0){
-                    gui.splash("Insert Coin", 3)
+                    gui.splash(messages.gameOver, 3)
                 }
                 else{
-                    gui.splash("Ungood", 2)
+                    gui.splash(messages.lifeLost, 2)
                 }
             })
-            .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash("Goal In", 2)})
+            .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash(messages.levelCompleted, 2)})
             .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
                 levelNumber++
                 prepareLevel()
@@ -210,7 +211,7 @@ function createStateMachine(){
             .onEnteringState("preLevel", ()=>{
                 gui.splash(levelNumber+":"+scene.greeting, 2)
             })
-            .onEnteringState("new", ()=>{gui.splash("Hello", 4)})
+            .onEnteringState("new", ()=>{gui.splash(messages.startOfGame, 4)})
             .onEventNamed("lose", ()=>{livesRemaining--})
 }
 

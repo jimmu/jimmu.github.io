@@ -29,3 +29,10 @@ export const colours = {
     touchControls: 80,
     guiText: 200,
 }
+export const messages = {
+    lifeLost: "Ungood",
+    gameOver: "Insert Coin",
+    levelCompleted: "Goal In",
+    startOfGame: "Hello",
+    startOfLevel: "Go",
+}
