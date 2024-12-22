@@ -1,5 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
+import {colours} from './config.js'
 
 export function newExplosion(size, durationSeconds){
 
@@ -24,7 +25,7 @@ export function newExplosion(size, durationSeconds){
         sizeFactor = (1 + minSizeFactor)-(1/Math.exp(sizeFactor))
         if (sizeFactor <= 1){
             p5.noFill()
-            p5.stroke(250)
+            p5.stroke(colours.explosion)
             p5.strokeWeight(6 - (6*sizeFactor))
             for (let i = 0; i < shrapnelCount; i++){
                 p5.rotate(2*Math.PI/shrapnelCount)

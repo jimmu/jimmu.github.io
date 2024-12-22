@@ -1,6 +1,7 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
 import {render, collision, circle} from './shapes.js'
+import {colours} from './config.js'
 
 export function newScene(level){
 
@@ -26,7 +27,7 @@ export function newScene(level){
         if (level.usePatternFill){
             let patternCanvas = p5.createGraphics(8, 8)
             patternCanvas.pixelDensity(1)
-            patternCanvas.background(30)
+            patternCanvas.background(colours.background)
             patternCanvas.noFill()
             patternCanvas.stroke(level.backgroundColour)
             patternCanvas.strokeWeight(1)
@@ -68,8 +69,8 @@ export function newScene(level){
     function drawObjects(){
         p5.push()
         p5.strokeWeight(1)
-        p5.stroke(200)
-        p5.fill(150)
+        p5.stroke(colours.collectibleOutline)
+        p5.fill(colours.collectibleFill)
         for (let shape of level.objects.filter((s)=>{return !s.collected && !s.disabled})){
             drawShape(shape)
         }

@@ -4,7 +4,7 @@ import {newInventory} from './inventory.js'
 import {directions as getDirections} from './controls.js'
 import {quadrilateral, render, rotate, line, circle} from './shapes.js'
 import {newVapourTrail} from './vapour.js'
-import {devMode} from './config.js'
+import {devMode, colours} from './config.js'
 
 export function newShip(){
     let size = 0.03   // Fraction of the screen width or height (whichever is smaller)
@@ -101,8 +101,8 @@ export function newShip(){
     function drawShip(){
         p5.push()
         p5.strokeWeight(1)
-        p5.stroke(200)
-        p5.fill(30)
+        p5.stroke(colours.shipOutline)
+        p5.fill(colours.background)
 
         p5.rotate(angle)
         render(shipShape.type, shipShape.coords)
@@ -140,10 +140,10 @@ export function newShip(){
         p5.push()
         // Because the canvas will already have been moved to put the ship at the centre,
         // the coordinates for the payload depend on the difference between the ships and payloads positions.
-        p5.stroke(100)
+        p5.stroke(colours.payloadRope)
         p5.strokeWeight(0.3)
         render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])
-        p5.fill(150)
+        p5.fill(colours.payload)
         p5.noStroke()
         render(circle, [payloadPosition.x - position.x, payloadPosition.y - position.y, payloadSize])
         p5.pop()

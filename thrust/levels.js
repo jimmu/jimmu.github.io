@@ -1,6 +1,6 @@
 "use strict";
 import {point, triangle, rectangle, quadrilateral, circle, rotate, translate} from './shapes.js'
-
+import {colours} from "./config.js"
 const groundChars = "#/"
 
 //TODO. Objects which boost speed, change ship size, teleport?
@@ -8,19 +8,19 @@ const standardObjectTypes = new Map([
     // Landing pad
     ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true, permanent: true}],
     // Full fuel
-    ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel", colour: "#2060a0"}],
+    ["F", {type: circle, coords:[0, 0, 0.5], fuel:100, message: "100 Fuel", colour: colours.fuel}],
     // Half fuel
-    ["f", {type: circle, coords:[0, 0, 0.3], fuel:50, message: "50 Fuel", colour: "#2060a0"}],
+    ["f", {type: circle, coords:[0, 0, 0.3], fuel:50, message: "50 Fuel", colour:  colours.fuel}],
     // Full health
-    ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage", colour: "#f04040"}],
+    ["H", {type: circle, coords:[0, 0, 0.3], health:100, message: "100 UnDamage", colour: colours.health}],
     // Half health
-    ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage", colour: "#f04040"}],
+    ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage", colour: colours.health}],
     // Payload
     ["p", {type: circle, coords:[0, 0, 0.3], payload: 1, message: "Carry me", mandatory: true}],
     // Collectable / Coin
-    ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: "#ffc010"}],
+    ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: colours.coin}],
     // Extra life
-    ["E", {type: quadrilateral, coords:[0, -0.25, 0.25, 0, 0, 0.25, -0.25, 0], extraLife: true, message: "Extra Life!", colour: "#800080"}],
+    ["E", {type: quadrilateral, coords:[0, -0.25, 0.25, 0, 0, 0.25, -0.25, 0], extraLife: true, message: "Extra Life!", colour: colours.extraLife}],
     // Key. Can override the needsKey value if need be
     ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
     // Door. Vertical. Can override the needsKey value if need be
@@ -83,7 +83,7 @@ function decorate(objectType, decoration){
 }
 
 function makeSwitch(switchName, message){
-    return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: "#b0e0b0", permanent: true}
+    return {type: rectangle, coords:[-0.1, -0.1, 0.2, 0.2], isSwitch: switchName, message, colour: colours.switches, permanent: true}
 }
 
 function defaultCompleteness(){

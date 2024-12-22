@@ -1,5 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
+import {colours} from './config.js'
 
 export function newGui(){
 
@@ -23,7 +24,7 @@ export function newGui(){
         let characterSize = Math.ceil(p5.windowWidth * textSize)
         p5.translate(characterSize, characterSize)
         p5.noStroke()
-        p5.fill(200)
+        p5.fill(colours.guiText)
         p5.textStyle(p5.BOLD)
         p5.textFont("Courier New", characterSize)
         let rowNum = 1

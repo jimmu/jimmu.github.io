@@ -1,5 +1,6 @@
 "use strict";
 import {p5instance as p5} from './lib.js'
+import {colours} from './config.js'
 
 const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
 const rightKey="s".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
@@ -21,7 +22,7 @@ export function draw(){
         p5.push()
         p5.noFill()
         let coords = getButtonCoords()
-        p5.stroke(80)
+        p5.stroke(colours.touchControls)
         p5.strokeWeight(1)
         let centreX = (coords.left.x + coords.left.x + coords.left.width)/2
         let centreY = (coords.left.y + coords.left.y + coords.left.height)/2
