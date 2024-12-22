@@ -10,7 +10,7 @@ import {newExplosion} from './explosion.js'
 import {translateScreen} from './shapes.js'
 import {newCamera} from './camera.js'
 import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
-import {devMode} from './config.js'
+import {devMode, startLevel} from './config.js'
 import {oneCollisionCheck} from './collisions.js'
 
 let ship
@@ -19,7 +19,7 @@ let scene
 let gui
 let camera
 let explosion
-let levelNumber = 0
+let levelNumber = startLevel
 let stateMachine
 let maxLives = 3
 let livesRemaining
@@ -177,6 +177,9 @@ function handleCollectedObject(collectedObject){
             }
         }
     }
+    if (collectedObject.isDamaging){
+        ship.hit(collectedObject)
+    }
 }
 
 function createStateMachine(){
@@ -199,7 +202,7 @@ function createStateMachine(){
             })
             .addTransition("lostLevel", "tapOrKeyPress", "preLevel", ()=>{
                 if (livesRemaining == 0){
-                    levelNumber = 0
+                    levelNumber = startLevel
                     livesRemaining = maxLives
                 }
                 prepareLevel()
@@ -224,7 +227,7 @@ function createGui(){
     //gui.addElement("Keys  : ", ()=>{return ship.inventory.getPocket("keys")})
     if (devMode){
         gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
-                       ") Speed: "+Math.floor(ship.velocity.mag())})
+                       ") Speed: "+ship.velocity.mag().toFixed(3)})
         gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.position.x.toFixed(3)+", "+ship.payloadCollisionShape.position.y.toFixed(3)+") shape: "+ship.payloadCollisionShape.shape.coords})
     }
     return gui

@@ -3,7 +3,6 @@ import {point, triangle, rectangle, quadrilateral, circle, rotate, translate} fr
 
 const groundChars = "#/"
 
-//TODO. Moving objects.
 //TODO. Objects which boost speed, change ship size, teleport?
 const standardObjectTypes = new Map([
     // Landing pad
@@ -48,10 +47,31 @@ const standardGroundTypes = new Map([
     ["b",   {type: rectangle, coords:[-0.5, -0.5, 1, 1]}],
 ])
 
-const movementFunctions = new Map([
-    ["sin", (object, propertyName, scale)=>{return Math.sin(object.phase) * object[propertyName] * scale}],
-    ["cos", (object, propertyName, scale)=>{return Math.cos(object.phase) * object[propertyName] * scale}],
-])
+const movementFunctions = {
+    // 0 to 1 treated as proportion of a full circle.
+    sin: (object, propertyName, scale)=>{
+        return Math.sin(2 * Math.PI * object.phase) * (object[propertyName]||1) * scale
+    },
+    cos: (object, propertyName, scale)=>{
+        return Math.cos(2 * Math.PI * object.phase) * (object[propertyName]||1) * scale
+    },
+    // Linearly from 0 to 1
+    rampUp: (object, propertyName, scale)=>{
+        return (object[propertyName]||1) * object.phase * scale
+    },
+    // Linearly from 1 down to 0
+    rampDown: (object, propertyName, scale)=>{
+        return (object[propertyName]||1) * (1-object.phase) * scale
+    },
+    // Linearly from 0 to 1 and back down to 0
+    rampUpAndBack: (object, propertyName, scale)=>{
+        let phase = 2 * object.phase
+        if (phase >=1){
+            phase = 2 - phase
+        }
+        return (object[propertyName]||1) * phase * scale
+    }
+}
 
 function decorate(objectType, decoration){
     let baseObject = standardObjectTypes.get(objectType)
@@ -327,21 +347,24 @@ const levels = [
             blocks: [
             "##############",
             "##############",
-            "###    b   ###",
+            "###ce  b   ###",
             "###   a    ###",
             "###  b     ###",
             "### a  .  b###",
             "###b     a ###",
             "###     b  ###",
-            "###    a   ###",
+            "### d  a   ###",
             "##############",
             "##############",
             ]
         },
         // TODO. Add dynamic ground - not just dynamic objects
         objectTypes: new Map([
-            ["b", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 8, phase: 0, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 0.5]*/})],
-            ["a", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 8, phase: Math.PI, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 1]*/})],
+            ["b", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 16, phase: 0, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 0.5]*/})],
+            ["a", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 16, phase: 0.5, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 1]*/})],
+            ["c", decorate("b", {coords: [-0.5, -0.5, 1, 1], permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["rampUp", "originalHeight", 7], /*yOffsetFn: ["cos", "originalHeight", 1]*/})],
+            ["d", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["rampUpAndBack", "originalHeight", 4], yOffsetFn: ["rampUpAndBack", "originalHeight", -4]})],
+            ["e", decorate("b", {coords: [-0.5, -0.5, 1, 4], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["rampUpAndBack", "originalHeight", -3/4]})],
         ]),
     },
     {
@@ -451,15 +474,23 @@ function updateDynamicObjects(objects){
         let elapsedSeconds = (now - object.lastUpdated)/1000
         object.lastUpdated = now
         let periodSeconds = object.period || 1
-        object.phase += (elapsedSeconds * 2 * Math.PI / periodSeconds)
-        object.phase = object.phase % (2*Math.PI)
+        object.phase += (elapsedSeconds/periodSeconds)
+        object.phase = object.phase % 1
         if (object.xOffsetFn){
-            let xOffset = movementFunctions.get(object.xOffsetFn[0])(object, ...object.xOffsetFn.slice(1))
+            let xOffset = movementFunctions[object.xOffsetFn[0]](object, ...object.xOffsetFn.slice(1))
             object.coords[0] = object.originalX + xOffset
         }
         if (object.yOffsetFn){
-            let yOffset = movementFunctions.get(object.yOffsetFn[0])(object, ...object.yOffsetFn.slice(1))
+            let yOffset = movementFunctions[object.yOffsetFn[0]](object, ...object.yOffsetFn.slice(1))
             object.coords[1] = object.originalY + yOffset
+        }
+        if (object.widthOffsetFn){
+            let widthOffset = movementFunctions[object.widthOffsetFn[0]](object, ...object.widthOffsetFn.slice(1))
+            object.coords[2] = object.originalWidth + widthOffset
+        }
+        if (object.heightOffsetFn){
+            let heightOffset = movementFunctions[object.heightOffsetFn[0]](object, ...object.heightOffsetFn.slice(1))
+            object.coords[3] = object.originalHeight + heightOffset
         }
         objNum++
     }
