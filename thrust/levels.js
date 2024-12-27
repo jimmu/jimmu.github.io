@@ -1,3 +1,4 @@
+
 "use strict";
 import {point, triangle, rectangle, quadrilateral, circle, rotate, translate} from './shapes.js'
 import {colours} from "./config.js"
@@ -371,19 +372,19 @@ const levels = [
         name: "Tight Squeeze",
         startCoords: {x:-0.2, y:0},
         ground: [
-            {type: rectangle, coords:[-1, -0.85, 1, 0.8]},
-            {type: rectangle, coords:[-1, 0.05, 3, 1]},
-            {type: rectangle, coords:[0.05, -0.75, 0.5, 0.8]},
-            {type: rectangle, coords:[-1, -1.05, 2.5, 0.2]},
-            {type: rectangle, coords:[0.6, -1, 0.1, 0.95]},
-            {type: rectangle, coords:[1.2, -1, 1, 1.25]}
+            {type: quadrilateral, coords:[-1, -0.85, 0, -0.85, 0, -0.05, -1, -0.05]},
+            {type: quadrilateral, coords:[-1, 0.05, 2, 0.05, 2, 1.05, -1, 1.05]},
+            {type: quadrilateral, coords:[0.05, -0.75, 0.55, -0.75, 0.55, 0.05, 0.05, 0.05]},
+            {type: quadrilateral, coords:[-1, -1.05, 2, -1.05, 2, -0.85, -1, -0.85]},
+            {type: quadrilateral, coords:[0.6, -1, 1.1, -1, 1.1, -0.05, 0.6, -0.05]},
+            {type: quadrilateral, coords:[1.7, -1.05, 2.7, -1.05, 2.7, 1.05, 1.7, 1.05]}
         ],
         objects: [
-            {type: rectangle, coords:[-0.75, 0.045, 0.1, 0.01], landingPad: true, permanent: true},
-            {type: triangle, coords:[0.95, -0.45, 0.945, -0.425, 0.955, -0.425], key: "A"},
-            {type: circle, coords:[0.95, -0.3, 0.025], fuel:100},
-            {type: circle, coords:[-0.4, 0, 0.025], fuel:100},
-            {type: rectangle, coords:[-0.375, -0.1, 0.05, 0.2], needsKey: "A"}
+            {type: quadrilateral,coords:[-0.75, 0.045, -0.65, 0.045, -0.65, 0.055, -0.75, 0.055], landingPad: true, permanent: true},
+            {type: triangle, coords:[1.45, -0.45, 1.445, -0.425, 1.455, -0.425], key: "A"},
+            {type: circle, coords:[1.45, -0.3, 0.025], fuel:100, message: "Fuel"},
+            {type: circle, coords:[-0.4, 0, 0.025], fuel:100, message: "Fuel"},
+            {type: quadrilateral, coords:[-0.375, -0.1, -0.37, -0.1, -0.37, 0.1, -0.375, 0.1], needsKey: "A"}
         ],
         isComplete: function(){
             return true
