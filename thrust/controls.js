@@ -2,8 +2,8 @@
 import {p5instance as p5} from './lib.js'
 import {colours} from './config.js'
 
-const leftKey="a".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
-const rightKey="s".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
+const leftKey="z".toUpperCase().charCodeAt(0) // 65 -> "a" keycode
+const rightKey="x".toUpperCase().charCodeAt(0) // 68 -> "d" keycode
 const upKey="p".toUpperCase().charCodeAt(0)
 const downKey="l".toUpperCase().charCodeAt(0)
 
