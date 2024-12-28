@@ -78,11 +78,13 @@ export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, un
                     return p5.collidePolyPoly(coordsToVertices(shapeOneCoords), coordsToVertices(shapeTwoCoords), includeFullyInside)
                 case rectangle:
                     // When used for the ship being the quad, and the rectangle being the ground, the fully-inside check doesn't work.
-                    // This could be because of the order we pass the two shapes.
-                    // So the inside check would be for the rectangle being inside the ship.
-                    // Which is not what we want.
-                    // Temporarily, we'll use quads instead of rectangles for the block-generated ground shapes.
-                    return p5.collideRectPoly(...shapeTwoCoords, coordsToVertices(shapeOneCoords), includeFullyInside)
+                    // Because of the order of the two shapes - we end up checking the for the rectangle being in the poly.
+                    // We convert the rectangle to a poly to get it working.
+                    let topLeft = {x: shapeTwoCoords[0], y: shapeTwoCoords[1]}
+                    let topRight = {x: topLeft.x + shapeTwoCoords[2], y: topLeft.y}
+                    let bottomRight = {x: topRight.x, y: topRight.y + shapeTwoCoords[3]}
+                    let bottomLeft = {x: topLeft.x, y: bottomRight.y}
+                    return p5.collidePolyPoly(coordsToVertices(shapeOneCoords), [topLeft, topRight, bottomRight, bottomLeft], true)
                 case quadrilateral:
                     return p5.collidePolyPoly(coordsToVertices(shapeOneCoords), coordsToVertices(shapeTwoCoords), includeFullyInside)
                 case circle:
