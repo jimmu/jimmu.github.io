@@ -152,15 +152,17 @@ export const levels = [
             "#             #",
             "#             #",
             "#             #",
-            "#             #",
+            "#           X #",
             "#             #",
             "#.            #",
-            "#  ABCDEDCBALL#",
+            "#  ABCDEDCBAL #",
             "###############",
             "###############",
             ]
         },
         objectTypes: new Map([
+            ["X", decorate("E")],   // Extra life.
+            ["L", decorate("L", {coords:[-0.5, 0.4, 2, 0.1]})],    // Overriding the width of the landing pad
             ["a", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
             ["b", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/80 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
             ["c", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/64 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],

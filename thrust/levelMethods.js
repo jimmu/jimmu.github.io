@@ -125,6 +125,7 @@ export function updateDynamicObjects(objects){
         let periodSeconds = object.period || 1
         object.phase += (elapsedSeconds/periodSeconds)
         object.phase = object.phase % 1
+        // TODO. This assumes the shape coordinates are of a rectangle. Do we want to allow other shapes?
         if (object.xOffsetFn){
             let xOffset = movementFunctions[object.xOffsetFn[0]](object, ...object.xOffsetFn.slice(1))
             object.coords[0] = object.originalX + xOffset
