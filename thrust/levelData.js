@@ -142,7 +142,7 @@ export const levels = [
         }
     },
     {
-        name: "Careful now",
+        name: "Steady On",
         backgroundColour: "#595c30",
         groundBlocks: {
             size: {x:2, y:1},
