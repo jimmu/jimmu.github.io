@@ -3,7 +3,7 @@ import {initP5, p5instance as p5} from './lib.js'
 import {newShip} from './ship.js'
 import {newScene} from './scene.js'
 import {newGui} from './gui.js'
-import {getLevel} from './levels.js'
+import {getLevel} from './levelBuilder.js'
 import {newStateMachine} from './stateMachine.js'
 import {newBackdrop} from './backdrop.js'
 import {newExplosion} from './explosion.js'
@@ -12,6 +12,9 @@ import {newCamera} from './camera.js'
 import {draw as drawControls, enableTouch as enableTouchControls} from './controls.js'
 import {devMode, startLevel, messages} from './config.js'
 import {oneCollisionCheck} from './collisions.js'
+
+// TODO ? Use local storage or a cookie to save progress.
+// Allow some amount of level skipping after levels have been unlocked/completed.
 
 let ship
 let backdrop

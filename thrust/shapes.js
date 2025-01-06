@@ -37,8 +37,6 @@ export function render(shapeType, unscaledCoords){
 }
 
 export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, unscaledShapeTwoCoords){
-    // The below checks _could_ use scaled or unscaled coordinates - so long as they agree.
-    // But in reality, when using unscaled coordinates, too much precision is lost.
     let shapeOneCoords = scale(unscaledShapeOneCoords)
     let shapeTwoCoords = scale(unscaledShapeTwoCoords)
     switch (shapeOneType){
@@ -95,7 +93,8 @@ export function collision(shapeOneType, unscaledShapeOneCoords, shapeTwoType, un
     }
 }
 
-// TODO. Instead of scaling coordinates, can we just call p5.scale() and then draw with the unscaled coords?
+// Instead of scaling coordinates, could we just call p5.scale() and then draw with the unscaled coords?
+// Not if we want to keep the line thicknesses as they are. They get scaled too, of course.
 function scale(coords){
     let scalingDimension = Math.max(p5.width, p5.height)
     return Array.isArray(coords)? coords.map((e)=>{return e * scalingDimension}) : coords * scalingDimension
@@ -150,6 +149,7 @@ export function translate(xAmount, yAmount, coords){
     return translatedCoords
 }
 
+// TODO. I don't think this method really belongs in this file
 export function translateScreen(xAmount, yAmount){
     // Scale the given coords _and_ move (0, 0) to the centre of the canvas
     p5.translate(scale(xAmount) + p5.width/2, scale(yAmount) + p5.height/2)
