@@ -1,5 +1,5 @@
 "use strict";
-import {point, triangle, rectangle, quadrilateral, circle, rotate, translate} from './shapes.js'
+import {point, triangle, rectangle, quadrilateral, circle, rotate, translate, offsetShape, offsetSizeShape} from './shapes.js'
 import {colours} from "./config.js"
 const groundChars = "#/"
 
@@ -107,13 +107,15 @@ export function updateDynamicObjects(objects){
         // Anything dynamic we can mess about with on the fly.
         // But what we do with it?
         // Lets offset its x coordinate by some varying amount.
-        if (object.originalX === undefined){
-            object.originalX = object.coords[0]
-            object.originalY = object.coords[1]
+        if (object.originalCoords === undefined){
+            object.lastUpdated = Date.now()
+            object.originalCoords = structuredClone(object.coords)
             if (object.type == rectangle){
-                object.originalWidth = object.coords[2]
-                object.originalHeight = object.coords[3]
-                object.lastUpdated = Date.now()
+                // We need named properties for the dynamic methods to work with.
+                object.originalX = object.originalCoords[0]
+                object.originalY = object.originalCoords[1]
+                object.originalWidth = object.originalCoords[2]
+                object.originalHeight = object.originalCoords[3]
             }
         }
         if (!object.phase){
@@ -126,22 +128,29 @@ export function updateDynamicObjects(objects){
         object.phase += (elapsedSeconds/periodSeconds)
         object.phase = object.phase % 1
         // TODO. This assumes the shape coordinates are of a rectangle. Do we want to allow other shapes?
+        // Use translate/scale methods in the shapes class instead of assuming rectangle here.
+        let xOffset = 0
+        let yOffset = 0
         if (object.xOffsetFn){
-            let xOffset = movementFunctions[object.xOffsetFn[0]](object, ...object.xOffsetFn.slice(1))
-            object.coords[0] = object.originalX + xOffset
+            xOffset = movementFunctions[object.xOffsetFn[0]](object, ...object.xOffsetFn.slice(1))
+            //object.coords[0] = object.originalX + xOffset
         }
         if (object.yOffsetFn){
-            let yOffset = movementFunctions[object.yOffsetFn[0]](object, ...object.yOffsetFn.slice(1))
-            object.coords[1] = object.originalY + yOffset
+            yOffset = movementFunctions[object.yOffsetFn[0]](object, ...object.yOffsetFn.slice(1))
+            //object.coords[1] = object.originalY + yOffset
         }
+        offsetShape(object, xOffset, yOffset)
+        let widthOffset = 0
+        let heightOffset = 0
         if (object.widthOffsetFn){
-            let widthOffset = movementFunctions[object.widthOffsetFn[0]](object, ...object.widthOffsetFn.slice(1))
-            object.coords[2] = object.originalWidth + widthOffset
+            widthOffset = movementFunctions[object.widthOffsetFn[0]](object, ...object.widthOffsetFn.slice(1))
+            //object.coords[2] = object.originalWidth + widthOffset
         }
         if (object.heightOffsetFn){
-            let heightOffset = movementFunctions[object.heightOffsetFn[0]](object, ...object.heightOffsetFn.slice(1))
-            object.coords[3] = object.originalHeight + heightOffset
+            heightOffset = movementFunctions[object.heightOffsetFn[0]](object, ...object.heightOffsetFn.slice(1))
+            //object.coords[3] = object.originalHeight + heightOffset
         }
+        offsetSizeShape(object, widthOffset, heightOffset)
         objNum++
     }
 }

@@ -149,6 +149,38 @@ export function translate(xAmount, yAmount, coords){
     return translatedCoords
 }
 
+export function offsetShape(shape, xOffset, yOffset){
+    // The translate function above processes a set of coordinates.
+    // This method here looks at the shape type before doing anything.
+    if (shape.originalCoords){
+        switch (shape.type) {
+            case rectangle:
+                shape.coords[0] = shape.originalCoords[0] + xOffset
+                shape.coords[1] = shape.originalCoords[1] + yOffset
+                break
+            case triangle:
+                break
+            default:
+                console.log("Unsupported shape type "+shape.type+" in offsetShape")
+        }
+    }
+}
+
+export function offsetSizeShape(shape, widthOffset, heightOffset){
+   if (shape.originalCoords){
+        switch (shape.type) {
+            case rectangle:
+                shape.coords[2] = shape.originalCoords[2] + widthOffset
+                shape.coords[3] = shape.originalCoords[3] + heightOffset
+                break
+            case triangle:
+                break
+            default:
+                console.log("Unsupported shape type "+shape.type+" in offsetSizeShape")
+        }
+   }
+}
+
 // TODO. I don't think this method really belongs in this file
 export function translateScreen(xAmount, yAmount){
     // Scale the given coords _and_ move (0, 0) to the centre of the canvas
