@@ -55,6 +55,12 @@ const movementFunctions = {
     cos: (object, propertyName, scale)=>{
         return Math.cos(2 * Math.PI * object.phase) * (object[propertyName]||1) * scale
     },
+    absSin: (object, propertyName, scale)=>{
+        return Math.abs(Math.sin(2 * Math.PI * object.phase) * (object[propertyName]||1)) * scale
+    },
+    absCos: (object, propertyName, scale)=>{
+        return Math.abs(Math.cos(2 * Math.PI * object.phase) * (object[propertyName]||1)) * scale
+    },
     // Linearly from 0 to 1
     rampUp: (object, propertyName, scale)=>{
         return (object[propertyName]||1) * object.phase * scale

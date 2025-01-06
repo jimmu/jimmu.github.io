@@ -142,6 +142,38 @@ export const levels = [
         }
     },
     {
+        name: "Careful now",
+        backgroundColour: "#595c30",
+        groundBlocks: {
+            size: {x:2, y:1},
+            blocks: [
+            "###############",
+            "#  abcdedcba  #",
+            "#             #",
+            "#             #",
+            "#             #",
+            "#             #",
+            "#             #",
+            "#.            #",
+            "#  ABCDEDCBALL#",
+            "###############",
+            "###############",
+            ]
+        },
+        objectTypes: new Map([
+            ["a", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
+            ["b", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/80 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
+            ["c", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/64 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
+            ["d", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/48 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
+            ["e", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/32 + Math.PI/4, heightOffsetFn: ["absSin", "originalHeight", 2.5], colour: "#595c30"})],
+            ["A", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["absSin", "originalHeight", 2.5], yOffsetFn: ["absSin", "originalHeight", -2.5], colour: "#595c30"})],
+            ["B", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/80, heightOffsetFn: ["absSin", "originalHeight", 2.5], yOffsetFn: ["absSin", "originalHeight", -2.5], colour: "#595c30"})],
+            ["C", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/64, heightOffsetFn: ["absSin", "originalHeight", 2.5], yOffsetFn: ["absSin", "originalHeight", -2.5], colour: "#595c30"})],
+            ["D", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/48, heightOffsetFn: ["absSin", "originalHeight", 2.5], yOffsetFn: ["absSin", "originalHeight", -2.5], colour: "#595c30"})],
+            ["E", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/32, heightOffsetFn: ["absSin", "originalHeight", 2.5], yOffsetFn: ["absSin", "originalHeight", -2.5], colour: "#595c30"})],
+        ]),
+    },
+    {
         name: "Repair",
         groundBlocks: {
             size: {x:1, y:1},
