@@ -61,6 +61,13 @@ const movementFunctions = {
     absCos: (object, propertyName, scale)=>{
         return Math.abs(Math.cos(2 * Math.PI * object.phase) * (object[propertyName]||1)) * scale
     },
+    // A sin wave between 0 and 1 instead of +/- 1.
+    posSin: (object, propertyName, scale)=>{
+        return ((1 + Math.sin(2 * Math.PI * object.phase))/2) * (object[propertyName]||1) * scale
+    },
+    posCos: (object, propertyName, scale)=>{
+        return ((1 + Math.cos(2 * Math.PI * object.phase))/2) * (object[propertyName]||1) * scale
+    },
     // Linearly from 0 to 1
     rampUp: (object, propertyName, scale)=>{
         return (object[propertyName]||1) * object.phase * scale
