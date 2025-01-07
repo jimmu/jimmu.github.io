@@ -2,7 +2,8 @@
 import {decorate, makeSwitch} from './levelMethods.js'
 import {point, triangle, rectangle, quadrilateral, circle} from './shapes.js'
 
-// TODO. Think about using character based coordinates for all of the ground stuff.
+const downwardDynamicBlock = decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})
+const upwardDynamicBlock = decorate(downwardDynamicBlock, {heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8]})
 export const levels = [
     {
         name: "Land Carefully",
@@ -163,16 +164,16 @@ export const levels = [
         objectTypes: new Map([
             ["X", decorate("E")],   // Extra life.
             ["L", decorate("L", {coords:[-0.5, 0.4, 2, 0.1]})],    // Overriding the width of the landing pad
-            ["a", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})],
-            ["b", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/32, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})],
-            ["c", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 2 * Math.PI/32, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})],
-            ["d", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 3 * Math.PI/32, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})],
-            ["e", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 4 * Math.PI/32, heightOffsetFn: ["posCos", "originalHeight", 2.8], colour: "#595c30"})],
-            ["A", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 0, heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8], colour: "#595c30"})],
-            ["B", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: Math.PI/32, heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8], colour: "#595c30"})],
-            ["C", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 2 * Math.PI/32, heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8], colour: "#595c30"})],
-            ["D", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 3 * Math.PI/32, heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8], colour: "#595c30"})],
-            ["E", decorate("b", {coords: [-0.5, -0.5, 1, 1], isDamaging: true, permanent: true, isDynamic: true, period: 8, phase: 4 * Math.PI/32, heightOffsetFn: ["posSin", "originalHeight", 2.8], yOffsetFn: ["posSin", "originalHeight", -2.8], colour: "#595c30"})],
+            ["a", downwardDynamicBlock],
+            ["b", decorate(downwardDynamicBlock, {phase: Math.PI/32})],
+            ["c", decorate(downwardDynamicBlock, {phase: 2 * Math.PI/32})],
+            ["d", decorate(downwardDynamicBlock, {phase: 3 * Math.PI/32})],
+            ["e", decorate(downwardDynamicBlock, {phase: 4 * Math.PI/32})],
+            ["A", upwardDynamicBlock],
+            ["B", decorate(upwardDynamicBlock, {phase: Math.PI/32})],
+            ["C", decorate(upwardDynamicBlock, {phase: 2 * Math.PI/32})],
+            ["D", decorate(upwardDynamicBlock, {phase: 3 * Math.PI/32})],
+            ["E", decorate(upwardDynamicBlock, {phase: 4 * Math.PI/32})],
         ]),
     },
     {
@@ -201,7 +202,10 @@ export const levels = [
         ground: [],
         objectTypes: new Map([
             ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
-            ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
+            ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}],
+            ["h", decorate("h", {coords:[0, 0, 0.6]})], // Making these larger than the default
+            ["H", decorate("H", {coords:[0, 0, 0.6]})], // Making these larger than the default
+            ["f", decorate("f", {coords:[0, 0, 0.6]})], // Making these larger than the default
         ]),
         usePatternFill: true,
         isComplete: function(){

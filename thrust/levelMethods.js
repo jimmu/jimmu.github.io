@@ -86,10 +86,13 @@ const movementFunctions = {
     }
 }
 
-export function decorate(objectType, decoration){
-    let baseObject = standardObjectTypes.get(objectType)
+export function decorate(objectOrType, decoration){
+    let baseObject = standardObjectTypes.get(objectOrType)
     if (!baseObject) {
-        baseObject = standardGroundTypes.get(objectType)
+        baseObject = standardGroundTypes.get(objectOrType)
+    }
+    if (!baseObject && typeof objectOrType === 'object') {
+        baseObject = objectOrType
     }
     // Merge the properties of the two objects. Decoration will override matching properties in the base object.
     return {...baseObject, ...decoration}
