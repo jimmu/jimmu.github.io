@@ -99,11 +99,12 @@ export function newShip(){
     function drawShip(){
         p5.push()
         p5.strokeWeight(1)
-        p5.stroke(colours.shipOutline)
         p5.fill(colours.background)
 
         p5.rotate(angle)
+        p5.stroke(colliding? colours.shipOutlineWhenColliding : colours.shipOutline)
         render(shipShape.type, shipShape.coords)
+        p5.stroke(colours.shipOutline)
         if (slowEnoughToLand()){
             // Draw landing legs
             render(line, [-size, 0, -size*0.4, 0])

@@ -22,6 +22,7 @@ export const colours = {
     extraLife: "#800080",
     switches: "#b0e0b0",
     shipOutline: 200,
+    shipOutlineWhenColliding: 250,
     payloadRope: 100,
     payload: 150,
     collectibleOutline: 200,
