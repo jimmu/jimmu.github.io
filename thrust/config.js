@@ -6,6 +6,7 @@ export const shipSize = 0.03    // Fraction of the larger window dimension
 export const shipRotationSpeed = 3   // Radians per second
 export const shipThrust = 0.2/1000
 export const gravityStrength = shipThrust/5
+export const payloadGravityStrength = gravityStrength * 1.5   // A bit non-physical, but somehow more intuitive
 export const friction = 0.005
 export const maxSpeed = 0.6   // Coordinate units per second.
 export const maxLandingSpeed = 0.05

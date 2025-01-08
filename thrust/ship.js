@@ -7,7 +7,7 @@ import {newVapourTrail} from './vapour.js'
 import {devMode, colours, shipSize as size,
         shipRotationSpeed as rotationSpeed,
         shipThrust as thrust,
-        maxSpeed, gravityStrength, friction,
+        maxSpeed, gravityStrength, payloadGravityStrength, friction,
         maxLandingSpeed, maxLandingAngle} from './config.js'
 
 export function newShip(){
@@ -38,6 +38,7 @@ export function newShip(){
     let fuelPerSecondThrust = devMode? 0 : 8.5    // Percentage points per second TODO - make this optionally level specific
     let damagePerSecond = devMode? 0 : 67
     let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(gravityStrength)
+    let payloadGravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(payloadGravityStrength)
     let thrusting = false
     let colliding = false
     let grabbing = false
@@ -185,7 +186,7 @@ export function newShip(){
             // The only other force to act on it is a pull towards the ship if the ship is thrusting.
             // Which will only be the component of the thrust in that direction.
             payloadVelocity.mult(1-friction)
-            let gravityIncrement = p5.constructor.Vector.mult(gravity, p5.deltaTime)
+            let gravityIncrement = p5.constructor.Vector.mult(payloadGravity, p5.deltaTime)
             payloadVelocity.add(gravityIncrement)
             let moveIncrement = p5.constructor.Vector.mult(payloadVelocity, p5.deltaTime/1000)
             payloadPosition.add(moveIncrement)
