@@ -44,23 +44,31 @@ function setup(){
     stateMachine = createStateMachine()
     prepareLevel()
     gui = createGui()
+    document.addEventListener("visibilitychange", ()=>{
+        if (document.hidden){
+            stateMachine.trigger("pause")
+        }
+        //else Automatically unpause? Or just wait for key press?
+    })
     stateMachine.start("new")
 }
 
 function draw(){
     p5.push()
-    if (stateMachine.state() == "inLevel"){
-        scene.updateDynamicObjects()
-        ship.update()
-        collisionChecks()
+    if (stateMachine.state() != "paused") {
+        if (stateMachine.state() == "inLevel"){
+            scene.updateDynamicObjects()
+            ship.update()
+            collisionChecks()
+        }
+        camera.keepTargetInFrame(ship.position)
+        drawBackdrop()
+        drawScene()
+        if (stateMachine.state() == "lostLevel"){
+            drawExplosion()
+        }
+        drawShip()
     }
-    camera.keepTargetInFrame(ship.position)
-    drawBackdrop()
-    drawScene()
-    if (stateMachine.state() == "lostLevel"){
-        drawExplosion()
-    }
-    drawShip()
     drawGui()
     drawControls()
     p5.pop()
@@ -200,6 +208,8 @@ function createStateMachine(){
                 }
             })
             .addTransition("inLevel", "win", "wonLevel", ()=>{gui.splash(messages.levelCompleted, 2)})
+            .addTransition("inLevel", "pause", "paused", ()=>{gui.splash(messages.gamePaused, 6000)})
+            .addTransition("paused", "tapOrKeyPress", "inLevel", ()=>{gui.splash("")})
             .addTransition("wonLevel", "tapOrKeyPress", "preLevel", ()=>{
                 levelNumber++
                 prepareLevel()
