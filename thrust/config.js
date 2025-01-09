@@ -37,5 +37,6 @@ export const messages = {
     levelCompleted: "Goal In",
     startOfGame: "Hello",
     startOfLevel: "Go",
-    gamePaused: "Paused"
+    gamePaused: "Paused",
+    everythingCollected: "Thank You",
 }

@@ -192,6 +192,11 @@ function handleCollectedObject(collectedObject){
     if (collectedObject.isDamaging){
         ship.hit(collectedObject)
     }
+    if (collectedObject.mandatory){
+        if (scene.mandatoryCollected() == scene.mandatoryCount){
+            gui.splash(messages.everythingCollected)
+        }
+    }
 }
 
 function createStateMachine(){
