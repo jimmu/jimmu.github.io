@@ -44,9 +44,9 @@ export function newShip(){
     let grabbing = false
     let grabAdjacent
     let payloadRopeLength = size * 3
-    let payload // Shall we consider this to be a mass?
-    let payloadPosition = p5.createVector(0, 0)
-    let payloadVelocity = p5.createVector(0, 0)
+    let payloads = [] // Allow more than one!
+    let payloadPositions = [] //p5.createVector(0, 0)
+    let payloadVelocities = [] //p5.createVector(0, 0)
     let inventory = newInventory()
     let trail = newVapourTrail()
 
@@ -64,7 +64,7 @@ export function newShip(){
         collisionShape: {position, shape: shipShape},
         landingLegsCollisionShape: {position, shape: landingLegsShape},
         landerZoneCollisionShape: {position, shape: landerZoneShape},
-        payloadCollisionShape: {position: payloadPosition, shape: payloadShape},
+        payloadCollisionShape: {positions: payloadPositions, shape: payloadShape},
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(x, y)},
@@ -87,7 +87,7 @@ export function newShip(){
     function draw(){
         p5.push()
         drawShip()
-        if (payload){
+        if (payloads.length > 0){
             drawPayload()
         }
         if (devMode && colliding){
@@ -139,12 +139,15 @@ export function newShip(){
         p5.push()
         // Because the canvas will already have been moved to put the ship at the centre,
         // the coordinates for the payload depend on the difference between the ships and payloads positions.
-        p5.stroke(colours.payloadRope)
         p5.strokeWeight(0.3)
-        render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])
-        p5.fill(colours.payload)
-        p5.noStroke()
-        render(circle, [payloadPosition.x - position.x, payloadPosition.y - position.y, payloadSize])
+        for (let i=0; i < payloads.length; i++){
+            let payloadPosition = payloadPositions[i]
+            p5.stroke(colours.payloadRope)
+            render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])
+            p5.fill(colours.payload)
+            p5.noStroke()
+            render(circle, [payloadPosition.x - position.x, payloadPosition.y - position.y, payloadSize])
+        }
         p5.pop()
     }
 
@@ -181,33 +184,37 @@ export function newShip(){
 
     function move(){
         // Are we towing something?
-        if (payload){
-            // Subject the payload to gravity too.
-            // It will also have its own position and velocity.
-            // The only other force to act on it is a pull towards the ship if the ship is thrusting.
-            // Which will only be the component of the thrust in that direction.
-            payloadVelocity.mult(1-friction)
-            let gravityIncrement = p5.constructor.Vector.mult(payloadGravity, p5.deltaTime)
-            payloadVelocity.add(gravityIncrement)
-            let moveIncrement = p5.constructor.Vector.mult(payloadVelocity, p5.deltaTime/1000)
-            payloadPosition.add(moveIncrement)
-            // That's the payload drifting an falling.
-            // Now is it tugging on the string?
-            let shipToPayload = p5.constructor.Vector.sub(payloadPosition, position)
-            if (shipToPayload.mag() > payloadRopeLength){
-                // Constrain the payload to stay near enough the ship
-                shipToPayload.normalize().mult(payloadRopeLength)   // or use limit.
-                payloadPosition.set(position.x+shipToPayload.x, position.y+shipToPayload.y)
-                // Give the velocity of the payload and the ship a tug too.
-                // We need the component of the ship velocity that is away from the payload
-                // plus the component of the payload velocity that is away from the ship.
-                // Which we can get by just subtracting one vector from the other.
-                let velocityDiff = p5.constructor.Vector.sub(payloadVelocity, velocity).mag()
-                let howHardToTugPayload = velocityDiff * 0.75
-                let howHardToTugShip = velocityDiff * 0.25
-                payloadVelocity.sub(p5.constructor.Vector.mult(shipToPayload, howHardToTugPayload))
-                // And tug the ship too
-                velocity.add(p5.constructor.Vector.mult(shipToPayload, howHardToTugShip))
+        if (payloads.length > 0){
+            for (let i = 0; i < payloads.length; i++){
+                let payloadVelocity = payloadVelocities[i]
+                let payloadPosition = payloadPositions[i]
+                // Subject the payload to gravity too.
+                // It will also have its own position and velocity.
+                // The only other force to act on it is a pull towards the ship if the ship is thrusting.
+                // Which will only be the component of the thrust in that direction.
+                payloadVelocity.mult(1-friction)
+                let gravityIncrement = p5.constructor.Vector.mult(payloadGravity, p5.deltaTime)
+                payloadVelocity.add(gravityIncrement)
+                let moveIncrement = p5.constructor.Vector.mult(payloadVelocity, p5.deltaTime/1000)
+                payloadPosition.add(moveIncrement)
+                // That's the payload drifting an falling.
+                // Now is it tugging on the string?
+                let shipToPayload = p5.constructor.Vector.sub(payloadPosition, position)
+                if (shipToPayload.mag() > payloadRopeLength){
+                    // Constrain the payload to stay near enough the ship
+                    shipToPayload.normalize().mult(payloadRopeLength)   // or use limit.
+                    payloadPosition.set(position.x+shipToPayload.x, position.y+shipToPayload.y)
+                    // Give the velocity of the payload and the ship a tug too.
+                    // We need the component of the ship velocity that is away from the payload
+                    // plus the component of the payload velocity that is away from the ship.
+                    // Which we can get by just subtracting one vector from the other.
+                    let velocityDiff = p5.constructor.Vector.sub(payloadVelocity, velocity).mag()
+                    let howHardToTugPayload = velocityDiff * 0.75
+                    let howHardToTugShip = velocityDiff * 0.25
+                    payloadVelocity.sub(p5.constructor.Vector.mult(shipToPayload, howHardToTugPayload))
+                    // And tug the ship too
+                    velocity.add(p5.constructor.Vector.mult(shipToPayload, howHardToTugShip))
+                }
             }
         }
         velocity.mult(1-friction)
@@ -251,9 +258,10 @@ export function newShip(){
 
     function carrying(thing){
         if (thing === undefined){
-            return payload
+            return payloads[0]
         }
-        payload = thing
+        payloads.push(thing)
+        let payloadPosition = p5.createVector(0, 0)
         if (thing.type == circle){
             payloadPosition.set(thing.coords[0], thing.coords[1])
             payloadSize = thing.coords[2]
@@ -262,6 +270,8 @@ export function newShip(){
             // Just in case.
             payloadPosition.set(grabberPosition.x, grabberPosition.y)
         }
+        payloadPositions.push(payloadPosition)
+        payloadVelocities.push(p5.createVector(0, 0))
     }
 
     function fuelPercent(percentage){

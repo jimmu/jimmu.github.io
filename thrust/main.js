@@ -97,9 +97,12 @@ function checkGroundCollision(){
     ship.hit(bumpedInto)
     // If we're carrying something, did the payload hit the ground?
     if (ship.carrying() && !ship.hit()){
-        let payloadBumpedInto = oneCollisionCheck(ship.payloadCollisionShape, scene.collisionCheck, 0)
-        if (payloadBumpedInto){
-            ship.hit(payloadBumpedInto)
+        for (let i = 0; i < ship.payloadCollisionShape.positions.length && !ship.hit(); i++){
+            let payloadCollisionShape = {position: ship.payloadCollisionShape.positions[i], shape: ship.payloadCollisionShape.shape}
+            let payloadBumpedInto = oneCollisionCheck(payloadCollisionShape, scene.collisionCheck, 0)
+            if (payloadBumpedInto){
+                ship.hit(payloadBumpedInto)
+            }
         }
     }
 }
@@ -111,15 +114,18 @@ function checkObjectCollisions(){
     if (!collectedObject && ship.carrying()){
         // Start by pretending we're only checking.
         // Because we don't want the level to end if the payload hits the landing pad.
-        collectedObject = oneCollisionCheck(ship.payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
-        if (collectedObject){
-            if (collectedObject.landingPad){
-                // Be generous and ignore the payload hitting the landing pad.
-                collectedObject = false
-            }
-            else {
-                collectedObject.collected = true
-                ship.grab(collectedObject)
+        for (let i = 0; i < ship.payloadCollisionShape.positions.length && !collectedObject; i++){
+            let payloadCollisionShape = {position: ship.payloadCollisionShape.positions[i], shape: ship.payloadCollisionShape.shape}
+            collectedObject = oneCollisionCheck(payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
+            if (collectedObject){
+                if (collectedObject.landingPad){
+                    // Be generous and ignore the payload hitting the landing pad.
+                    collectedObject = false
+                }
+                else {
+                    collectedObject.collected = true
+                    ship.grab(collectedObject)
+                }
             }
         }
     }
@@ -253,7 +259,7 @@ function createGui(){
     if (devMode){
         gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
                        ") Speed: "+ship.velocity.mag().toFixed(3)})
-        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.position.x.toFixed(3)+", "+ship.payloadCollisionShape.position.y.toFixed(3)+") shape: "+ship.payloadCollisionShape.shape.coords})
+        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.positions+") shape: "+ship.payloadCollisionShape.shape.coords})
     }
     return gui
 }
