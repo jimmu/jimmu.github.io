@@ -45,8 +45,8 @@ export function newShip(){
     let grabAdjacent
     let payloadRopeLength = size * 3
     let payloads = [] // Allow more than one!
-    let payloadPositions = [] //p5.createVector(0, 0)
-    let payloadVelocities = [] //p5.createVector(0, 0)
+    //let payloadPositions = [] //p5.createVector(0, 0)
+    //let payloadVelocities = [] //p5.createVector(0, 0)
     let inventory = newInventory()
     let trail = newVapourTrail()
 
@@ -60,11 +60,13 @@ export function newShip(){
         hit,
         grab,
         nearAnObject,
-        carrying,
+        addPayload,
+        hasPayload,
+        dropPayload,
         collisionShape: {position, shape: shipShape},
         landingLegsCollisionShape: {position, shape: landingLegsShape},
         landerZoneCollisionShape: {position, shape: landerZoneShape},
-        payloadCollisionShape: {positions: payloadPositions, shape: payloadShape},
+        payloadCollisionShape: {positions: payloads, shape: payloadShape},
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(x, y)},
@@ -140,8 +142,8 @@ export function newShip(){
         // Because the canvas will already have been moved to put the ship at the centre,
         // the coordinates for the payload depend on the difference between the ships and payloads positions.
         p5.strokeWeight(0.3)
-        for (let i=0; i < payloads.length; i++){
-            let payloadPosition = payloadPositions[i]
+        for (let payload of payloads){
+            let payloadPosition = payload.position
             p5.stroke(colours.payloadRope)
             render(line, [0,0, payloadPosition.x - position.x, payloadPosition.y - position.y])
             p5.fill(colours.payload)
@@ -185,9 +187,9 @@ export function newShip(){
     function move(){
         // Are we towing something?
         if (payloads.length > 0){
-            for (let i = 0; i < payloads.length; i++){
-                let payloadVelocity = payloadVelocities[i]
-                let payloadPosition = payloadPositions[i]
+            for (let payload of payloads){
+                let payloadVelocity = payload.velocity
+                let payloadPosition = payload.position
                 // Subject the payload to gravity too.
                 // It will also have its own position and velocity.
                 // The only other force to act on it is a pull towards the ship if the ship is thrusting.
@@ -256,22 +258,32 @@ export function newShip(){
         grabAdjacent = near
     }
 
-    function carrying(thing){
-        if (thing === undefined){
-            return payloads[0]
+    function addPayload(thing){
+        if (thing){
+            let payloadPosition = p5.createVector(0, 0)
+            if (thing.type == circle){
+                payloadPosition.set(thing.coords[0], thing.coords[1])
+                payloadSize = thing.coords[2]
+            }
+            else {
+                // Just in case.
+                payloadPosition.set(grabberPosition.x, grabberPosition.y)
+            }
+            payloads.push({payload: thing, position: payloadPosition, velocity: p5.createVector(0, 0)})
         }
-        payloads.push(thing)
-        let payloadPosition = p5.createVector(0, 0)
-        if (thing.type == circle){
-            payloadPosition.set(thing.coords[0], thing.coords[1])
-            payloadSize = thing.coords[2]
+    }
+
+    function dropPayload(thing){
+        if (thing){
+            // drop this particular item
+            return thing
         }
-        else {
-            // Just in case.
-            payloadPosition.set(grabberPosition.x, grabberPosition.y)
-        }
-        payloadPositions.push(payloadPosition)
-        payloadVelocities.push(p5.createVector(0, 0))
+        // Drop something.
+        return payloads.shift()
+    }
+
+    function hasPayload(){
+        return payloads.length > 0
     }
 
     function fuelPercent(percentage){

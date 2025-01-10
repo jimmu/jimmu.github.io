@@ -96,19 +96,19 @@ export const levels = [
         ])
     },
     {
-        name: "Carry",
+        name: "Fetch",
         backgroundColour: "darkBlue",
         groundBlocks: {
             size: {x:1, y:1},
             blocks: [
             "############",
             "#/   //   /#",
-            "#     . L  #",
-            "#/    //  /#",
+            "#     .    #",
+            "#/    //BB/#",
             "##/ /#######",
             "#/     /  /#",
-            "#F     p   #",
-            "#/  //    /#",
+            "#F     p p #",
+            "#/ L//    /#",
             "############"
             ]
         },

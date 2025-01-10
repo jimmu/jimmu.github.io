@@ -20,7 +20,8 @@ export function newScene(level){
         isOutOfBounds,
         updateDynamicObjects,
         mandatoryCount: level.howManyMandatory,
-        mandatoryCollected: ()=>{return level.howManyMandatoryCollected()}
+        mandatoryCollected: ()=>{return level.howManyMandatoryCollected()},
+        addObject,
     }
 
     function setup(){
@@ -134,6 +135,12 @@ export function newScene(level){
         switchObject.disabled = true
         // Set it to come back on soon.
         setTimeout(()=>{switchObject.disabled = false}, 2000)
+    }
+
+    function addObject(object){
+        if (object){
+            level.objects.push(object)
+        }
     }
 
     function drawShape(shape){
