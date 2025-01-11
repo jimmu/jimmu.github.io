@@ -30,6 +30,7 @@ export const colours = {
     explosion: 250,
     touchControls: 80,
     guiText: 200,
+    payload: "#802020",
 }
 export const messages = {
     lifeLost: "Ungood",
@@ -39,4 +40,5 @@ export const messages = {
     startOfLevel: "Go",
     gamePaused: "Paused",
     everythingCollected: "Thank You",
+    payloadDropped: "Nice",
 }

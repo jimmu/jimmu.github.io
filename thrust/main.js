@@ -116,7 +116,7 @@ function checkGroundCollision(){
     }
 }
 
-function checkObjectCollisions(checkPayload){
+function checkObjectCollisions(checkPayload){   // TODO. Make this return not just the collected object, but what collected it - which might be the ship or one of the payloads. If it's a payload then we need to know the index of that.
     let collectedObject
     // Did the ship hit any game objects?
     if (!checkPayload){
@@ -154,7 +154,7 @@ function checkObjectCollisions(checkPayload){
             collectedObject = legsHitThis
         }
     }
-    return collectedObject
+    return collectedObject  // Return an object with the collectedObject and the collector - that is, the ship or the index of the payload.
 }
 
 function handleCollectedObject(collectedObject, collectedByPayload){
@@ -174,7 +174,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
     if (collectedObject.extraLife){
         livesRemaining++
     }
-    if (collectedObject.payload && !collectedByPayload){
+    if (collectedObject.payload && !collectedByPayload && !collectedObject.permanent){
         ship.addPayload(collectedObject)
     }
     if (collectedObject.needsKey){
@@ -217,7 +217,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
             gui.splash(messages.everythingCollected)
         }
     }
-    if (collectedObject.bucket && collectedByPayload){
+    if (collectedObject.bucket && collectedByPayload){  //TODO. We need to know which payload. If there are multiple we need to drop the right one.
         collectedObject.collected = false   // We still want to see the bucket
         // If we're carrying something, and the bucket is not already full, put the payload in the bucket.
         if (ship.hasPayload() && !collectedObject.full){
@@ -232,7 +232,13 @@ function handleCollectedObject(collectedObject, collectedByPayload){
                              coords: [droppedPayload.position.x, droppedPayload.position.y, droppedPayload.payload.coords[2]],
                              permanent: true,
                              payload: 1,
+                             dropped: true,
+                             colour: collectedObject.colour
                             })
+            gui.splash(messages.payloadDropped)
+            if (scene.isComplete()){
+                stateMachine.trigger("win")
+            }
         }
     }
 }

@@ -16,9 +16,9 @@ const standardObjectTypes = new Map([
     // Half health
     ["h", {type: circle, coords:[0, 0, 0.3], health:50, message: "50 UnDamage", colour: colours.health}],
     // Payload
-    ["p", {type: circle, coords:[0, 0, 0.3], payload: 0.1, message: "Carry me", mandatory: true}],
+    ["p", {type: circle, coords:[0, 0, 0.3], payload: 0.1, message: "Carry me", mandatory: true, colour: colours.payload}],
     // Bucket. To drop a payload into.
-    ["B", {type: quadrilateral, coords:[-0.5, 0.5, 0.5, 0.5, 0.3, 0.3, -0.3, 0.3], bucket: true, permanent: true}],
+    ["B", {type: quadrilateral, coords:[-0.5, 0.5, 0.5, 0.5, 0.3, 0.3, -0.3, 0.3], bucket: true, permanent: true, colour: colours.payload}],
     // Collectable / Coin
     ["c", {type: circle, coords:[0, 0, 0.4], mandatory: true, colour: colours.coin}],
     // Extra life

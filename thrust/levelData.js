@@ -97,24 +97,24 @@ export const levels = [
     },
     {
         name: "Fetch",
-        backgroundColour: "darkBlue",
+        backgroundColour: "saddleBrown",
         groundBlocks: {
             size: {x:1, y:1},
             blocks: [
             "############",
             "#/   //   /#",
             "#     .    #",
-            "#/    //BB/#",
+            "#/   B//B /#",
             "##/ /#######",
             "#/     /  /#",
             "#F     p p #",
-            "#/ L//    /#",
+            "#/  //    /#",
             "############"
             ]
         },
         isComplete: function(){
             for (let collectable of this.objects){
-                if (collectable.mandatory && !collectable.collected){
+                if (collectable.bucket && !collectable.full){
                     return false
                 }
             }
