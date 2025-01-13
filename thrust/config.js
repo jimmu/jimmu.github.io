@@ -1,7 +1,7 @@
 "use strict";
 
 export const devMode = false
-export const startLevel = 5
+export const startLevel = 0
 export const shipSize = 0.03    // Fraction of the larger window dimension
 export const shipRotationSpeed = 3   // Radians per second
 export const shipThrust = 0.2/1000
