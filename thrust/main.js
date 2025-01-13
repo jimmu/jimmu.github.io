@@ -15,8 +15,6 @@ import {oneCollisionCheck} from './collisions.js'
 
 // TODO ? Use local storage or a cookie to save progress.
 // Allow some amount of level skipping after levels have been unlocked/completed.
-// TODO. Now we have the multiple payload thing, it could be good also to have buckets to drop payloads into
-//       rather than just land while carrying all the payloads.
 
 let ship
 let backdrop
@@ -62,6 +60,13 @@ function draw(){
             scene.updateDynamicObjects()
             ship.update()
             collisionChecks()
+            if (ship.healthPercent() == 0){
+                stateMachine.trigger("lose")
+            }
+            // Are we drifting in the Abyss?
+            if (scene.isOutOfBounds(ship.position)){
+                stateMachine.trigger("lose")
+            }
         }
         camera.keepTargetInFrame(ship.position)
         drawBackdrop()
@@ -82,20 +87,8 @@ function draw(){
 // The scene itself may delegate the work to methods in the collisions.js file.
 function collisionChecks(checkingForPayload){
     checkGroundCollision()
-    let collectedObject = checkObjectCollisions(false)  // Check if the ship hit anything
-    handleCollectedObject(collectedObject, false)
-    if (!collectedObject){
-        collectedObject = checkObjectCollisions(true)   // Check if the payload hit anything
-        handleCollectedObject(collectedObject, true)
-    }
-    // TODO. Why is this in the collision check method?
-    if (ship.healthPercent() == 0){
-        stateMachine.trigger("lose")
-    }
-    // Are we drifting in the Abyss?
-    if (scene.isOutOfBounds(ship.position)){
-        stateMachine.trigger("lose")
-    }
+    let collectionResult = checkObjectCollisions()
+    handleCollectedObject(collectionResult)
 }
 
 function checkGroundCollision(){
@@ -116,28 +109,29 @@ function checkGroundCollision(){
     }
 }
 
-function checkObjectCollisions(checkPayload){   // TODO. Make this return not just the collected object, but what collected it - which might be the ship or one of the payloads. If it's a payload then we need to know the index of that.
-    let collectedObject
+function checkObjectCollisions(){
+    let result = {}
     // Did the ship hit any game objects?
-    if (!checkPayload){
-        collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck, ship.getAngle())
-        ship.grab(collectedObject)
+    result.collectedObject = oneCollisionCheck(ship.collisionShape, scene.collectionCheck, ship.getAngle())
+    if (result.collectedObject){
+        result.collector = {ship: true}
     }
-    else if (ship.hasPayload()){
+    if (ship.hasPayload()){
         // Start by pretending we're only checking.
         // Because we don't want the level to end if the payload hits the landing pad.
-        for (let payload of ship.payloadCollisionShape.positions){
-            if (!collectedObject){
+        for (let i = 0; i < ship.payloadCollisionShape.positions.length && !result.collectedObject; i++){
+            let payload = ship.payloadCollisionShape.positions[i]
+            if (!result.collectedObject){
                 let payloadCollisionShape = {position: payload.position, shape: ship.payloadCollisionShape.shape}
-                collectedObject = oneCollisionCheck(payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
-                if (collectedObject){
-                    if (collectedObject.landingPad || collectedObject.payload){
+                result.collectedObject = oneCollisionCheck(payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
+                if (result.collectedObject){
+                    if (result.collectedObject.landingPad || result.collectedObject.payload){
                         // Payloads and landing pads can't be collected by payloads
-                        collectedObject = false
+                        result.collectedObject = false
                     }
                     else {
-                        collectedObject.collected = true
-                        ship.grab(collectedObject)
+                        result.collectedObject.collected = true
+                        result.collector = {payload: true, payloadIndex: i}
                     }
                 }
             }
@@ -150,18 +144,19 @@ function checkObjectCollisions(checkPayload){   // TODO. Make this return not ju
     if (ship.slowEnoughToLand()){
         let legsHitThis = oneCollisionCheck(ship.landingLegsCollisionShape, scene.collectionCheck, ship.getAngle())
         if (legsHitThis){
-            ship.grab(legsHitThis)
-            collectedObject = legsHitThis
+            result.collectedObject = legsHitThis
+            result.collector = {ship: true, legs: true}
         }
     }
-    return collectedObject  // Return an object with the collectedObject and the collector - that is, the ship or the index of the payload.
+    return result
 }
 
-function handleCollectedObject(collectedObject, collectedByPayload){
-    if (!collectedObject){
+function handleCollectedObject(collectionInfo){
+    if (!collectionInfo.collectedObject){
         return
     }
     // Now check the collectable objects
+    let collectedObject = collectionInfo.collectedObject
     if (collectedObject.message){
         gui.splash(collectedObject.message)
     }
@@ -174,7 +169,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
     if (collectedObject.extraLife){
         livesRemaining++
     }
-    if (collectedObject.payload && !collectedByPayload && !collectedObject.permanent){
+    if (collectedObject.payload && collectionInfo.collector.ship && !collectedObject.permanent){
         ship.addPayload(collectedObject)
     }
     if (collectedObject.needsKey){
@@ -199,7 +194,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
     if (collectedObject.isSwitch){
         scene.toggleSwitchableObjects(collectedObject)
     }
-    if (collectedObject.landingPad && !collectedByPayload){
+    if (collectedObject.landingPad && !collectionInfo.payload){
         if (scene.isComplete()){
             if (ship.slowEnoughToLand()){
                 stateMachine.trigger("win")
@@ -217,7 +212,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
             gui.splash(messages.everythingCollected)
         }
     }
-    if (collectedObject.bucket && collectedByPayload){  //TODO. We need to know which payload. If there are multiple we need to drop the right one.
+    if (collectedObject.bucket && collectionInfo.collector.payload){
         collectedObject.collected = false   // We still want to see the bucket
         // If we're carrying something, and the bucket is not already full, put the payload in the bucket.
         if (ship.hasPayload() && !collectedObject.full){
@@ -225,7 +220,7 @@ function handleCollectedObject(collectedObject, collectedByPayload){
             // Remove a payload from the ship.
             // Add it to the bucket.
             collectedObject.full = true // We don't want to be able to use it twice
-            let droppedPayload = ship.dropPayload()
+            let droppedPayload = ship.dropPayload(collectionInfo.collector.payloadIndex)
             // Now the payload isn't being carried by the ship, but we do want to see it on the bucket.
             // Add a new object to the scene.
             scene.addObject({type: droppedPayload.payload.type,

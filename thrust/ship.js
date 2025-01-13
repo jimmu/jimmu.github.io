@@ -41,7 +41,6 @@ export function newShip(){
     let payloadGravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(payloadGravityStrength)
     let thrusting = false
     let colliding = false
-    let grabbing = false
     let grabAdjacent
     let payloadRopeLength = size * 3
     let payloads = [] // Allow more than one!
@@ -58,7 +57,6 @@ export function newShip(){
         velocity,
         getAngle,
         hit,
-        grab,
         nearAnObject,
         addPayload,
         hasPayload,
@@ -118,7 +116,7 @@ export function newShip(){
         }
 
         p5.noFill()
-        if (thrusting && !grabbing){
+        if (thrusting){
             render(circle, [-size*0.32, -size/7, size*0.1])
             render(circle, [-size*0.32, size/7, size*0.1])
             p5.strokeWeight(0.5)
@@ -244,13 +242,6 @@ export function newShip(){
         }
     }
 
-   function grab(grab){
-        if (grab === undefined){
-            return grabbing
-        }
-        grabbing = grab
-    }
-
     function nearAnObject(near){
         if (near === undefined){
             return grabAdjacent
@@ -273,14 +264,11 @@ export function newShip(){
         }
     }
 
-    function dropPayload(thing){
-        if (thing){
-            // drop this particular item
-            return thing
-        }
-        // Drop something.
-        return payloads.shift()
-    }
+    function dropPayload(index){
+        let dropped = payloads[index]
+        payloads = payloads.slice(0, index).concat(payloads.slice(index+1))
+        return dropped
+     }
 
     function hasPayload(){
         return payloads.length > 0

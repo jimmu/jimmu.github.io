@@ -35,7 +35,6 @@ export function newVapourTrail(){
         p5.noFill()
         for (let vapourPoint of vapourPoints){
             p5.stroke(vapourPoint.colour)
-            //p5.fill(vapourPoint.colour || 75)
             let sizeFactor = vapourPoint.age / lifetime
             p5.strokeWeight(1-sizeFactor)
             render(circle, [vapourPoint.position.x, vapourPoint.position.y, maxSize * sizeFactor])
