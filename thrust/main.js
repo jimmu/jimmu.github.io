@@ -97,9 +97,9 @@ function checkGroundCollision(){
     ship.hit(bumpedInto)
     // If we're carrying something, did the payload hit the ground?
     if (ship.hasPayload() && !ship.hit()){
-        for (let payload of ship.payloadCollisionShape.positions){
+        for (let payloadPosition of ship.getPayloadPositions()){
             if (!ship.hit()){
-                let payloadCollisionShape = {position: payload.position, shape: ship.payloadCollisionShape.shape}
+                let payloadCollisionShape = {position: payloadPosition, shape: ship.payloadCollisionShape}
                 let payloadBumpedInto = oneCollisionCheck(payloadCollisionShape, scene.collisionCheck, 0)
                 if (payloadBumpedInto){
                     ship.hit(payloadBumpedInto)
@@ -119,10 +119,11 @@ function checkObjectCollisions(){
     if (ship.hasPayload()){
         // Start by pretending we're only checking.
         // Because we don't want the level to end if the payload hits the landing pad.
-        for (let i = 0; i < ship.payloadCollisionShape.positions.length && !result.collectedObject; i++){
-            let payload = ship.payloadCollisionShape.positions[i]
+        let payloadPositions = ship.getPayloadPositions()
+        for (let i = 0; i <payloadPositions.length && !result.collectedObject; i++){
+            let payloadPosition = payloadPositions[i]
             if (!result.collectedObject){
-                let payloadCollisionShape = {position: payload.position, shape: ship.payloadCollisionShape.shape}
+                let payloadCollisionShape = {position: payloadPosition, shape: ship.payloadCollisionShape}
                 result.collectedObject = oneCollisionCheck(payloadCollisionShape, (s)=>{return scene.collectionCheck(s, true)}, ship.getAngle())
                 if (result.collectedObject){
                     if (result.collectedObject.landingPad || result.collectedObject.payload){
@@ -295,7 +296,7 @@ function createGui(){
     if (devMode){
         gui.addElement("Co-ordinates: ", ()=>{return "("+ship.position.x.toFixed(3)+", "+ship.position.y.toFixed(3)+
                        ") Speed: "+ship.velocity.mag().toFixed(3)})
-        gui.addElement("Payload     : ", ()=>{return "("+ship.payloadCollisionShape.positions+") shape: "+ship.payloadCollisionShape.shape.coords})
+        gui.addElement("Payload     : ", ()=>{return ship.getPayloadPositions().length + " - ("+JSON.stringify(ship.getPayloadPositions())+")"})
     }
     return gui
 }

@@ -303,7 +303,6 @@ export const levels = [
             "##############",
             ]
         },
-        // TODO. Add dynamic ground - not just dynamic objects
         objectTypes: new Map([
             ["b", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 16, phase: 0, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 0.5]*/})],
             ["a", decorate("b", {coords: [-0.5, -0.5, 2, 1], permanent: true, isDynamic: true, period: 16, phase: 0.5, xOffsetFn: ["sin", "originalWidth", 1], /*yOffsetFn: ["cos", "originalHeight", 1]*/})],

@@ -3,7 +3,6 @@ import {point, triangle, rectangle, quadrilateral, circle, rotate, translate, of
 import {colours} from "./config.js"
 const groundChars = "#/"
 
-//TODO. Objects which boost speed, change ship size, teleport?
 const standardObjectTypes = new Map([
     // Landing pad
     ["L", {type: rectangle, coords:[-0.5, 0.4, 1, 0.1], landingPad: true, permanent: true}],
@@ -26,7 +25,6 @@ const standardObjectTypes = new Map([
     // Key. Can override the needsKey value if need be
     ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
     // Door. Vertical. Can override the needsKey value if need be
-    // Could do automagic detection of whether to use vertical or horizontal door.
     ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A", orientation: "vertical"}]
 ]);
 

@@ -61,10 +61,11 @@ export function newShip(){
         addPayload,
         hasPayload,
         dropPayload,
+        getPayloadPositions: ()=>{return payloads.map((p)=>{return p.position})},   // With this in place, stop using
         collisionShape: {position, shape: shipShape},
         landingLegsCollisionShape: {position, shape: landingLegsShape},
         landerZoneCollisionShape: {position, shape: landerZoneShape},
-        payloadCollisionShape: {positions: payloads, shape: payloadShape},
+        payloadCollisionShape: payloadShape,
         fuelPercent,
         healthPercent,
         setPos: (x, y)=>{position.set(x, y)},

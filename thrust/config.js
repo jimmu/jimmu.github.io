@@ -3,7 +3,7 @@
 export const devMode = false
 export const startLevel = 0
 export const shipSize = 0.03    // Fraction of the larger window dimension
-export const shipRotationSpeed = 3   // Radians per second
+export const shipRotationSpeed = Math.PI   // Radians per second
 export const shipThrust = 0.2/1000
 export const gravityStrength = shipThrust/5
 export const payloadGravityStrength = gravityStrength * 1.5   // A bit non-physical, but somehow more intuitive
