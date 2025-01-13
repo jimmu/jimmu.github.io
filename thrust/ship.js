@@ -69,7 +69,8 @@ export function newShip(){
         healthPercent,
         setPos: (x, y)=>{position.set(x, y)},
         slowEnoughToLand,
-        inventory
+        inventory,
+        bounce
     }
 
     function getAngle(){
@@ -272,6 +273,18 @@ export function newShip(){
 
     function hasPayload(){
         return payloads.length > 0
+    }
+
+    function bounce(surfaceOrientation){
+        if (surfaceOrientation === "vertical"){
+            velocity.x = -velocity.x
+        }
+        else if (surfaceOrientation === "horizontal"){
+            velocity.y = -velocity.y
+        }
+        else {
+            velocity.mult(-1)
+        }
     }
 
     function fuelPercent(percentage){

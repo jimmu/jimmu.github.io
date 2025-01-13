@@ -177,10 +177,10 @@ function handleCollectedObject(collectionInfo){
         // Use it if it has it.
         if (ship.inventory.has("keys", collectedObject.needsKey)){
             scene.useKey(collectedObject.needsKey)
+            gui.splash(collectedObject.unlockMessage)
         }
         else {
             // What to do. Bump off the object?
-            ship.velocity.mult(-1)
             collectedObject.collected = false
             if (!collectedObject.message){
                 gui.splash("Lock "+collectedObject.needsKey)
@@ -235,6 +235,9 @@ function handleCollectedObject(collectionInfo){
                 stateMachine.trigger("win")
             }
         }
+    }
+    if (collectedObject.orientation && !collectedObject.disabled){
+        ship.bounce(collectedObject.orientation)
     }
 }
 

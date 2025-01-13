@@ -135,7 +135,7 @@ export const levels = [
         objects: [
             {type: rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false, permanent: true},
             {type: triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
-            {type: rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", message: "Unlocked"}
+            {type: rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", unlockMessage: "Unlocked", orientation: "vertical"}
         ],
         isComplete: function(){
             // If you can reach the landing pad then that's all there is to it.

@@ -27,7 +27,7 @@ const standardObjectTypes = new Map([
     ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A"}],
     // Door. Vertical. Can override the needsKey value if need be
     // Could do automagic detection of whether to use vertical or horizontal door.
-    ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A"}]
+    ["D", {type: rectangle, coords:[0, -1, 0.5, 2], needsKey: "A", orientation: "vertical"}]
 ]);
 
 const standardGroundTypes = new Map([
