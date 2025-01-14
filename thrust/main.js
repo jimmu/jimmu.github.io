@@ -186,6 +186,7 @@ function handleCollectedObject(collectionInfo){
             if (!collectedObject.message){
                 gui.splash("Lock "+collectedObject.needsKey)
             }
+            ship.bounce(collectedObject.orientation)
         }
     }
     if (collectedObject.key){
@@ -236,9 +237,6 @@ function handleCollectedObject(collectionInfo){
                 stateMachine.trigger("win")
             }
         }
-    }
-    if (collectedObject.orientation && !collectedObject.disabled){
-        ship.bounce(collectedObject.orientation)
     }
 }
 
