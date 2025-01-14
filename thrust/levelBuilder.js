@@ -1,6 +1,7 @@
 "use strict";
 import {levels} from './levelData.js'
 import {processGroundBlocks, updateDynamicObjects, findOuterLimits, defaultCompleteness} from './levelMethods.js'
+import {colours} from './config.js'
 
 export function getLevel(levelNum){
     let level = levels[levelNum % levels.length]
@@ -15,7 +16,7 @@ export function getLevel(levelNum){
         objects: structuredClone(level.objects || []),
         objectTypes: structuredClone(level.objectTypes|| new Map()),
         isComplete: level.isComplete || defaultCompleteness,
-        backgroundColour: level.backgroundColour || "gray",
+        backgroundColour: level.backgroundColour || colours.defaultGround,
         usePatternFill: level.usePatternFill || false,
         generatePattern: level.generatePattern,
         updateDynamicObjects,

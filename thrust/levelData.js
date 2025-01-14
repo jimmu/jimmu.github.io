@@ -123,24 +123,20 @@ export const levels = [
     },
     {
         name: "Unlock",
-        startCoords: {x: -0.25, y: 0},
-        ground: [
-            {type: rectangle, coords:[-1, -1, 2, 0.5]},
-            {type: rectangle, coords:[-1, 0.5, 2, 0.5]},
-            {type: rectangle, coords:[-1, -0.5, 0.5, 1]},
-            {type: rectangle, coords:[0.5, -0.5, 0.5, 1]},
-            {type: rectangle, coords: [-0.02, -0.5, 0.04, 0.4]},
-            {type: rectangle, coords: [-0.02, 0.1, 0.04, 0.4]},
-        ],
-        objects: [
-            {type: rectangle, coords:[0.25, 0.25, 0.1, 0.01], landingPad: true, disabled: false, permanent: true},
-            {type: triangle, coords:[-0.25, 0.25, -0.24, 0.27, -0.26, 0.27], message: "Key A", key: "A"},
-            {type: rectangle, coords: [-0.01, -0.15, 0.02, 0.3], needsKey: "A", unlockMessage: "Unlocked", orientation: "vertical"}
-        ],
-        isComplete: function(){
-            // If you can reach the landing pad then that's all there is to it.
-            return true
-        }
+        groundBlocks: {
+            size: {x:2, y:1},
+            blocks: [
+            "#################",
+            "##     ///     ##",
+            "##     ///     ##",
+            "##     ///     ##",
+            "##  .   D      ##",
+            "##     ///     ##",
+            "##  K  ///  L  ##",
+            "##     ///     ##",
+            "#################",
+            ]
+        },
     },
     {
         name: "Steady On",

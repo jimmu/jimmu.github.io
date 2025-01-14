@@ -16,6 +16,7 @@ export const starDensity = 30
 export const maxStars = 500
 export const colours = {
     background: 30,
+    defaultGround: "gray",
     fuel: "#2060a0",
     health: "#f04040",
     coin: "#ffc010",
