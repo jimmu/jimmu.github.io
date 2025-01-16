@@ -48,6 +48,7 @@ export function newShip(){
     //let payloadVelocities = [] //p5.createVector(0, 0)
     let inventory = newInventory()
     let trail = newVapourTrail()
+    let lastBounce = 0
 
     return {
         setup,
@@ -277,15 +278,20 @@ export function newShip(){
     }
 
     function bounce(surfaceOrientation){
-        if (surfaceOrientation === "vertical"){
-            velocity.x = -velocity.x
+        // Don't allow the ship to get stuck to a bouncy surface.
+        // When did we last get asked to bounce? If it was on the last frame then don't bounce again yet.
+        if (p5.frameCount - lastBounce > 1){
+            if (surfaceOrientation === "vertical"){
+                velocity.x = -velocity.x
+            }
+            else if (surfaceOrientation === "horizontal"){
+                velocity.y = -velocity.y
+            }
+            else {
+                velocity.mult(-1)
+            }
         }
-        else if (surfaceOrientation === "horizontal"){
-            velocity.y = -velocity.y
-        }
-        else {
-            velocity.mult(-1)
-        }
+        lastBounce = p5.frameCount
     }
 
     function fuelPercent(percentage){

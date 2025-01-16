@@ -1,7 +1,7 @@
 "use strict";
 import {point, triangle, rectangle, quadrilateral, circle, rotate, translate, offsetShape, offsetSizeShape} from './shapes.js'
 import {colours} from "./config.js"
-const groundChars = "#/"
+const groundChars = "#/|-"
 
 const standardObjectTypes = new Map([
     // Landing pad
@@ -25,7 +25,9 @@ const standardObjectTypes = new Map([
     // Key. Can override the needsKey value if need be
     ["K", {type: triangle, coords:[0, -0.25, 0.25, 0.25, -0.25, 0.25], key: "A", message: "Key A"}],
     // Door. Vertical. Can override the needsKey value if need be
-    ["D", {type: rectangle, coords:[-0.25, -1, 0.5, 2], needsKey: "A", orientation: "vertical"}]
+    ["D", {type: rectangle, coords:[-0.25, -1, 0.5, 2], needsKey: "A", bouncy: true, orientation: "vertical"}],
+    ["|", {type: rectangle, coords:[-0.25, -0.5, 0.5, 1], permanent: true, bouncy: true, orientation: "vertical"}],
+    ["-", {type: rectangle, coords:[-0.5, -0.25, 1, 0.5], permanent: true, bouncy: true, orientation: "horizontal"}],
 ]);
 
 const standardGroundTypes = new Map([

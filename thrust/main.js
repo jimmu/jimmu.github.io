@@ -186,8 +186,11 @@ function handleCollectedObject(collectionInfo){
             if (!collectedObject.message){
                 gui.splash("Lock "+collectedObject.needsKey)
             }
-            ship.bounce(collectedObject.orientation)
         }
+    }
+    // Ship could note that it's bouncing and not allow another bounce until it has had a frame of not bouncing?
+    if (collectedObject.bouncy && !collectedObject.disabled){
+        ship.bounce(collectedObject.orientation)
     }
     if (collectedObject.key){
         // Add the key to the ship's inventory
