@@ -226,9 +226,9 @@ export const levels = [
             ["s", makeSwitch("a", "click")],
             ["t", makeSwitch("a", "click")],
             ["u", makeSwitch("b", "click")],
-            ["a", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope", orientation: "vertical"}],
-            ["b", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a", "b"], disabled: false, needsKey: "-", message: "Nope", orientation: "vertical"}],
-            ["d", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope", orientation: "vertical"}],
+            ["a", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope", orientation: "vertical", bouncy: true}],
+            ["b", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a", "b"], disabled: false, needsKey: "-", message: "Nope", orientation: "vertical", bouncy: true}],
+            ["d", {type: rectangle, coords:[-0.1, -0.6, 0.2, 1.2], switchedBy: ["a"], disabled: true, needsKey: "-", message: "Nope", orientation: "vertical", bouncy: true}],
         ])
     },
     {
