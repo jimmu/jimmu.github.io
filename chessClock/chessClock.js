@@ -95,6 +95,9 @@ export default class ChessClock
             p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
             this.calcRadius()
         }.bind(this)
+        p5.touchStarted = function(){
+            p5.fullscreen(true)
+        }
         this.pauseButton = this.makeButton("Pause")
         this.pauseButton.addClass("pause")
         this.resumeButton = this.makeButton("Resume")
