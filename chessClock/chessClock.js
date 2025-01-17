@@ -112,6 +112,10 @@ export default class ChessClock
         this.sliderLabel.addClass("slider label")
         this.makeClocks()
         this.stateMachine.start("new")
+
+        if ('wakeLock' in navigator){
+            navigator.wakeLock.request()
+        }
     }
 
     draw(){
