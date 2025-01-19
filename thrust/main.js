@@ -190,7 +190,7 @@ function handleCollectedObject(collectionInfo){
     }
     // Ship could note that it's bouncing and not allow another bounce until it has had a frame of not bouncing?
     if (collectedObject.bouncy && !collectedObject.disabled){
-        ship.bounce(collectedObject.orientation)
+        ship.bounce(collectedObject)
     }
     if (collectedObject.key){
         // Add the key to the ship's inventory
@@ -281,8 +281,8 @@ function createGui(){
     let gui = newGui()
     gui.setup()
     gui.addElement("Lives : ", ()=>{return livesRemaining})
-    gui.addElement("Fuel  : ", ()=>{
-        return "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
+    gui.addElement("Fuel  : ", ()=>{    // TODO. Finish this off. Don't show fuel gauge when burn rate is 0.
+        return ship.fuelBurnRate() == 0? "!" : "["+"#".repeat(ship.fuelPercent())+"_".repeat(100-ship.fuelPercent())+"]"
     })
     gui.addElement("Damage: ", ()=>{
         return "["+"#".repeat(100-ship.healthPercent())+"_".repeat(ship.healthPercent())+"]"
@@ -311,6 +311,7 @@ function prepareLevel(){
     ship = newShip()
     ship.setup()
     ship.setPos(scene.startCoords.x, scene.startCoords.y)
+    ship.fuelBurnRate(level.fuelBurnRate)
     camera = newCamera(ship.position)
 }
 

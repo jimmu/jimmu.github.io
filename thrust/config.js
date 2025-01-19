@@ -1,7 +1,7 @@
 "use strict";
 
 export const devMode = false
-export const startLevel = 0
+export const startLevel = 10
 export const shipSize = 0.03    // Fraction of the larger window dimension
 export const shipRotationSpeed = Math.PI   // Radians per second
 export const shipThrust = 0.2/1000
@@ -11,7 +11,8 @@ export const friction = 0.005
 export const maxSpeed = 0.6   // Coordinate units per second.
 export const maxLandingSpeed = 0.05
 export const maxLandingAngle = Math.PI/6
-
+export const bounciness = 0.9   // Coefficient of restitution
+export const defaultFuelBurnRate = 8.5 // Percentage points per second
 export const starDensity = 30
 export const maxStars = 500
 export const colours = {

@@ -8,7 +8,8 @@ import {devMode, colours, shipSize as size,
         shipRotationSpeed as rotationSpeed,
         shipThrust as thrust,
         maxSpeed, gravityStrength, payloadGravityStrength, friction,
-        maxLandingSpeed, maxLandingAngle} from './config.js'
+        maxLandingSpeed, maxLandingAngle, bounciness,
+        defaultFuelBurnRate} from './config.js'
 
 export function newShip(){
     let shipShape = {type: quadrilateral,
@@ -35,7 +36,7 @@ export function newShip(){
     let velocity = p5.createVector(0, 0)
     let fuel = 100  // Percent
     let health = 100 // Percent. Undamagedness
-    let fuelPerSecondThrust = devMode? 0 : 8.5    // Percentage points per second TODO - make this optionally level specific
+    let fuelPerSecondThrust = devMode? 0 : defaultFuelBurnRate    // Percentage points per second
     let damagePerSecond = devMode? 0 : 67
     let gravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(gravityStrength)
     let payloadGravity = p5.constructor.Vector.fromAngle(Math.PI/2).mult(payloadGravityStrength)
@@ -72,7 +73,13 @@ export function newShip(){
         setPos: (x, y)=>{position.set(x, y)},
         slowEnoughToLand,
         inventory,
-        bounce
+        bounce,
+        fuelBurnRate: (burnRate)=>{
+            if (burnRate === undefined) {
+                return fuelPerSecondThrust
+            }
+            fuelPerSecondThrust = burnRate
+        }
     }
 
     function getAngle(){
@@ -277,10 +284,14 @@ export function newShip(){
         return payloads.length > 0
     }
 
-    function bounce(surfaceOrientation){
+    function bounce(bouncedOff){
+        //Possibly do this immediate backtrack to try to avoid the ship falling right through bouncy stuff when it comes to rest.
+        let moveIncrement = p5.constructor.Vector.mult(velocity, 1.1 * p5.deltaTime/1000)
+        position.sub(moveIncrement)
         // Don't allow the ship to get stuck to a bouncy surface.
         // When did we last get asked to bounce? If it was on the last frame then don't bounce again yet.
         if (p5.frameCount - lastBounce > 1){
+            let surfaceOrientation = bouncedOff.orientation
             if (surfaceOrientation === "vertical"){
                 velocity.x = -velocity.x
             }
@@ -288,8 +299,19 @@ export function newShip(){
                 velocity.y = -velocity.y
             }
             else {
-                velocity.mult(-1)
+                if (bouncedOff.type === circle){
+                    // A line between the ship's position and the circle is the normal.
+                    let normal = p5.createVector(bouncedOff.coords[0] - position.x, bouncedOff.coords[1] - position.y).normalize()
+                    let dot = velocity.dot(normal)
+                    let delta = p5.constructor.Vector.mult(normal, 2 * dot)
+                    velocity.sub(delta)
+                }
+                else {
+                    velocity.mult(-1)
+                }
             }
+            velocity.mult(bounciness)
+            //velocity.limit(maxSpeed)
         }
         lastBounce = p5.frameCount
     }

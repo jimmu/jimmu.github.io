@@ -1,7 +1,7 @@
 "use strict";
 import {levels} from './levelData.js'
 import {processGroundBlocks, updateDynamicObjects, findOuterLimits, defaultCompleteness} from './levelMethods.js'
-import {colours} from './config.js'
+import {colours, defaultFuelBurnRate} from './config.js'
 
 export function getLevel(levelNum){
     let level = levels[levelNum % levels.length]
@@ -20,6 +20,7 @@ export function getLevel(levelNum){
         usePatternFill: level.usePatternFill || false,
         generatePattern: level.generatePattern,
         updateDynamicObjects,
+        fuelBurnRate: level.fuelBurnRate === undefined? defaultFuelBurnRate : level.fuelBurnRate,
     }
     processGroundBlocks(levelCopy)
     findOuterLimits(levelCopy)
