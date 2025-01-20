@@ -235,23 +235,26 @@ export const levels = [
     {
         name: "Gotta Catch All Of Them",
         groundBlocks: {
-            size: {x:1.5, y:1},
+            size: {x:1.2, y:1},
             blocks: [
-                "#///////////////#",
-                "/////////////////",
-                "//fcccccccccccf//",
-                "//c///c///c///c//",
-                "//c///c///c///c//",
-                "//c///c///c///c//",
-                "//fccc.cccccccf//",
-                "//c///c///     //",
-                "//c///c///     //",
-                "//c///c///     //",
-                "//fcccccccLLLLL//",
-                "/////////////////",
-                "#///////////////#",
+                "#///////////#",
+                "/////////////",
+                "//ccccccccc//",
+                "//c///c///c//",
+                "//c///c///c//",
+                "//c///f///c//",
+                "//cccc.cccc//",
+                "//c///     //",
+                "//c///     //",
+                "//c///     //",
+                "//ccccLLLLL//",
+                "/////////////",
+                "#////////////#",
             ]
-        }
+        },
+        objectTypes: new Map([
+            ["f", decorate("f", {fuel: 5, message: "5 Fuel"})],
+        ])
     },
     {
         name: "Maze",
@@ -296,7 +299,7 @@ export const levels = [
             ["#", decorate("b", {colour: colours.background})],
             ["+", decorate("c", {coords:[0, 0, 1.1], bouncy: true, permanent: true, colour: "darkOrange", mandatory: false})],
             ["s", makeSwitch("s", "Door A")],
-            ["t", makeSwitch("b", "Door B")],
+            ["t", makeSwitch("t", "Door B")],
             ["a", {type: rectangle, coords:[-0.6, -0.1, 1.2, 0.2], switchedBy: ["s"], needsKey: "-", message: "Door A", orientation: "horizontal", bouncy: true}],
             ["b", {type: rectangle, coords:[-0.6, -0.1, 1.2, 0.2], switchedBy: ["t"], needsKey: "-", message: "Door B", orientation: "horizontal", bouncy: true}],
         ]),
@@ -336,7 +339,7 @@ export const levels = [
         backgroundColour: "#595c00",    // Dark drab olive
         groundBlocks: {
             size: {x:2, y:1.5},
-            blocks: [
+            blocks: [ 
             "##############",
             "##############",
             "###ce  b   ###",
